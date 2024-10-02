@@ -1,0 +1,37 @@
+server {
+    listen 80;
+    server_name example.com;
+    root /var/www/html;
+
+    error_page 404 /errors/404.html;
+    client_max_body_size 1024;
+
+    location /uploads {
+        methods POST;
+        upload_directory /var/www/uploads;
+    }
+
+    location / {
+        methods GET;
+        index index.html;
+    }
+}
+
+server {
+    listen 80;
+    server_name example.com;
+    root /var/www/html;
+
+    error_page 404 /errors/404.html;
+    client_max_body_size 1024;
+
+    location /uploads {
+        methods POST;
+        upload_directory /var/www/uploads;
+    }
+
+    location / {
+        methods GET;
+        index index.html;
+    }
+}
