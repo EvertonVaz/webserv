@@ -10,7 +10,6 @@ server {
         methods POST;
         upload_directory /var/www/uploads;
     }
-
     location / {
         methods GET;
         index index.html;
