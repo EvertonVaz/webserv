@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:10:43 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/04 20:04:24 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/04 20:33:49 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,8 @@ void ConfigParser::parseLocationDirective(RouteConfig& route, const std::string&
 		route.setIndex(value);
 	} else if (key == "root") {
         route.setRoot(value);
+    } else {
+        throw std::runtime_error("Unknown directive: " + key);
     }
 }
 

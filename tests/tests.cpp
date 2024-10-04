@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:32:14 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/04 16:06:55 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/04 20:39:27 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ bool testInvalidDirective() {
         ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido a diretiva inválida");
     } catch (const std::exception& e) {
         std::string errorMsg = e.what();
-        ASSERT_TRUE(errorMsg.find("Diretiva desconhecida") != std::string::npos, "A mensagem de erro deve indicar diretiva desconhecida");
+        ASSERT_TRUE(errorMsg.find("Unknown directive") != std::string::npos, "A mensagem de erro deve indicar diretiva desconhecida");
     }
 
     return true;
