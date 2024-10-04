@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 19:06:31 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/03 22:35:53 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/04 09:28:44 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,17 @@
 
 #include <map>
 #include <string>
+#include <cstdlib>
 #include "RouteConfig.hpp"
 
 class ServerConfig {
     private:
-        int listen;
-		std::string root;
+        int port;
 		std::string host;
+		std::string root;
         std::string error_page;
         std::string server_name;
+		int max_body_size;
         std::map<std::string, RouteConfig> routes;
 
     public:
@@ -31,7 +33,7 @@ class ServerConfig {
 			root = "./";
 		};
         int getPort() const {
-			return listen;
+			return port;
 		};
         std::string getHost() const {
 			return host;
@@ -48,8 +50,14 @@ class ServerConfig {
 		std::map<std::string, RouteConfig> getRoutes() const {
 			return routes;
 		};
-		void setPort(int port) {
-			listen = port;
+		void fillListen(std::string value) {
+			if (value.find(":") != std::string::npos) {
+				std::string port_str = value.substr(value.find(":") + 1);
+				port = std::atoi(port_str.c_str());
+				host = value.substr(0, value.find(":"));
+			} else {
+				port = std::atoi(value.c_str());
+			}
 		};
 		void setHost(const std::string& host) {
 			this->host = host;
@@ -63,7 +71,10 @@ class ServerConfig {
 		void setRoot(const std::string& root) {
 			this->root = root;
 		};
+		void setMaxBodySize(int max_body_size) {
+			this->max_body_size = max_body_size;
+		};
 		void addRoute(const std::string& path, const RouteConfig& route) {
 			routes[path] = route;
 		};
-	};
+};

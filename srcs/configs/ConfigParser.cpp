@@ -6,14 +6,15 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:10:43 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/03 22:57:09 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/04 11:10:33 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <algorithm>
 #include <fstream>
-#include <cstdlib>
 #include <iostream>
 #include "ConfigParser.hpp"
+#include <cctype>
 
 ConfigParser::ConfigParser() {}
 
@@ -27,20 +28,21 @@ ConfigParser *ConfigParser::loadConfig(const std::string& filename) {
     return parse();
 }
 
-bool newServerBlock(bool inServerBlock) {
+bool newServerBlock(bool inServerBlock, ServerConfig& currentServer) {
 	if (inServerBlock) {
 		throw std::runtime_error("Nested server blocks are not allowed.");
 		return false;
 	}
-
+    currentServer = ServerConfig();
 	return true;
 }
 
-bool newLocationBlock(bool inLocationBlock) {
+bool newLocationBlock(bool inLocationBlock, RouteConfig& currentRoute) {
 	if (inLocationBlock) {
 		throw std::runtime_error("Nested location blocks are not allowed.");
 		return false;
 	}
+    currentRoute = RouteConfig();
 	return true;
 }
 
@@ -58,12 +60,12 @@ ConfigParser *ConfigParser::parse() {
 		if (line.find("{") != std::string::npos && line.find("}") == std::string::npos)
 			openBraces++;
         if (key == "server") {
-            inServerBlock = newServerBlock(inServerBlock);
+            inServerBlock = newServerBlock(inServerBlock, currentServer);
             continue;
         } else if (key == "location") {
 			iss >> key;
             route_name = key;
-            inLocationBlock = newLocationBlock(inLocationBlock);
+            inLocationBlock = newLocationBlock(inLocationBlock, currentRoute);
             currentRoute.setRoot(currentServer.getRoot());
             continue;
         } else if (key == "}") {
@@ -92,38 +94,51 @@ ConfigParser *ConfigParser::parse() {
     return this;
 }
 
-static inline void removeTrailingSemicolon(std::string &s) {
-    if (!s.empty() && s[s.size() - 1] == ';') {
-        s.erase(s.size() - 1);
+static inline void removeTrailingSemicolon(std::string &s, const std::string &key) {
+    if (s.find("#") != std::string::npos || key.find("#") != std::string::npos) {
+        return;
     }
+    if (s.empty() || s.find("{") != std::string::npos || s.find("}") != std::string::npos) {
+        return ;
+    }
+    if (s[s.size() - 1] == ';') {
+        s.erase(s.size() - 1);
+        return;
+    }
+    throw std::runtime_error("Missing semicolon in directive: " + s);
+}
+
+static inline std::string& trim(std::string& s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+    s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+    return (s);
 }
 
 void ConfigParser::parseServerDirective(ServerConfig& server, const std::string& key, std::istringstream& iss) {
 	std::string value;
-	iss >> value;
-    removeTrailingSemicolon(value);
+    std::getline(iss, value);
+	value = trim(value);
+    removeTrailingSemicolon(value, key);
 	if (key == "listen") {
-		server.setPort(std::atoi(value.c_str()));
+		server.fillListen(value);
 	} else if (key == "server_name") {
 		server.setServerName(value);
 	} else if (key == "error_page") {
 		server.setErrorPage(value);
 	} else if (key == "root") {
         server.setRoot(value);
+    } else if (key == "client_max_body_size") {
+        server.setMaxBodySize(std::atoi(value.c_str()));
     }
 }
 
 void ConfigParser::parseLocationDirective(RouteConfig& route, const std::string& key, std::istringstream& iss) {
 	std::string value;
-	iss >> value;
-    removeTrailingSemicolon(value);
+	std::getline(iss, value);
+	value = trim(value);
+    removeTrailingSemicolon(value, key);
 	if (key == "methods") {
-        while (true) {
-            removeTrailingSemicolon(value);
-            route.addMethod(value);
-            if (!(iss >> value))
-                break;
-        }
+        route.addMethod(value);
 	} else if (key == "index") {
 		route.setIndex(value);
 	} else if (key == "root") {

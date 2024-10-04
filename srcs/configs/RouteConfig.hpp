@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 19:07:32 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/03 20:50:32 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/04 09:51:18 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <set>
 #include <string>
+#include <sstream>
 
 class RouteConfig {
 	private:
@@ -31,7 +32,13 @@ class RouteConfig {
 			return methods;
 		};
 		void addMethod(const std::string& method) {
-			methods.insert(method);
+			std::istringstream iss(method);
+			while (iss) {
+				std::string word;
+				iss >> word;
+				if (!word.empty())
+					methods.insert(word);
+			}
 		};
 		void setRoot(const std::string& root) {
 			this->root = root;
