@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:32:14 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/04 20:39:27 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/04 20:46:42 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ bool testMissingRequiredDirective() {
         ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido à diretiva obrigatória ausente");
     } catch (const std::exception& e) {
         std::string errorMsg = e.what();
-        ASSERT_TRUE(errorMsg.find("Diretiva obrigatória ausente") != std::string::npos, "A mensagem de erro deve indicar diretiva obrigatória ausente");
+        ASSERT_TRUE(errorMsg.find("Server block missing listen directive") != std::string::npos, "A mensagem de erro deve indicar diretiva obrigatória ausente");
     }
 
     return true;

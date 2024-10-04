@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:10:43 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/04 20:33:49 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/04 20:49:54 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ ConfigParser *ConfigParser::parse() {
                 inLocationBlock = false;
                 continue;
             } else if (inServerBlock) {
+                if (currentServer.getPort() <= 0)
+                    throw std::runtime_error("Server block missing listen directive.");
                 servers.push_back(currentServer);
                 inServerBlock = false;
                 continue;
