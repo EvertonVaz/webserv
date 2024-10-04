@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:10:43 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/04 16:12:12 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/04 20:04:24 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,9 +120,9 @@ void ConfigParser::parseServerDirective(ServerConfig& server, const std::string&
 	value = trim(value);
     if (removeTrailingSemicolon(value, key)) return;
 	if (key == "listen") {
-		server.fillListen(value);
+		server.setListen(value);
 	} else if (key == "server_name") {
-		server.fillServerName(value);
+		server.setServerName(value);
 	} else if (key == "error_page") {
 		server.setErrorPage(value);
 	} else if (key == "root") {
@@ -145,7 +145,7 @@ void ConfigParser::parseLocationDirective(RouteConfig& route, const std::string&
 		route.setIndex(value);
 	} else if (key == "root") {
         route.setRoot(value);
-    } else
+    }
 }
 
 std::vector<ServerConfig> ConfigParser::getServers() const {
