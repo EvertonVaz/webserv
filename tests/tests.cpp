@@ -6,14 +6,14 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:32:14 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/04 11:15:27 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/04 16:06:55 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "basic.hpp"
 #include "../srcs/configs/ConfigParser.hpp"
 
-std::string path = "/home/etovaz/nave/webserver/tests/";
+std::string path = "/home/etovaz/nave/webserver/tests/configs/";
 
 bool testValidConfigParsing() {
     ConfigParser parser;
@@ -30,7 +30,7 @@ bool testValidConfigParsing() {
     ASSERT_TRUE(server.getPort() == 8080, "A porta do servidor deve ser 8080");
     ASSERT_TRUE(server.getHost() == "127.0.0.1", "O host do servidor deve ser 127.0.0.1");
 
-    std::string serverName = server.getServerName();
+    std::string serverName = server.getServerName()[0];
     std::cout << "Valor de serverName: '" << serverName << "'" << std::endl;
     ASSERT_TRUE(serverName == "localhost", "O nome do servidor deve ser localhost");
 

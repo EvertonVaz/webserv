@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:10:43 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/04 11:10:33 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/04 16:02:08 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,16 +94,16 @@ ConfigParser *ConfigParser::parse() {
     return this;
 }
 
-static inline void removeTrailingSemicolon(std::string &s, const std::string &key) {
+static inline bool removeTrailingSemicolon(std::string &s, const std::string &key) {
     if (s.find("#") != std::string::npos || key.find("#") != std::string::npos) {
-        return;
+        return true;
     }
     if (s.empty() || s.find("{") != std::string::npos || s.find("}") != std::string::npos) {
-        return ;
+        return true;
     }
     if (s[s.size() - 1] == ';') {
         s.erase(s.size() - 1);
-        return;
+        return false;
     }
     throw std::runtime_error("Missing semicolon in directive: " + s);
 }
@@ -118,11 +118,11 @@ void ConfigParser::parseServerDirective(ServerConfig& server, const std::string&
 	std::string value;
     std::getline(iss, value);
 	value = trim(value);
-    removeTrailingSemicolon(value, key);
+    if (removeTrailingSemicolon(value, key)) return;
 	if (key == "listen") {
 		server.fillListen(value);
 	} else if (key == "server_name") {
-		server.setServerName(value);
+		server.fillServerName(value);
 	} else if (key == "error_page") {
 		server.setErrorPage(value);
 	} else if (key == "root") {
@@ -136,7 +136,7 @@ void ConfigParser::parseLocationDirective(RouteConfig& route, const std::string&
 	std::string value;
 	std::getline(iss, value);
 	value = trim(value);
-    removeTrailingSemicolon(value, key);
+    if (removeTrailingSemicolon(value, key)) return;
 	if (key == "methods") {
         route.addMethod(value);
 	} else if (key == "index") {

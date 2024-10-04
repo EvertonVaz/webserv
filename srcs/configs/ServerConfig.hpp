@@ -6,13 +6,14 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 19:06:31 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/04 09:28:44 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/04 16:05:50 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <map>
+#include <vector>
 #include <string>
 #include <cstdlib>
 #include "RouteConfig.hpp"
@@ -22,8 +23,8 @@ class ServerConfig {
         int port;
 		std::string host;
 		std::string root;
-        std::string error_page;
-        std::string server_name;
+        std::map<int, std::string> error_page;
+        std::vector<std::string> server_names;
 		int max_body_size;
         std::map<std::string, RouteConfig> routes;
 
@@ -38,10 +39,10 @@ class ServerConfig {
         std::string getHost() const {
 			return host;
 		};
-        std::string getServerName() const {
-			return server_name;
+        std::vector<std::string> getServerName() const {
+			return server_names;
 		};
-		std::string getErrorPage() const {
+		std::map<int, std::string> getErrorPage() const {
 			return error_page;
 		};
 		std::string getRoot() const {
@@ -62,11 +63,21 @@ class ServerConfig {
 		void setHost(const std::string& host) {
 			this->host = host;
 		};
-		void setServerName(const std::string& server_name) {
-			this->server_name = server_name;
+		void fillServerName(const std::string& server_name) {
+			std::istringstream iss(server_name);
+			while (iss) {
+				std::string links;
+				iss >> links;
+				if (!links.empty())
+					server_names.push_back(links);
+			}
 		};
-		void setErrorPage(const std::string& error_page) {
-			this->error_page = error_page;
+		void setErrorPage(std::string error_page) {
+			std::istringstream iss(error_page);
+			int error_code;
+			iss >> error_code;
+			iss >> error_page;
+			this->error_page[error_code] = error_page;
 		};
 		void setRoot(const std::string& root) {
 			this->root = root;
