@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:10:43 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/04 20:49:54 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/10 19:59:46 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@ ConfigParser *ConfigParser::loadConfig(const std::string& filename) {
     }
     this->file << file.rdbuf();
     file.close();
+    if (this->file.str().empty()) {
+        throw std::runtime_error("Empty configuration file.");
+    }
     return parse();
 }
 
@@ -61,25 +64,23 @@ ConfigParser *ConfigParser::parse() {
 			openBraces++;
         if (key == "server") {
             inServerBlock = newServerBlock(inServerBlock, currentServer);
-            continue;
         } else if (key == "location") {
 			iss >> key;
             route_name = key;
             inLocationBlock = newLocationBlock(inLocationBlock, currentRoute);
             currentRoute.setRoot(currentServer.getRoot());
-            continue;
         } else if (key == "}") {
             openBraces--;
             if (inLocationBlock) {
                 currentServer.addRoute(route_name, currentRoute);
                 inLocationBlock = false;
-                continue;
+
             } else if (inServerBlock) {
                 if (currentServer.getPort() <= 0)
                     throw std::runtime_error("Server block missing listen directive.");
                 servers.push_back(currentServer);
                 inServerBlock = false;
-                continue;
+
             }
         } else {
             if (inServerBlock && !inLocationBlock) {

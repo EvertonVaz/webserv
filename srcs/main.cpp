@@ -6,17 +6,21 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:14:57 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/03 23:07:23 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/10 20:36:07 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./configs/ConfigParser.hpp"
 #include <iostream>
 
-int main() {
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " <config_file>" << std::endl;
+        return 1;
+    }
     std::vector<ServerConfig> servers;
     ConfigParser parser;
-    parser.loadConfig("../config.web");
+    parser.loadConfig(argv[1]);
 
     servers = parser.getServers();
 
@@ -24,9 +28,9 @@ int main() {
         const ServerConfig& server = servers[i];
         std::cout << "Server " << i + 1 << ":" << std::endl;
         std::cout << "  Listen: " << server.getPort() << std::endl;
-        std::cout << "  Server Name: " << server.getServerName() << std::endl;
+        std::cout << "  Server Name: " << server.getServerName()[0] << std::endl;
         std::cout << "  Root: " << server.getRoot() << std::endl;
-        std::cout << "  Error Page: " << server.getErrorPage() << std::endl;
+        std::cout << "  Error Page: " << server.getErrorPage().second << std::endl;
 
         std::map<std::string, RouteConfig> routes = server.getRoutes();
         size_t j = 0;
