@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 20:05:01 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/10 22:03:00 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/10 23:35:07 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 ServerConfig::ServerConfig() {
 	host = "127.0.0.1";
 	root = "./";
+	port = -1;
 
 	initializeDirectiveMap();
 };

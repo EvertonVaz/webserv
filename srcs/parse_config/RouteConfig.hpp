@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 19:07:32 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/10 21:54:07 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/11 14:08:42 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,15 @@
 
 class RouteConfig {
 	private:
+		bool autoindex;
 		std::string root;
-		std::string autoindex;
+		bool upload_enable;
 		std::string upload_path;
-		std::string cgi_extension;
-		std::string upload_enable;
 		std::set<std::string> index;
 		std::set<std::string> methods;
+		std::set<std::string> cgi_extensions;
 		std::set<std::string> allowed_methods;
-		std::pair<int, std::string> return_codes;
+		std::map<int, std::string> return_codes;
 
 		void initializeDirectiveMap();
 		struct DirectiveHandler {
@@ -37,8 +37,15 @@ class RouteConfig {
 	public:
 		RouteConfig();
 
+		bool getAutoindex() const;
 		std::string getRoot() const;
+		bool getUploadEnable() const;
+		std::string getUploadPath() const;
+		std::set<std::string> getIndex() const;
 		std::set<std::string> getMethods() const;
+		std::set<std::string> getCgiExtensions() const;
+		std::set<std::string> getAllowedMethods() const;
+		std::map<int, std::string> getReturnCodes() const;
 
 		void addMethod(const std::string& method);
 		void setRoot(const std::string& root);
@@ -46,7 +53,7 @@ class RouteConfig {
 		void setAllowedMethods(const std::string& methods);
 		void setAutoindex(const std::string& autoindex);
 		void setUploadPath(const std::string& upload_path);
-		void setCgiExtension(const std::string& cgi_extension);
+		void setCgiExtension(const std::string& cgi_extensions);
 		void setUploadEnable(const std::string& upload_enable);
 		void setReturnCodes(const std::string& return_codes);
 

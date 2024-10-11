@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:32:14 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/10 23:08:01 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/11 14:02:17 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,5 +165,231 @@ bool testConfigMultipleServerBlocks() {
     ASSERT_TRUE(route2.getMethods().size() == 2, "A rota deve aceitar dois métodos");
     ASSERT_TRUE(route2.getMethods().count("GET") == 1, "A rota deve aceitar o método GET");
     ASSERT_TRUE(route2.getMethods().count("POST") == 1, "A rota deve aceitar o método POST");
+    return true;
+}
+
+bool testConfigAutoindexOnOff() {
+    ConfigParser parser;
+    try {
+        parser.loadConfig(path + "autoindex_on_off.conf");
+    } catch (const std::exception& e) {
+        ASSERT_TRUE(false, "Exceção lançada durante o parsing: " + std::string(e.what()));
+    }
+
+    std::vector<ServerConfig> servers = parser.getServers();
+    ASSERT_TRUE(servers.size() == 1, "Deve haver uma configuração de servidor");
+
+    ServerConfig server = servers[0];
+    std::map<std::string, RouteConfig> routes = server.getRoutes();
+
+    RouteConfig routeOn = routes["/autoindex_on"];
+    ASSERT_TRUE(routeOn.getAutoindex() == true, "Autoindex deve estar ativado na rota /autoindex_on");
+
+    RouteConfig routeOff = routes["/autoindex_off"];
+    ASSERT_TRUE(routeOff.getAutoindex() == false, "Autoindex deve estar desativado na rota /autoindex_off");
+
+    return true;
+}
+
+bool testConfigUploadEnable() {
+    ConfigParser parser;
+    try {
+        parser.loadConfig(path + "upload_enable.conf");
+    } catch (const std::exception& e) {
+        ASSERT_TRUE(false, "Exceção lançada durante o parsing: " + std::string(e.what()));
+    }
+
+    std::vector<ServerConfig> servers = parser.getServers();
+    ASSERT_TRUE(servers.size() == 1, "Deve haver uma configuração de servidor");
+
+    ServerConfig server = servers[0];
+    std::map<std::string, RouteConfig> routes = server.getRoutes();
+
+    RouteConfig route = routes["/upload"];
+    ASSERT_TRUE(route.getUploadEnable() == true, "Upload deve estar ativado na rota /upload");
+    ASSERT_TRUE(route.getUploadPath() == "/var/www/uploads", "Caminho de upload deve ser /var/www/uploads");
+
+    return true;
+}
+
+bool testConfigCgiExtensions() {
+    ConfigParser parser;
+    try {
+        parser.loadConfig(path + "cgi_extensions.conf");
+    } catch (const std::exception& e) {
+        ASSERT_TRUE(false, "Exceção lançada durante o parsing: " + std::string(e.what()));
+    }
+
+    std::vector<ServerConfig> servers = parser.getServers();
+    ASSERT_TRUE(servers.size() == 1, "Deve haver uma configuração de servidor");
+
+    ServerConfig server = servers[0];
+    std::map<std::string, RouteConfig> routes = server.getRoutes();
+
+    RouteConfig route = routes["/cgi"];
+    std::set<std::string> cgiExtensions = route.getCgiExtensions();
+    ASSERT_TRUE(cgiExtensions.size() == 2, "Deve suportar duas extensões CGI");
+    ASSERT_TRUE(cgiExtensions.count(".php") == 1, "Deve suportar extensão .php");
+    ASSERT_TRUE(cgiExtensions.count(".py") == 1, "Deve suportar extensão .py");
+
+    return true;
+}
+
+bool testConfigReturnCodes() {
+    ConfigParser parser;
+    try {
+        parser.loadConfig(path + "return_codes.conf");
+    } catch (const std::exception& e) {
+        ASSERT_TRUE(false, "Exceção lançada durante o parsing: " + std::string(e.what()));
+    }
+
+    std::vector<ServerConfig> servers = parser.getServers();
+    ASSERT_TRUE(servers.size() == 1, "Deve haver uma configuração de servidor");
+
+    ServerConfig server = servers[0];
+    std::map<std::string, RouteConfig> routes = server.getRoutes();
+
+    RouteConfig route = routes["/errors"];
+    std::map<int, std::string> returnCodes = route.getReturnCodes();
+    ASSERT_TRUE(returnCodes.size() == 2, "Deve haver dois códigos de retorno");
+
+    ASSERT_TRUE(returnCodes.count(404) == 1, "Deve conter código de retorno 404");
+    ASSERT_TRUE(returnCodes[404] == "/404.html", "Código 404 deve redirecionar para /404.html");
+
+    ASSERT_TRUE(returnCodes.count(500) == 1, "Deve conter código de retorno 500");
+    ASSERT_TRUE(returnCodes[500] == "/500.html", "Código 500 deve redirecionar para /500.html");
+
+    return true;
+}
+
+bool testConfigInvalidAutoindexValue() {
+    ConfigParser parser;
+    try {
+        parser.loadConfig(path + "invalid_autoindex.conf");
+        ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido a um valor inválido para autoindex");
+    } catch (const std::exception& e) {
+        std::string errorMsg = e.what();
+        ASSERT_TRUE(errorMsg.find("Invalid value for autoindex") != std::string::npos, "A mensagem de erro deve indicar valor inválido para autoindex");
+    }
+
+    return true;
+}
+
+bool testConfigInvalidUploadEnableValue() {
+    ConfigParser parser;
+    try {
+        parser.loadConfig(path + "invalid_upload_enable.conf");
+        ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido a um valor inválido para upload_enable");
+    } catch (const std::exception& e) {
+        std::string errorMsg = e.what();
+        ASSERT_TRUE(errorMsg.find("Invalid value for upload_enable") != std::string::npos, "A mensagem de erro deve indicar valor inválido para upload_enable");
+    }
+
+    return true;
+}
+
+bool testConfigMissingUploadPath() {
+    ConfigParser parser;
+    try {
+        parser.loadConfig(path + "missing_upload_path.conf");
+        ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido ao upload_path ausente");
+    } catch (const std::exception& e) {
+        std::string errorMsg = e.what();
+        ASSERT_TRUE(errorMsg.find("Upload path specified but upload_enable is off") != std::string::npos, "A mensagem de erro deve indicar upload_path sem upload_enable ativado");
+    }
+
+    return true;
+}
+
+bool testConfigInvalidReturnCode() {
+    ConfigParser parser;
+    try {
+        parser.loadConfig(path + "invalid_return_code.conf");
+        ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido a um código de retorno inválido");
+    } catch (const std::exception& e) {
+        std::string errorMsg = e.what();
+        ASSERT_TRUE(errorMsg.find("Invalid return code") != std::string::npos, "A mensagem de erro deve indicar código de retorno inválido");
+    }
+
+    return true;
+}
+
+bool testConfigDuplicateServerNames() {
+    ConfigParser parser;
+    try {
+        parser.loadConfig(path + "duplicate_server_names.conf");
+    } catch (const std::exception& e) {
+        ASSERT_TRUE(false, "Exceção lançada durante o parsing: " + std::string(e.what()));
+    }
+
+    std::vector<ServerConfig> servers = parser.getServers();
+    ASSERT_TRUE(servers.size() == 2, "Deve haver duas configurações de servidor");
+
+    ServerConfig server1 = servers[0];
+    ServerConfig server2 = servers[1];
+
+    ASSERT_TRUE(server1.getServerName()[0] == "example.com", "O primeiro servidor deve ter o nome example.com");
+    ASSERT_TRUE(server2.getServerName()[0] == "example.com", "O segundo servidor deve ter o nome example.com");
+
+    return true;
+}
+
+bool testConfigAllDirectives() {
+    ConfigParser parser;
+    try {
+        parser.loadConfig(path + "all_directives.conf");
+    } catch (const std::exception& e) {
+        ASSERT_TRUE(false, "Exceção lançada durante o parsing: " + std::string(e.what()));
+    }
+
+    std::vector<ServerConfig> servers = parser.getServers();
+    ASSERT_TRUE(servers.size() == 1, "Deve haver uma configuração de servidor");
+
+    ServerConfig server = servers[0];
+    ASSERT_TRUE(server.getPort() == 80, "A porta do servidor deve ser 80");
+    ASSERT_TRUE(server.getHost() == "0.0.0.0", "O host do servidor deve ser 0.0.0.0");
+
+    std::vector<std::string> serverNames = server.getServerName();
+    ASSERT_TRUE(serverNames.size() == 2, "Deve haver dois nomes de servidor");
+    ASSERT_TRUE(serverNames[0] == "example.com", "O primeiro nome do servidor deve ser example.com");
+    ASSERT_TRUE(serverNames[1] == "www.example.com", "O segundo nome do servidor deve ser www.example.com");
+
+    std::map<std::string, RouteConfig> routes = server.getRoutes();
+    ASSERT_TRUE(routes.size() == 2, "Deve haver duas configurações de rota");
+
+    RouteConfig route1 = routes["/"];
+    ASSERT_TRUE(route1.getRoot() == "/var/www/html", "A raiz da rota / deve ser /var/www/html");
+    ASSERT_TRUE(route1.getAutoindex() == false, "Autoindex deve estar desativado na rota /");
+
+    RouteConfig route2 = routes["/images"];
+    ASSERT_TRUE(route2.getRoot() == "/var/www/images", "A raiz da rota /images deve ser /var/www/images");
+    ASSERT_TRUE(route2.getAutoindex() == true, "Autoindex deve estar ativado na rota /images");
+
+    return true;
+}
+
+bool testConfigInvalidHost() {
+    ConfigParser parser;
+    try {
+        parser.loadConfig(path + "invalid_host.conf");
+        ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido a um host inválido");
+    } catch (const std::exception& e) {
+        std::string errorMsg = e.what();
+        ASSERT_TRUE(errorMsg.find("Invalid host") != std::string::npos, "A mensagem de erro deve indicar host inválido");
+    }
+
+    return true;
+}
+
+bool testConfigInvalidPort() {
+    ConfigParser parser;
+    try {
+        parser.loadConfig(path + "invalid_port.conf");
+        ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido a uma porta inválida");
+    } catch (const std::exception& e) {
+        std::string errorMsg = e.what();
+        ASSERT_TRUE(errorMsg.find("Invalid port") != std::string::npos, "A mensagem de erro deve indicar porta inválida");
+    }
+
     return true;
 }

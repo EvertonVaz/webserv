@@ -6,11 +6,11 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:14:57 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/10 21:58:59 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/10 23:28:34 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./configs/ConfigParser.hpp"
+#include "./parse_config/ConfigParser.hpp"
 #include <iostream>
 
 int main(int argc, char **argv) {
