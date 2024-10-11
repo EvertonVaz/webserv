@@ -1,4 +1,4 @@
-src := ./srcs/configs
+src := ./srcs/parse_config
 main := ./srcs/main.cpp
 
 all:

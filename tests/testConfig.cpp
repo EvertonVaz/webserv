@@ -6,12 +6,12 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:32:14 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/10 20:18:24 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/10 23:08:01 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "basic.hpp"
-#include "../srcs/configs/ConfigParser.hpp"
+#include "../srcs/parse_config/ConfigParser.hpp"
 
 std::string path = "/home/etovaz/nave/webserver/tests/configs/";
 
