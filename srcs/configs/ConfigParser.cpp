@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:10:43 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/10 19:59:46 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/10 21:54:51 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,19 +122,7 @@ void ConfigParser::parseServerDirective(ServerConfig& server, const std::string&
     std::getline(iss, value);
 	value = trim(value);
     if (removeTrailingSemicolon(value, key)) return;
-	if (key == "listen") {
-		server.setListen(value);
-	} else if (key == "server_name") {
-		server.setServerName(value);
-	} else if (key == "error_page") {
-		server.setErrorPage(value);
-	} else if (key == "root") {
-        server.setRoot(value);
-    } else if (key == "client_max_body_size") {
-        server.setMaxBodySize(std::atoi(value.c_str()));
-    } else {
-        throw std::runtime_error("Unknown directive: " + key);
-    }
+	server.applyDirective(key, value);
 }
 
 void ConfigParser::parseLocationDirective(RouteConfig& route, const std::string& key, std::istringstream& iss) {
@@ -142,15 +130,7 @@ void ConfigParser::parseLocationDirective(RouteConfig& route, const std::string&
 	std::getline(iss, value);
 	value = trim(value);
     if (removeTrailingSemicolon(value, key)) return;
-	if (key == "methods") {
-        route.addMethod(value);
-	} else if (key == "index") {
-		route.setIndex(value);
-	} else if (key == "root") {
-        route.setRoot(value);
-    } else {
-        throw std::runtime_error("Unknown directive: " + key);
-    }
+	route.applyDirective(key, value);
 }
 
 std::vector<ServerConfig> ConfigParser::getServers() const {

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 19:06:31 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/04 20:09:58 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/10 21:46:20 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,14 @@ class ServerConfig {
         std::pair<int, std::string> error_page;
         std::map<std::string, RouteConfig> routes;
 
-    public:
-		ServerConfig() {
-			host = "127.0.0.1";
-			root = "./";
+		void initializeDirectiveMap();
+		struct DirectiveHandler {
+			void (ServerConfig::*handler)(const std::string&);
 		};
+		std::map<std::string, DirectiveHandler> directiveMap;
+
+    public:
+		ServerConfig();
 
         int getPort() const;
         std::string getHost() const;
@@ -41,11 +44,13 @@ class ServerConfig {
 		std::pair<int, std::string> getErrorPage() const;
 		std::map<std::string, RouteConfig> getRoutes() const;
 
-		void setListen(std::string value);
+		void setListen(const std::string& value);
 		void setHost(const std::string& host);
 		void setRoot(const std::string& root);
-		void setMaxBodySize(int max_body_size);
-		void setErrorPage(std::string error_page);
+		void setMaxBodySize(const std::string& max_body_size);
+		void setErrorPage(const std::string& error_page);
 		void setServerName(const std::string& server_name);
 		void addRoute(const std::string& path, const RouteConfig& route);
+
+		void applyDirective(const std::string& key, const std::string& value);
 };

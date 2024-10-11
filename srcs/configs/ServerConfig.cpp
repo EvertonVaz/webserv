@@ -6,12 +6,21 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 20:05:01 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/04 20:16:19 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/10 22:03:00 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <sstream>
 #include "ServerConfig.hpp"
+
+
+
+ServerConfig::ServerConfig() {
+	host = "127.0.0.1";
+	root = "./";
+
+	initializeDirectiveMap();
+};
 
 int ServerConfig::getPort() const {
 	return port;
@@ -37,7 +46,7 @@ std::map<std::string, RouteConfig> ServerConfig::getRoutes() const {
 	return routes;
 };
 
-void ServerConfig::setListen(std::string value) {
+void ServerConfig::setListen(const std::string& value) {
 	if (value.find(":") != std::string::npos) {
 		std::string port_str = value.substr(value.find(":") + 1);
 		port = std::atoi(port_str.c_str());
@@ -61,7 +70,7 @@ void ServerConfig::setServerName(const std::string& server_name) {
 	}
 };
 
-void ServerConfig::setErrorPage(std::string error_page) {
+void ServerConfig::setErrorPage(const std::string& error_page) {
 	std::istringstream iss(error_page);
 	iss >> this->error_page.first;
 	iss >> this->error_page.second;
@@ -71,10 +80,28 @@ void ServerConfig::setRoot(const std::string& root) {
 	this->root = root;
 };
 
-void ServerConfig::setMaxBodySize(int max_body_size) {
-	this->max_body_size = max_body_size;
+void ServerConfig::setMaxBodySize(const std::string& max_body_size) {
+	this->max_body_size = std::atoi(max_body_size.c_str());
 };
 
 void ServerConfig::addRoute(const std::string& path, const RouteConfig& route) {
 	routes[path] = route;
 };
+
+
+void ServerConfig::initializeDirectiveMap() {
+	directiveMap["listen"].handler = &ServerConfig::setListen;
+	directiveMap["server_name"].handler = &ServerConfig::setServerName;
+	directiveMap["error_page"].handler = &ServerConfig::setErrorPage;
+	directiveMap["root"].handler = &ServerConfig::setRoot;
+	directiveMap["client_max_body_size"].handler = &ServerConfig::setMaxBodySize;
+}
+
+void ServerConfig::applyDirective(const std::string& key, const std::string& value) {
+    std::map<std::string, DirectiveHandler>::const_iterator it = directiveMap.find(key);
+    if (it != directiveMap.end()) {
+        (this->*(it->second.handler))(value);
+    } else {
+        throw std::runtime_error("Unknown directive: " + key);
+    }
+}

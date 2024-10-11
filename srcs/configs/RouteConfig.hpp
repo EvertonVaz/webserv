@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 19:07:32 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/04 20:28:37 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/10 21:54:07 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <set>
 #include <string>
+#include <map>
 
 class RouteConfig {
 	private:
@@ -26,6 +27,12 @@ class RouteConfig {
 		std::set<std::string> methods;
 		std::set<std::string> allowed_methods;
 		std::pair<int, std::string> return_codes;
+
+		void initializeDirectiveMap();
+		struct DirectiveHandler {
+			void (RouteConfig::*handler)(const std::string&);
+		};
+		std::map<std::string, DirectiveHandler> directiveMap;
 
 	public:
 		RouteConfig();
@@ -42,4 +49,6 @@ class RouteConfig {
 		void setCgiExtension(const std::string& cgi_extension);
 		void setUploadEnable(const std::string& upload_enable);
 		void setReturnCodes(const std::string& return_codes);
+
+		void applyDirective(const std::string& key, const std::string& value);
 };
