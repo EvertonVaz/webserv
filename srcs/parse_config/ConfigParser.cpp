@@ -6,12 +6,11 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:10:43 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/10 23:01:20 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/10 23:03:21 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include "ConfigParser.hpp"
