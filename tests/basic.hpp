@@ -24,7 +24,6 @@ struct TestResult {
         : test_name(name), passed(p), message(msg) {}
 };
 
-// Declare o vetor de resultados como extern
 extern std::vector<TestResult> test_results;
 
 #define ASSERT_TRUE(condition, message) \
@@ -64,7 +63,7 @@ extern std::vector<TestResult> test_results;
         std::cout << std::endl; \
     } while (0)
 
-// Declare a função printSummary
+
 void printSummary();
 
-#endif // BASIC_HPP
+#endif
