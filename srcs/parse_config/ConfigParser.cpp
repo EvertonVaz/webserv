@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:10:43 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/11 13:17:26 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/17 19:58:55 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,6 +161,8 @@ void ConfigParser::handleLocation(std::istringstream& iss) {
 void ConfigParser::handleClosingBrace(std::istringstream& iss) {
     (void)iss;
     if (state == STATE_LOCATION) {
+        if (currentRoute.getUploadEnable() && currentRoute.getUploadPath().empty())
+            throw std::runtime_error("Location block missing upload_path directive.");
         currentServer.addRoute(route_name, currentRoute);
         state = STATE_SERVER;
     } else if (state == STATE_SERVER) {

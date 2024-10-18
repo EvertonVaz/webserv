@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:32:14 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/11 14:02:17 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/17 19:48:52 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,7 +295,7 @@ bool testConfigMissingUploadPath() {
         ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido ao upload_path ausente");
     } catch (const std::exception& e) {
         std::string errorMsg = e.what();
-        ASSERT_TRUE(errorMsg.find("Upload path specified but upload_enable is off") != std::string::npos, "A mensagem de erro deve indicar upload_path sem upload_enable ativado");
+        ASSERT_TRUE(errorMsg.find("Location block missing upload_path directive") != std::string::npos, "A mensagem de erro deve indicar upload_path sem upload_enable ativado");
     }
 
     return true;
