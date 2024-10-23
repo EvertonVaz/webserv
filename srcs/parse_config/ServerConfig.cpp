@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 20:05:01 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/10 23:35:07 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/23 10:23:25 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,17 +47,66 @@ std::map<std::string, RouteConfig> ServerConfig::getRoutes() const {
 	return routes;
 };
 
+std::vector<std::string> split(const std::string& s, char delimiter) {
+	std::vector<std::string> tokens;
+	std::string token;
+	std::istringstream tokenStream(s);
+	while (std::getline(tokenStream, token, delimiter)) {
+		tokens.push_back(token);
+	}
+	return tokens;
+}
+
+bool isNumber(const std::string& s) {
+    for (size_t i = 0; i < s.size(); ++i) {
+        if (!std::isdigit(s[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+bool isValidIPv4(const std::string& ip) {
+	std::vector<std::string> parts = split(ip, '.');
+	if (parts.size() != 4) {
+		return false;
+	}
+	for (size_t i = 0; i < parts.size(); ++i) {
+		if (!isNumber(parts[i])) {
+			return false;
+		}
+		int num = std::atoi(parts[i].c_str());
+		if (num < 0 || num > 255) {
+			return false;
+		}
+	}
+	return true;
+}
+
 void ServerConfig::setListen(const std::string& value) {
+	std::string port_str = value.substr(value.find(":") + 1);
+	if (!isNumber(port_str)) {
+		throw std::runtime_error("Invalid port: " + port_str);
+	}
 	if (value.find(":") != std::string::npos) {
-		std::string port_str = value.substr(value.find(":") + 1);
 		port = std::atoi(port_str.c_str());
 		host = value.substr(0, value.find(":"));
 	} else {
 		port = std::atoi(value.c_str());
 	}
+	if (port < 0 || port > 65535) {
+		throw std::runtime_error("Invalid port: " + value);
+	}
 };
 
+
+
+
 void ServerConfig::setHost(const std::string& host) {
+	if (!isValidIPv4(host)) {
+		throw std::runtime_error("Invalid host: " + host);
+	}
 	this->host = host;
 };
 
@@ -91,6 +140,7 @@ void ServerConfig::addRoute(const std::string& path, const RouteConfig& route) {
 
 
 void ServerConfig::initializeDirectiveMap() {
+	directiveMap["host"].handler = &ServerConfig::setHost;
 	directiveMap["listen"].handler = &ServerConfig::setListen;
 	directiveMap["server_name"].handler = &ServerConfig::setServerName;
 	directiveMap["error_page"].handler = &ServerConfig::setErrorPage;

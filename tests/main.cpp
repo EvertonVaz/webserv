@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 20:51:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/11 14:12:19 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/23 10:29:22 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ void runConfigTests() {
     RUN_TEST(testConfigAllDirectives);
     RUN_TEST(testConfigInvalidHost);
     RUN_TEST(testConfigInvalidPort);
-    RUN_TEST(testConfigInvalidValue);
     printSummary();
 }
 

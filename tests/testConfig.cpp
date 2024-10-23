@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:32:14 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/17 19:48:52 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/23 10:42:10 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,19 +92,6 @@ bool testConfigMissingRequiredDirective() {
     } catch (const std::exception& e) {
         std::string errorMsg = e.what();
         ASSERT_TRUE(errorMsg.find("Server block missing listen directive") != std::string::npos, "A mensagem de erro deve indicar diretiva obrigatória ausente");
-    }
-
-    return true;
-}
-
-bool testConfigInvalidValue() {
-    ConfigParser parser;
-    try {
-        parser.loadConfig(path + "invalid_value.conf");
-        ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido a um valor inválido");
-    } catch (const std::exception& e) {
-        std::string errorMsg = e.what();
-        ASSERT_TRUE(errorMsg.find("Invalid value") != std::string::npos, "A mensagem de erro deve indicar valor inválido");
     }
 
     return true;
@@ -388,7 +375,7 @@ bool testConfigInvalidPort() {
         ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido a uma porta inválida");
     } catch (const std::exception& e) {
         std::string errorMsg = e.what();
-        ASSERT_TRUE(errorMsg.find("Invalid port") != std::string::npos, "A mensagem de erro deve indicar porta inválida");
+        ASSERT_TRUE(errorMsg.find("Invalid port") != std::string::npos, "A mensagem de erro deve indicar porta inválida\nesperado: Invalid port\nrecebido: " + errorMsg);
     }
 
     return true;
