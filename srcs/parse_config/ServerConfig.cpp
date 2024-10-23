@@ -6,13 +6,13 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 20:05:01 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/23 10:23:25 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/23 10:54:08 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <sstream>
 #include "ServerConfig.hpp"
-
+#include "../aux.hpp"
 
 
 ServerConfig::ServerConfig() {
@@ -47,43 +47,6 @@ std::map<std::string, RouteConfig> ServerConfig::getRoutes() const {
 	return routes;
 };
 
-std::vector<std::string> split(const std::string& s, char delimiter) {
-	std::vector<std::string> tokens;
-	std::string token;
-	std::istringstream tokenStream(s);
-	while (std::getline(tokenStream, token, delimiter)) {
-		tokens.push_back(token);
-	}
-	return tokens;
-}
-
-bool isNumber(const std::string& s) {
-    for (size_t i = 0; i < s.size(); ++i) {
-        if (!std::isdigit(s[i])) {
-            return false;
-        }
-    }
-    return true;
-}
-
-
-bool isValidIPv4(const std::string& ip) {
-	std::vector<std::string> parts = split(ip, '.');
-	if (parts.size() != 4) {
-		return false;
-	}
-	for (size_t i = 0; i < parts.size(); ++i) {
-		if (!isNumber(parts[i])) {
-			return false;
-		}
-		int num = std::atoi(parts[i].c_str());
-		if (num < 0 || num > 255) {
-			return false;
-		}
-	}
-	return true;
-}
-
 void ServerConfig::setListen(const std::string& value) {
 	std::string port_str = value.substr(value.find(":") + 1);
 	if (!isNumber(port_str)) {
@@ -99,9 +62,6 @@ void ServerConfig::setListen(const std::string& value) {
 		throw std::runtime_error("Invalid port: " + value);
 	}
 };
-
-
-
 
 void ServerConfig::setHost(const std::string& host) {
 	if (!isValidIPv4(host)) {
@@ -137,7 +97,6 @@ void ServerConfig::setMaxBodySize(const std::string& max_body_size) {
 void ServerConfig::addRoute(const std::string& path, const RouteConfig& route) {
 	routes[path] = route;
 };
-
 
 void ServerConfig::initializeDirectiveMap() {
 	directiveMap["host"].handler = &ServerConfig::setHost;

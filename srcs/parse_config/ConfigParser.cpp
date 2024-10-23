@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:10:43 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/17 19:58:55 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/23 10:55:38 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <iostream>
 #include "ConfigParser.hpp"
 #include <cctype>
+#include "../aux.hpp"
 
 ConfigParser::ConfigParser() {
     state = STATE_GLOBAL;
@@ -34,7 +35,7 @@ ConfigParser *ConfigParser::loadConfig(const std::string& filename) {
     return parse();
 }
 
-bool newServerBlock(bool inServerBlock, ServerConfig& currentServer) {
+static inline bool newServerBlock(bool inServerBlock, ServerConfig& currentServer) {
 	if (inServerBlock) {
 		throw std::runtime_error("Nested server blocks are not allowed.");
 		return false;
@@ -43,7 +44,7 @@ bool newServerBlock(bool inServerBlock, ServerConfig& currentServer) {
 	return true;
 }
 
-bool newLocationBlock(bool inLocationBlock, RouteConfig& currentRoute) {
+static inline bool newLocationBlock(bool inLocationBlock, RouteConfig& currentRoute) {
 	if (inLocationBlock) {
 		throw std::runtime_error("Nested location blocks are not allowed.");
 		return false;
@@ -77,35 +78,6 @@ ConfigParser *ConfigParser::parse(){
         throw std::runtime_error("Mismatched braces in configuration file.");
 
     return this;
-}
-
-static inline bool removeTrailingSemicolon(std::string &s, const std::string &key) {
-    if (s.find("#") != std::string::npos || key.find("#") != std::string::npos)
-        return true;
-    if (s.empty() || s.find("{") != std::string::npos || s.find("}") != std::string::npos)
-        return true;
-    if (s[s.size() - 1] == ';') {
-        s.erase(s.size() - 1);
-        return false;
-    }
-    throw std::runtime_error("Missing semicolon in directive: " + s);
-}
-
-static inline std::string& trim(std::string& s) {
-    std::string::iterator it = s.begin();
-    while (it != s.end() && std::isspace(static_cast<unsigned char>(*it))) {
-        ++it;
-    }
-    s.erase(s.begin(), it);
-
-    if (!s.empty()) {
-        std::string::reverse_iterator rit = s.rbegin();
-        while (rit != s.rend() && std::isspace(static_cast<unsigned char>(*rit))) {
-            ++rit;
-        }
-        s.erase(rit.base(), s.end());
-    }
-    return s;
 }
 
 void ConfigParser::parseServerDirective(ServerConfig& server, const std::string& key, std::istringstream& iss) {
@@ -166,7 +138,7 @@ void ConfigParser::handleClosingBrace(std::istringstream& iss) {
         currentServer.addRoute(route_name, currentRoute);
         state = STATE_SERVER;
     } else if (state == STATE_SERVER) {
-        if (currentServer.getPort() <= 0)
+        if (currentServer.getPort() < 0)
             throw std::runtime_error("Server block missing listen directive.");
         servers.push_back(currentServer);
         state = STATE_GLOBAL;
