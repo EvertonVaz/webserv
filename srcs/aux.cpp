@@ -6,13 +6,14 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:48:25 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/23 10:52:48 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/24 10:21:50 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "aux.hpp"
 #include <stdexcept>
 #include <sstream>
+#include <cstdlib>
 
 bool removeTrailingSemicolon(std::string &s, const std::string &key) {
     if (s.find("#") != std::string::npos || key.find("#") != std::string::npos)

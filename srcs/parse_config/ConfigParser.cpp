@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:10:43 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/23 10:55:38 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/24 11:06:20 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,24 +33,6 @@ ConfigParser *ConfigParser::loadConfig(const std::string& filename) {
         throw std::runtime_error("Empty configuration file.");
     }
     return parse();
-}
-
-static inline bool newServerBlock(bool inServerBlock, ServerConfig& currentServer) {
-	if (inServerBlock) {
-		throw std::runtime_error("Nested server blocks are not allowed.");
-		return false;
-	}
-    currentServer = ServerConfig();
-	return true;
-}
-
-static inline bool newLocationBlock(bool inLocationBlock, RouteConfig& currentRoute) {
-	if (inLocationBlock) {
-		throw std::runtime_error("Nested location blocks are not allowed.");
-		return false;
-	}
-    currentRoute = RouteConfig();
-	return true;
 }
 
 ConfigParser *ConfigParser::parse(){
