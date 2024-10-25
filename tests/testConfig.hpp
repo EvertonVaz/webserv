@@ -6,10 +6,11 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 20:16:41 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/11 14:10:58 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/25 14:43:42 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#pragma once
 bool testConfigValidConfigParsing();
 bool testConfigMissingSemicolon();
 bool testConfigUnmatchedBraces();
@@ -33,3 +34,12 @@ bool testConfigAllDirectives();
 bool testConfigInvalidHost();
 bool testConfigInvalidPort();
 bool testConfigMissingSemicolon();
+
+bool testServerInitializationSuccess();
+bool testServerSocketCreationFailure();
+bool testServerSetsockoptFailure();
+bool testServerInetPtonFailure();
+bool testServerBindFailure();
+bool testServerListenFailure();
+bool testServerDestructorClosesSockets();
+bool testServerMultipleListenSockets();

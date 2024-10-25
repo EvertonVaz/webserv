@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 20:51:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/23 10:29:22 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/25 14:43:08 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,15 @@ void runConfigTests() {
     RUN_TEST(testConfigAllDirectives);
     RUN_TEST(testConfigInvalidHost);
     RUN_TEST(testConfigInvalidPort);
+
+    RUN_TEST(testServerInitializationSuccess);
+    RUN_TEST(testServerSocketCreationFailure);
+    RUN_TEST(testServerSetsockoptFailure);
+    RUN_TEST(testServerInetPtonFailure);
+    RUN_TEST(testServerBindFailure);
+    RUN_TEST(testServerListenFailure);
+    RUN_TEST(testServerDestructorClosesSockets);
+    RUN_TEST(testServerMultipleListenSockets);
     printSummary();
 }
 
