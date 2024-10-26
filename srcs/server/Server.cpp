@@ -6,24 +6,33 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:27:24 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/25 15:55:06 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/26 11:48:11 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include "Server.hpp"
+#include "SocketImp.hpp"
 
-Server::Server(const ConfigParser &parser, ISocket *socket) : socketInterface(socket) {
+Server::Server(const ConfigParser &parser, ISocket *socket) {
+	if (!socket) {
+		socketInterface = new SocketImp();
+		ownSocket = true;
+	}
+	else {
+		socketInterface = socket;
+		ownSocket = false;
+	}
 	servers = parser.getServers();
 	for (size_t i = 0; i < servers.size(); i++)
 		initServer(servers[i]);
 }
 
-// #TODO: entender o motivo do double free caso mantenha o free aqui
 Server::~Server() {
 	for (size_t i = 0; i < listenSockets.size(); i++)
 		socketInterface->close(listenSockets[i]);
-	// delete socketInterface;
+	if (ownSocket)
+		delete socketInterface;
 }
 
 void Server::configureSocket(int sockfd, int &opt) {
@@ -83,37 +92,14 @@ bool Server::isListening() const {
 	return !listenSockets.empty();
 }
 
-void Server::run(void) {
-	std::vector<struct pollfd> pollFds(listenSockets.size());
-	for (size_t i = 0; i < listenSockets.size(); i++) {
-		pollFds[i].fd = listenSockets[i];
-		pollFds[i].events = POLLIN;
-	}
+std::vector<int> Server::getListenSockets() const {
+	return listenSockets;
+}
 
-	while (true) {
-		int ret = poll(pollFds.data(), pollFds.size(), -1);
-		if (ret < 0) {
-			throw std::runtime_error("poll failed");
-			break;
-		}
+std::vector<ServerConfig> Server::getServers() const {
+	return servers;
+}
 
-		for (size_t i = 0; i < pollFds.size(); i++) {
-			if (pollFds[i].revents & POLLIN) {
-				int newSocket;
-				struct sockaddr_in clientAddr;
-				socklen_t clientLen = sizeof(clientAddr);
-				newSocket = socketInterface->accept(
-					listenSockets[i],
-					(struct sockaddr *)&clientAddr,
-					&clientLen
-				);
-				if(newSocket < 0)
-					throw std::runtime_error("accept failed");
-
-				std::cout << "New connection from " << inet_ntoa(clientAddr.sin_addr);
-				std::cout << ":" << ntohs(clientAddr.sin_port) << std::endl;
-				socketInterface->close(newSocket);
-			}
-		}
-	}
+ISocket *Server::getSocketInterface() const {
+	return socketInterface;
 }

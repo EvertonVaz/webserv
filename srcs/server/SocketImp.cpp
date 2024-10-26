@@ -37,3 +37,6 @@ int SocketImp::close(int sockfd) {
 	return ::close(sockfd);
 }
 
+int SocketImp::recv(int sockfd, void *buf, size_t len, int flags) {
+	return ::recv(sockfd, buf, len, flags);
+}

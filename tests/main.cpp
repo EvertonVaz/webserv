@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 20:51:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/25 14:43:08 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/26 10:19:44 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "testConfig.hpp"
 
 void runConfigTests() {
+    std::cout << "\n\nConfig tests" << std::endl;
     RUN_TEST(testConfigValidConfigParsing);
     RUN_TEST(testConfigMissingSemicolon);
     RUN_TEST(testConfigUnmatchedBraces);
@@ -33,7 +34,9 @@ void runConfigTests() {
     RUN_TEST(testConfigAllDirectives);
     RUN_TEST(testConfigInvalidHost);
     RUN_TEST(testConfigInvalidPort);
+    RUN_TEST(testErrorPage);
 
+    std::cout << "\n\nServer tests" << std::endl;
     RUN_TEST(testServerInitializationSuccess);
     RUN_TEST(testServerSocketCreationFailure);
     RUN_TEST(testServerSetsockoptFailure);

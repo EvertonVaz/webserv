@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 20:05:01 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/23 10:54:08 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/26 10:06:52 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,10 @@ ServerConfig::ServerConfig() {
 	host = "127.0.0.1";
 	root = "./";
 	port = -1;
+	max_body_size = 1000000;
+	server_names.clear();
+	error_page.clear();
+	routes.clear();
 
 	initializeDirectiveMap();
 };
@@ -35,7 +39,7 @@ std::vector<std::string> ServerConfig::getServerName() const {
 	return server_names;
 };
 
-std::pair<int, std::string> ServerConfig::getErrorPage() const {
+std::map<int, std::string> ServerConfig::getErrorPage() const {
 	return error_page;
 };
 
@@ -82,8 +86,23 @@ void ServerConfig::setServerName(const std::string& server_name) {
 
 void ServerConfig::setErrorPage(const std::string& error_page) {
 	std::istringstream iss(error_page);
-	iss >> this->error_page.first;
-	iss >> this->error_page.second;
+	while(iss) {
+		std::string code;
+		std::string path;
+		iss >> code;
+		iss >> path;
+		if (!code.empty() && !path.empty()) {
+			if (!isNumber(code))
+				throw std::runtime_error("Invalid error code: " + code);
+
+			int code_number = std::atoi(code.c_str());
+			if (!this->error_page[code_number].empty())
+				throw std::runtime_error("Duplicate error code: " + code);
+
+			this->error_page[code_number] = path;
+		}
+	}
+
 };
 
 void ServerConfig::setRoot(const std::string& root) {

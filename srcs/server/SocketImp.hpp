@@ -24,4 +24,5 @@ class SocketImp : public ISocket {
 		int listen(int sockfd, int backlog);
 		int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 		int close(int sockfd);
+		int recv(int sockfd, void *buf, size_t len, int flags);
 };

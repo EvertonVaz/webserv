@@ -144,9 +144,17 @@ bool testServerDestructorClosesSockets() {
     MockSocket mockSocket;
     Server* server = new Server(parser, &mockSocket);
 
-    // Verifica se o socket foi fechado ao deletar o servidor
     delete server;
-    ASSERT_TRUE(mockSocket.fail_close == false, "O socket deve ser fechado sem erros");
+
+    bool close_called = false;
+    for (size_t i = 0; i < mockSocket.closed_sockets.size(); ++i) {
+        if (mockSocket.closed_sockets[i] == 42) {
+            close_called = true;
+            break;
+        }
+    }
+
+    ASSERT_TRUE(close_called, "O socket deve ser fechado pelo destrutor do Server");
 
     return true;
 }
