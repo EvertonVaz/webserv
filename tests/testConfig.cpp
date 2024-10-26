@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:32:14 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/25 15:30:43 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/26 09:56:36 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -378,5 +378,20 @@ bool testConfigInvalidPort() {
         ASSERT_TRUE(errorMsg.find("Invalid port") != std::string::npos, "A mensagem de erro deve indicar porta inválida\nesperado: Invalid port\nrecebido: " + errorMsg);
     }
 
+    return true;
+}
+
+bool testErrorPage() {
+    ConfigParser parser;
+    try {
+        parser.loadConfig(path + "error_page.conf");
+        ServerConfig server = parser.getServers()[0];
+        std::map<int, std::string> errorPages = server.getErrorPage();
+        ASSERT_TRUE(errorPages.size() == 5, "Deve haver cinco páginas de erro configuradas");
+        ASSERT_TRUE(errorPages[404] == "/404.html", "esperado: /404.html - real: " + errorPages[404]);
+        ASSERT_TRUE(errorPages[504] == "/504.html", "esperado: /504.html - real: " + errorPages[504]);
+    } catch (const std::exception& e) {
+        ASSERT_TRUE(false, "Exceção lançada durante o parsing: " + std::string(e.what()));
+    }
     return true;
 }

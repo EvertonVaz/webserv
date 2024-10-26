@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 20:16:41 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/25 14:43:42 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/26 09:43:12 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ bool testConfigAllDirectives();
 bool testConfigInvalidHost();
 bool testConfigInvalidPort();
 bool testConfigMissingSemicolon();
+bool testErrorPage();
 
 bool testServerInitializationSuccess();
 bool testServerSocketCreationFailure();

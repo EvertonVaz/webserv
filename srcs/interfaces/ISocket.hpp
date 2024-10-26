@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 12:03:48 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/25 10:03:27 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/25 17:41:54 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,4 +23,5 @@ class ISocket {
 		virtual int listen(int sockfd, int backlog) = 0;
 		virtual int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) = 0;
 		virtual int close(int sockfd) = 0;
+		virtual int recv(int sockfd, void *buf, size_t len, int flags) = 0;
 };

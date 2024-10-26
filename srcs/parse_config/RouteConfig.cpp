@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 19:58:50 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/11 14:09:17 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/26 10:09:06 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,17 @@
 #include <sstream>
 
 RouteConfig::RouteConfig() {
-	initializeDirectiveMap();
+    autoindex = false;
+    root = "";
+    upload_enable = false;
+    upload_path = "";
+    index = std::set<std::string>();
+    methods = std::set<std::string>();
+    cgi_extensions = std::set<std::string>();
+    allowed_methods = std::set<std::string>();
+    return_codes = std::map<int, std::string>();
+
+    initializeDirectiveMap();
 }
 
 bool RouteConfig::getAutoindex() const {
