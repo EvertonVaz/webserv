@@ -6,19 +6,19 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:32:14 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/26 09:56:36 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/28 22:29:28 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "basic.hpp"
-#include "../srcs/parse_config/ConfigParser.hpp"
+#include "../headers/basic.hpp"
+#include "../../srcs/parser/ConfigParser.hpp"
 
-std::string path = "/home/etovaz/nave/webserver/tests/configs/";
+std::string path_configs = "/home/etovaz/nave/webserver/tests/configs/";
 
 bool testConfigValidConfigParsing() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "valid_config.conf");
+        parser.loadConfig(path_configs + "valid_config.conf");
     } catch (const std::exception& e) {
         ASSERT_TRUE(false, "Exceção lançada durante o parsing: " + std::string(e.what()));
     }
@@ -48,7 +48,7 @@ bool testConfigValidConfigParsing() {
 bool testConfigMissingSemicolon() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "missing_semicolon.conf");
+        parser.loadConfig(path_configs + "missing_semicolon.conf");
         ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido à falta de ponto e vírgula");
     } catch (const std::exception& e) {
         std::string errorMsg = e.what();
@@ -61,7 +61,7 @@ bool testConfigMissingSemicolon() {
 bool testConfigUnmatchedBraces() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "unmatched_braces.conf");
+        parser.loadConfig(path_configs + "unmatched_braces.conf");
         ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido a chaves não balanceadas");
     } catch (const std::exception& e) {
         std::string errorMsg = e.what();
@@ -74,7 +74,7 @@ bool testConfigUnmatchedBraces() {
 bool testConfigInvalidDirective() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "invalid_directive.conf");
+        parser.loadConfig(path_configs + "invalid_directive.conf");
         ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido a diretiva inválida");
     } catch (const std::exception& e) {
         std::string errorMsg = e.what();
@@ -87,7 +87,7 @@ bool testConfigInvalidDirective() {
 bool testConfigMissingRequiredDirective() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "missing_required_directive.conf");
+        parser.loadConfig(path_configs + "missing_required_directive.conf");
         ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido à diretiva obrigatória ausente");
     } catch (const std::exception& e) {
         std::string errorMsg = e.what();
@@ -100,7 +100,7 @@ bool testConfigMissingRequiredDirective() {
 bool testConfigEmptyConfigFile() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "empty_config.conf");
+        parser.loadConfig(path_configs + "empty_config.conf");
         ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido ao arquivo de configuração vazio");
     } catch (const std::exception& e) {
         std::string errorMsg = e.what();
@@ -113,7 +113,7 @@ bool testConfigEmptyConfigFile() {
 bool testConfigMultipleServerBlocks() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "multiple_server_block.conf");
+        parser.loadConfig(path_configs + "multiple_server_block.conf");
     } catch (const std::exception& e) {
         ASSERT_TRUE(false, "Exceção lançada durante o parsing: " + std::string(e.what()));
     }
@@ -158,7 +158,7 @@ bool testConfigMultipleServerBlocks() {
 bool testConfigAutoindexOnOff() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "autoindex_on_off.conf");
+        parser.loadConfig(path_configs + "autoindex_on_off.conf");
     } catch (const std::exception& e) {
         ASSERT_TRUE(false, "Exceção lançada durante o parsing: " + std::string(e.what()));
     }
@@ -181,7 +181,7 @@ bool testConfigAutoindexOnOff() {
 bool testConfigUploadEnable() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "upload_enable.conf");
+        parser.loadConfig(path_configs + "upload_enable.conf");
     } catch (const std::exception& e) {
         ASSERT_TRUE(false, "Exceção lançada durante o parsing: " + std::string(e.what()));
     }
@@ -202,7 +202,7 @@ bool testConfigUploadEnable() {
 bool testConfigCgiExtensions() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "cgi_extensions.conf");
+        parser.loadConfig(path_configs + "cgi_extensions.conf");
     } catch (const std::exception& e) {
         ASSERT_TRUE(false, "Exceção lançada durante o parsing: " + std::string(e.what()));
     }
@@ -225,7 +225,7 @@ bool testConfigCgiExtensions() {
 bool testConfigReturnCodes() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "return_codes.conf");
+        parser.loadConfig(path_configs + "return_codes.conf");
     } catch (const std::exception& e) {
         ASSERT_TRUE(false, "Exceção lançada durante o parsing: " + std::string(e.what()));
     }
@@ -252,7 +252,7 @@ bool testConfigReturnCodes() {
 bool testConfigInvalidAutoindexValue() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "invalid_autoindex.conf");
+        parser.loadConfig(path_configs + "invalid_autoindex.conf");
         ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido a um valor inválido para autoindex");
     } catch (const std::exception& e) {
         std::string errorMsg = e.what();
@@ -265,7 +265,7 @@ bool testConfigInvalidAutoindexValue() {
 bool testConfigInvalidUploadEnableValue() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "invalid_upload_enable.conf");
+        parser.loadConfig(path_configs + "invalid_upload_enable.conf");
         ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido a um valor inválido para upload_enable");
     } catch (const std::exception& e) {
         std::string errorMsg = e.what();
@@ -278,7 +278,7 @@ bool testConfigInvalidUploadEnableValue() {
 bool testConfigMissingUploadPath() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "missing_upload_path.conf");
+        parser.loadConfig(path_configs + "missing_upload_path.conf");
         ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido ao upload_path ausente");
     } catch (const std::exception& e) {
         std::string errorMsg = e.what();
@@ -291,7 +291,7 @@ bool testConfigMissingUploadPath() {
 bool testConfigInvalidReturnCode() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "invalid_return_code.conf");
+        parser.loadConfig(path_configs + "invalid_return_code.conf");
         ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido a um código de retorno inválido");
     } catch (const std::exception& e) {
         std::string errorMsg = e.what();
@@ -304,7 +304,7 @@ bool testConfigInvalidReturnCode() {
 bool testConfigDuplicateServerNames() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "duplicate_server_names.conf");
+        parser.loadConfig(path_configs + "duplicate_server_names.conf");
     } catch (const std::exception& e) {
         ASSERT_TRUE(false, "Exceção lançada durante o parsing: " + std::string(e.what()));
     }
@@ -324,7 +324,7 @@ bool testConfigDuplicateServerNames() {
 bool testConfigAllDirectives() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "all_directives.conf");
+        parser.loadConfig(path_configs + "all_directives.conf");
     } catch (const std::exception& e) {
         ASSERT_TRUE(false, "Exceção lançada durante o parsing: " + std::string(e.what()));
     }
@@ -358,7 +358,7 @@ bool testConfigAllDirectives() {
 bool testConfigInvalidHost() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "invalid_host.conf");
+        parser.loadConfig(path_configs + "invalid_host.conf");
         ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido a um host inválido");
     } catch (const std::exception& e) {
         std::string errorMsg = e.what();
@@ -371,7 +371,7 @@ bool testConfigInvalidHost() {
 bool testConfigInvalidPort() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "invalid_port.conf");
+        parser.loadConfig(path_configs + "invalid_port.conf");
         ASSERT_TRUE(false, "O parser deveria ter lançado uma exceção devido a uma porta inválida");
     } catch (const std::exception& e) {
         std::string errorMsg = e.what();
@@ -384,7 +384,7 @@ bool testConfigInvalidPort() {
 bool testErrorPage() {
     ConfigParser parser;
     try {
-        parser.loadConfig(path + "error_page.conf");
+        parser.loadConfig(path_configs + "error_page.conf");
         ServerConfig server = parser.getServers()[0];
         std::map<int, std::string> errorPages = server.getErrorPage();
         ASSERT_TRUE(errorPages.size() == 5, "Deve haver cinco páginas de erro configuradas");

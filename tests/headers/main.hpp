@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   testConfig.hpp                                     :+:      :+:    :+:   */
+/*   main.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 20:16:41 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/26 09:43:12 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/28 22:04:07 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,3 +44,10 @@ bool testServerBindFailure();
 bool testServerListenFailure();
 bool testServerDestructorClosesSockets();
 bool testServerMultipleListenSockets();
+
+bool test_connection_manager_initialization();
+bool test_connection_manager_accept_new_connection();
+bool test_connection_manager_read_from_client();
+bool test_connection_manager_write_to_client();
+bool test_connection_manager_close_connection_on_error();
+bool test_connection_manager_read_and_write_simultaneously();

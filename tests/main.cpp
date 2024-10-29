@@ -6,12 +6,12 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 20:51:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/26 10:19:44 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/28 22:03:24 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "basic.hpp"
-#include "testConfig.hpp"
+#include "./headers/basic.hpp"
+#include "./headers/main.hpp"
 
 void runConfigTests() {
     std::cout << "\n\nConfig tests" << std::endl;
@@ -45,6 +45,14 @@ void runConfigTests() {
     RUN_TEST(testServerListenFailure);
     RUN_TEST(testServerDestructorClosesSockets);
     RUN_TEST(testServerMultipleListenSockets);
+
+    std::cout << "\n\nConnectionManager tests" << std::endl;
+    RUN_TEST(test_connection_manager_initialization);
+    RUN_TEST(test_connection_manager_accept_new_connection);
+    RUN_TEST(test_connection_manager_read_from_client);
+    RUN_TEST(test_connection_manager_write_to_client);
+    RUN_TEST(test_connection_manager_close_connection_on_error);
+    RUN_TEST(test_connection_manager_read_and_write_simultaneously);
     printSummary();
 }
 

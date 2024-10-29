@@ -1,9 +1,9 @@
 // ServerTests.cpp
-#include "basic.hpp"
-#include "../srcs/server/Server.hpp"
-#include "../srcs/parse_config/ConfigParser.hpp"
-#include "../srcs/parse_config/ServerConfig.hpp"
-#include "MockSocket.hpp"
+#include "../headers/basic.hpp"
+#include "../../srcs/server/Server.hpp"
+#include "../../srcs/parser/ConfigParser.hpp"
+#include "../../srcs/parser/ServerConfig.hpp"
+#include "../headers/MockSocket.hpp"
 
 const std::string filePath = "/home/etovaz/nave/webserver/tests/configs/valid_config.conf";
 

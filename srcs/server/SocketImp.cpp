@@ -40,3 +40,11 @@ int SocketImp::close(int sockfd) {
 int SocketImp::recv(int sockfd, void *buf, size_t len, int flags) {
 	return ::recv(sockfd, buf, len, flags);
 }
+
+int SocketImp::send(int sockfd, const void *buf, size_t len, int flags) {
+	return ::send(sockfd, buf, len, flags);
+}
+
+int SocketImp::poll(struct pollfd *fds, nfds_t nfds, int timeout) {
+	return ::poll(fds, nfds, timeout);
+}

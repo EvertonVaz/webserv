@@ -6,11 +6,13 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:24:07 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/26 11:47:09 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/28 19:46:14 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parse_config/ConfigParser.hpp"
+#pragma once
+
+#include "../parser/ConfigParser.hpp"
 #include "../interfaces/ISocket.hpp"
 #include <unistd.h>
 #include <netinet/in.h>
@@ -21,7 +23,7 @@
 
 class Server
 {
-	private:
+	protected:
 		bool ownSocket;
 		std::vector<int> listenSockets;
 		std::vector<ServerConfig> servers;
@@ -29,12 +31,12 @@ class Server
 
 	public:
 		Server(const ConfigParser &parser, ISocket *socket = NULL);
-		~Server();
+		virtual ~Server();
 		void configureSocket(int sockfd, int &opt);
 		void setupSocket(int sockfd, const ServerConfig &serverConfig, struct sockaddr_in &addr);
 		void initServer(const ServerConfig &serverConfig);
 		bool isListening() const;
-		std::vector<int> getListenSockets() const;
-		std::vector<ServerConfig> getServers() const;
-		ISocket *getSocketInterface() const;
+		virtual std::vector<int> getListenSockets() const;
+		virtual std::vector<ServerConfig> getServers() const;
+		virtual ISocket *getSocketInterface() const;
 };

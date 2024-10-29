@@ -6,13 +6,14 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 12:03:48 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/25 17:41:54 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/28 13:20:33 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <unistd.h>
+#include <poll.h>
 
 class ISocket {
 	public:
@@ -24,4 +25,6 @@ class ISocket {
 		virtual int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) = 0;
 		virtual int close(int sockfd) = 0;
 		virtual int recv(int sockfd, void *buf, size_t len, int flags) = 0;
+		virtual int send(int sockfd, const void *buf, size_t len, int flags) = 0;
+		virtual int poll(struct pollfd *fds, nfds_t nfds, int timeout) = 0;
 };
