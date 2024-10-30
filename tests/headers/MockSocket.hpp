@@ -20,6 +20,7 @@ class MockSocket : public ISocket {
         bool fail_recv;
         bool fail_send;
         bool fail_poll;
+        bool fail_fcntl;
 
         // Rastreamento de chamadas
         std::vector<int> closed_sockets;
@@ -43,6 +44,7 @@ class MockSocket : public ISocket {
             fail_recv = false;
             fail_send = false;
             fail_poll = false;
+            fail_fcntl = false;
 
             std::cout << "MockSocket created" << std::endl;
         }
@@ -136,6 +138,12 @@ class MockSocket : public ISocket {
                 }
             }
             return ready;
+        }
+
+        int fcntl(int sockfd, int cmd, int arg) {
+            (void)sockfd, (void)cmd, (void)arg;
+            if (fail_fcntl) return -1;
+            return 0;
         }
 
         // Método para adicionar dados a serem recebidos pelo recv

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:27:24 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/26 11:48:11 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/29 01:30:11 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void Server::configureSocket(int sockfd, int &opt) {
         throw std::runtime_error("Failed to set SO_REUSEADDR");
     }
 
-    if (fcntl(sockfd, F_SETFL, O_NONBLOCK) < 0) {
+    if (socketInterface->fcntl(sockfd, F_SETFL, O_NONBLOCK) < 0) {
         socketInterface->close(sockfd);
         throw std::runtime_error("Failed to make socket non-blocking");
     }

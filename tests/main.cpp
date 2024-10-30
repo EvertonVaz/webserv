@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 20:51:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/28 22:03:24 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/30 19:55:56 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 void runConfigTests() {
     std::cout << "\n\nConfig tests" << std::endl;
+
     RUN_TEST(testConfigValidConfigParsing);
     RUN_TEST(testConfigMissingSemicolon);
     RUN_TEST(testConfigUnmatchedBraces);
@@ -35,7 +36,10 @@ void runConfigTests() {
     RUN_TEST(testConfigInvalidHost);
     RUN_TEST(testConfigInvalidPort);
     RUN_TEST(testErrorPage);
+    printSummary();
+}
 
+void runSererTests() {
     std::cout << "\n\nServer tests" << std::endl;
     RUN_TEST(testServerInitializationSuccess);
     RUN_TEST(testServerSocketCreationFailure);
@@ -45,7 +49,9 @@ void runConfigTests() {
     RUN_TEST(testServerListenFailure);
     RUN_TEST(testServerDestructorClosesSockets);
     RUN_TEST(testServerMultipleListenSockets);
+}
 
+void runConnManagerTests() {
     std::cout << "\n\nConnectionManager tests" << std::endl;
     RUN_TEST(test_connection_manager_initialization);
     RUN_TEST(test_connection_manager_accept_new_connection);
@@ -53,10 +59,12 @@ void runConfigTests() {
     RUN_TEST(test_connection_manager_write_to_client);
     RUN_TEST(test_connection_manager_close_connection_on_error);
     RUN_TEST(test_connection_manager_read_and_write_simultaneously);
-    printSummary();
 }
 
 int main() {
-    runConfigTests();
+    // runConfigTests();
+    // runSererTests();
+    runConnManagerTests();
+    printSummary();
     return 0;
 }

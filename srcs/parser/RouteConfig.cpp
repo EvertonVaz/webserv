@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 19:58:50 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/26 10:09:06 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/29 09:51:24 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ std::set<std::string> RouteConfig::getMethods() const {
 	return methods;
 }
 
-void RouteConfig::addMethod(const std::string& method) {
+void RouteConfig::setMethods(const std::string& method) {
 	std::istringstream iss(method);
 	while (iss) {
 		std::string word;
@@ -156,7 +156,7 @@ void RouteConfig::setReturnCodes(const std::string& return_codes) {
 void RouteConfig::initializeDirectiveMap() {
     directiveMap["root"].handler = &RouteConfig::setRoot;
     directiveMap["index"].handler = &RouteConfig::setIndex;
-    directiveMap["methods"].handler = &RouteConfig::addMethod;
+    directiveMap["methods"].handler = &RouteConfig::setMethods;
     directiveMap["allowed_methods"].handler = &RouteConfig::setAllowedMethods;
     directiveMap["autoindex"].handler = &RouteConfig::setAutoindex;
     directiveMap["upload_path"].handler = &RouteConfig::setUploadPath;

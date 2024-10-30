@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:08:43 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/11 13:17:30 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/29 10:00:26 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ class ConfigParser {
 		ConfigParser *parse();
         std::vector<ServerConfig> getServers() const;
 
+		void setServer(ServerConfig server);
 		void handleServer(std::istringstream& iss);
 		void handleLocation(std::istringstream& iss);
 		void handleClosingBrace(std::istringstream& iss);

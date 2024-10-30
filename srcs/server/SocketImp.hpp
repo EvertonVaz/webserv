@@ -27,4 +27,5 @@ class SocketImp : public ISocket {
 		int recv(int sockfd, void *buf, size_t len, int flags);
 		int send(int sockfd, const void *buf, size_t len, int flags);
 		int poll(struct pollfd *fds, nfds_t nfds, int timeout);
+		int fcntl(int sockfd, int cmd, int arg);
 };

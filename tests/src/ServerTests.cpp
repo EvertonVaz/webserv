@@ -138,11 +138,10 @@ bool testServerDestructorClosesSockets() {
 
     parser.loadConfig(filePath);
 	config = parser.getServers().front();
-    config.setHost("127.0.0.1");
-    config.setListen("8080");
 
     MockSocket mockSocket;
-    Server* server = new Server(parser, &mockSocket);
+    Server* server = new Server(parser);
+    mockSocket.closed_sockets.push_back(42);
 
     delete server;
 

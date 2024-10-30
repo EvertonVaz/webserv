@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/28 20:07:12 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/30 17:47:47 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ void ConnectionManager::acceptNewConnection(int listenSockFd) {
         throw std::runtime_error("Fail to accept new connection");
     }
 
-    if (fcntl(clientSockFd, F_SETFL, O_NONBLOCK) < 0) {
+    if (socketInterface->fcntl(clientSockFd, F_SETFL, O_NONBLOCK) < 0) {
         socketInterface->close(clientSockFd);
         throw std::runtime_error("Fail to set client socket to non-blocking");
     }
@@ -191,4 +191,12 @@ std::vector<struct pollfd> ConnectionManager::getPollFds() const {
 
 std::map<int, std::string> ConnectionManager::getClientBuffers() const {
     return clientBuffers;
+}
+
+void ConnectionManager::setPollFds(std::vector<struct pollfd> pollFds) {
+    this->pollFds = pollFds;
+}
+
+void ConnectionManager::setClientBuffers(std::map<int, std::string> clientBuffers) {
+    this->clientBuffers = clientBuffers;
 }

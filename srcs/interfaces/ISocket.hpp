@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 12:03:48 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/28 13:20:33 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/29 01:05:33 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,4 +27,5 @@ class ISocket {
 		virtual int recv(int sockfd, void *buf, size_t len, int flags) = 0;
 		virtual int send(int sockfd, const void *buf, size_t len, int flags) = 0;
 		virtual int poll(struct pollfd *fds, nfds_t nfds, int timeout) = 0;
+		virtual int fcntl(int sockfd, int cmd, int arg) = 0;
 };

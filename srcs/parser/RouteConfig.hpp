@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 19:07:32 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/11 14:08:42 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/29 09:51:24 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ class RouteConfig {
 		std::set<std::string> getAllowedMethods() const;
 		std::map<int, std::string> getReturnCodes() const;
 
-		void addMethod(const std::string& method);
+		void setMethods(const std::string& method);
 		void setRoot(const std::string& root);
 		void setIndex(const std::string& index);
 		void setAllowedMethods(const std::string& methods);

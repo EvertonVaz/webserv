@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:10:43 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/26 09:34:41 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/29 10:01:33 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ void ConfigParser::handleClosingBrace(std::istringstream& iss) {
     } else if (state == STATE_SERVER) {
         if (currentServer.getPort() < 0)
             throw std::runtime_error("Server block missing listen directive.");
-        servers.push_back(currentServer);
+        setServer(currentServer);
         state = STATE_GLOBAL;
     } else {
         throw std::runtime_error("Unexpected closing brace.");
@@ -138,4 +138,8 @@ void ConfigParser::handleDirective(std::istringstream& iss, const std::string& k
         return (parseLocationDirective(currentRoute, key, iss));
     }
     throw std::runtime_error("Directive outside of server block: " + key);
+}
+
+void ConfigParser::setServer(ServerConfig server) {
+    servers.push_back(server);
 }
