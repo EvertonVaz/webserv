@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/30 17:47:47 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/31 11:43:41 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,6 @@ void ConnectionManager::handleEvents() {
             if (pollFds[i].revents & POLLIN) {
                 readFromClient(pollFds[i].fd);
             }
-            if (pollFds[i].revents & POLLOUT) {
-                writeToClient(pollFds[i].fd);
-            }
             if (pollFds[i].revents & (POLLHUP | POLLERR)) {
                 closeConnection(pollFds[i].fd);
             }
@@ -106,64 +103,106 @@ void ConnectionManager::acceptNewConnection(int listenSockFd) {
 
 void ConnectionManager::readFromClient(int clientSockFd) {
     char buffer[1024];
-    int bytesRead = socketInterface->recv(clientSockFd, buffer, sizeof(buffer) - 1, 0);
+    int bytesRead = socketInterface->recv(clientSockFd, buffer, sizeof(buffer), 0);
 
-    if (bytesRead < 0) {
-        closeConnection(clientSockFd);
-        throw std::runtime_error("Error reading from client");
-    } else if (bytesRead == 0) {
-        std::cout << "Client disconnect: sock fd " << clientSockFd << std::endl;
-        closeConnection(clientSockFd);
+    if (bytesRead <= 0) {
+        if (bytesRead == 0 || errno != EWOULDBLOCK) {
+            closeConnection(clientSockFd);
+        }
         return;
     }
 
-    buffer[bytesRead] = '\0';
-    clientBuffers[clientSockFd] += buffer;
+    std::string data(buffer, bytesRead);
+    requests[clientSockFd].appendData(data);
 
-    std::cout << "Receive data from client " << clientSockFd << ": " << buffer << std::endl;
+    if (requests[clientSockFd].hasError()) {
+        closeConnection(clientSockFd);
+    } else if (requests[clientSockFd].isComplete()) {
+        processRequest(clientSockFd, requests[clientSockFd]);
+    }
+}
 
-    for (size_t i = 0; i < pollFds.size(); ++i) {
-        if (pollFds[i].fd == clientSockFd) {
-            pollFds[i].events |= POLLOUT;
-            break;
+std::string getContentType(const std::string& extension) {
+    if (extension == ".html") return "text/html";
+    if (extension == ".css") return "text/css";
+    if (extension == ".js") return "application/javascript";
+    if (extension == ".png") return "image/png";
+    if (extension == ".jpg" || extension == ".jpeg") return "image/jpeg";
+    return "application/octet-stream";
+}
+
+void serveStaticFile(const std::string& filePath, HTTPResponse& response) {
+    std::ifstream file(filePath.c_str(), std::ios::in | std::ios::binary);
+    if (!file.is_open()) {
+        response.setStatusCode(404);
+        response.setBody("<html><body><h1>404 Not Found</h1></body></html>");
+        response.addHeader("Content-Type", getContentType(response.getHeaders()["Content-Type"]));
+        return;
+    }
+    std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    response.setBody(content);
+
+    // Definir o Content-Type (usar uma função para mapear extensões para MIME types)
+    response.addHeader("Content-Type", "text/html");
+
+    file.close();
+}
+
+void ConnectionManager::processRequest(int clientSockFd, const HTTPRequest& request) {
+    HTTPResponse response;
+
+    if (request.hasError()) {
+        response.setStatusCode(400);
+        response.setBody("<html><body><h1>400 Bad Request</h1></body></html>");
+        response.addHeader("Content-Type", "text/html");
+    } else {
+        std::string method = request.getMethod();
+        std::string uri = request.getURI();
+
+        if (method == "GET") {
+            std::string path = "/home/etovaz/nave/webserver/srcs/connection/test.html";
+            serveStaticFile(path, response);
+        } else if (method == "POST") {
+            response.setStatusCode(200);
+            response.setBody("<html><body><h1>POST recebido</h1></body></html>");
+            response.addHeader("Content-Type", "text/html");
+        } else if (method == "DELETE") {
+            response.setStatusCode(200);
+            response.setBody("<html><body><h1>Recurso deletado</h1></body></html>");
+            response.addHeader("Content-Type", "text/html");
+        } else {
+            response.setStatusCode(405); // Method Not Allowed
+            response.addHeader("Allow", "GET, POST, DELETE");
+            response.setBody("<html><body><h1>405 Method Not Allowed</h1></body></html>");
+            response.addHeader("Content-Type", "text/html");
         }
     }
-}
 
-// #TODO: REMOVER ESSA FUNÇÃO
-static inline std::string arquivo() {
-    std::ifstream file("/home/etovaz/nave/webserver/srcs/connection/test.html");
-    if (!file.is_open()) {
-        throw std::runtime_error("error ao ler arquivo html");
+    std::map<std::string, std::string> reqHeaders = request.getHeaders();
+    if (reqHeaders.find("Connection") != reqHeaders.end() && reqHeaders["Connection"] == "close") {
+        response.setCloseConnection(true);
     }
-    std::stringstream contentStream;
-    contentStream << file.rdbuf();
-    std::string content = contentStream.str();
 
-    std::stringstream headerStream;
-    headerStream << "HTTP/1.1 200 OK\r\n"
-                << "Content-Type: text/html; charset=UTF-8\r\n"
-                << "Content-Length: " << content.size() << "\r\n"
-                << "Connection: close\r\n"
-                << "\r\n";
-    std::string header = headerStream.str();
-    return header + content;
-}
+    std::string responseStr = response.generateResponse();
+    int totalSent = 0;
+    int responseLength = responseStr.size();
+    const char* responseData = responseStr.c_str();
 
-void ConnectionManager::writeToClient(int clientSockFd) {
-    // #TODO: Remover esse exemplo simples de resposta HTTP
-    std::string response = arquivo();
-    int bytesSent = socketInterface->send(clientSockFd, response.c_str(), response.size(), 0);
+    while (totalSent < responseLength) {
+        int sent = socketInterface->send(clientSockFd, responseData + totalSent, responseLength - totalSent, 0);
+        if (sent < 0) {
+            closeConnection(clientSockFd);
+            throw std::runtime_error("Error sending response to client");
+            return;
+        }
+        totalSent += sent;
+    }
 
-    if (bytesSent < 0) {
+    if (response.shouldCloseConnection()) {
         closeConnection(clientSockFd);
-        throw std::runtime_error("Error sending response to client");
+    } else {
+        requests.erase(clientSockFd);
     }
-
-    std::cout << "Response send to client " << clientSockFd << std::endl;
-
-    // #TODO: verificar se a conexao e persistente, caso seja não devemos fechar ela
-    closeConnection(clientSockFd);
 }
 
 void ConnectionManager::closeConnection(int sockFd) {
