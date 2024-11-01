@@ -6,11 +6,12 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 19:58:50 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/29 09:51:24 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/01 09:17:07 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RouteConfig.hpp"
+#include <iostream>
 #include <sstream>
 
 RouteConfig::RouteConfig() {
@@ -19,13 +20,33 @@ RouteConfig::RouteConfig() {
     upload_enable = false;
     upload_path = "";
     index = std::set<std::string>();
-    methods = std::set<std::string>();
+    methods.insert("GET");
     cgi_extensions = std::set<std::string>();
     allowed_methods = std::set<std::string>();
     return_codes = std::map<int, std::string>();
 
     initializeDirectiveMap();
 }
+
+RouteConfig::RouteConfig(const RouteConfig& other) {
+    *this = other;
+}
+
+RouteConfig& RouteConfig::operator=(const RouteConfig& other) {
+    autoindex = other.autoindex;
+    root = other.root;
+    upload_enable = other.upload_enable;
+    upload_path = other.upload_path;
+    index = other.index;
+    methods = other.methods;
+    cgi_extensions = other.cgi_extensions;
+    allowed_methods = other.allowed_methods;
+    return_codes = other.return_codes;
+
+    return *this;
+}
+
+RouteConfig::~RouteConfig() {}
 
 bool RouteConfig::getAutoindex() const {
 	return autoindex;

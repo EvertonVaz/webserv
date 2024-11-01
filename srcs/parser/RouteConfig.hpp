@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 19:07:32 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/29 09:51:24 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/31 23:24:30 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,10 @@ class RouteConfig {
 
 	public:
 		RouteConfig();
-
+		RouteConfig(const RouteConfig& other);
+		RouteConfig& operator=(const RouteConfig& other);
+		~RouteConfig();
+		
 		bool getAutoindex() const;
 		std::string getRoot() const;
 		bool getUploadEnable() const;

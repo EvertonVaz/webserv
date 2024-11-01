@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:14:57 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/28 13:37:00 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/01 09:06:43 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ int main(int argc, char **argv) {
 
         Server server(parser, NULL);
 
+        std::cout << *server.getServers()[0].getRoutes()["/"].getIndex().begin() << std::endl;
         if (server.isListening()) {
             std::cout << "Servidor iniciado com sucesso." << std::endl;
         } else {

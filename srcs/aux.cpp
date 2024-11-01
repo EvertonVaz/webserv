@@ -6,14 +6,53 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:48:25 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/31 11:24:54 by Everton          ###   ########.fr       */
+/*   Updated: 2024/10/31 18:15:52 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "aux.hpp"
-#include <stdexcept>
 #include <sstream>
 #include <cstdlib>
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
+
+std::string joinMethods(const std::set<std::string>& methods) {
+    std::ostringstream oss;
+    for (std::set<std::string>::const_iterator it = methods.begin(); it != methods.end(); ++it) {
+        if (it != methods.begin()) {
+            oss << ", ";
+        }
+        oss << *it;
+    }
+    return oss.str();
+}
+
+std::string getContentType(const std::string& extension) {
+    if (extension == ".html") return "text/html";
+    if (extension == ".css") return "text/css";
+    if (extension == ".js") return "application/javascript";
+    if (extension == ".png") return "image/png";
+    if (extension == ".jpg" || extension == ".jpeg") return "image/jpeg";
+    return "application/octet-stream";
+}
+
+void serveStaticFile(const std::string& filePath, HTTPResponse& response) {
+    std::ifstream file(filePath.c_str(), std::ios::in | std::ios::binary);
+    std::string extension = filePath.substr(filePath.find_last_of('.'));
+    if (!file.is_open()) {
+        response.setStatusCode(404);
+        response.setBody("<html><body><h1>404 Not Found</h1></body></html>");
+        response.addHeader("Content-Type", "text/html");
+        return;
+    }
+    std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    response.setStatusCode(200);
+    response.setBody(content);
+    response.addHeader("Content-Type", getContentType(extension));
+
+    file.close();
+}
 
 bool removeTrailingSemicolon(std::string &s, const std::string &key) {
     if (s.find("#") != std::string::npos || key.find("#") != std::string::npos)
