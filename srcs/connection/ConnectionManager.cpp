@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/01 10:03:36 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/01 11:54:47 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,13 +124,19 @@ void ConnectionManager::readFromClient(int clientSockFd) {
     }
 }
 
+ServerConfig SelectConfig (HTTPRequest request, std::vector<ServerConfig> serverConfigs) {
+    for (size_t i = 0; i < serverConfigs.size(); i++) {
+        if (request.getHeaders()["host"].find(serverConfigs[i].getHost()) != std::string::npos)
+            return serverConfigs[i];
+    }
+    return ServerConfig();
+}
 
 void ConnectionManager::processRequest(int clientSockFd, const HTTPRequest& request) {
     HTTPResponse response;
-    ServerConfig config = this->serverConfigs[0];
+    router = SelectConfig(request, serverConfigs);
 
-    handleRequest(request, response, config);
-
+    router.handleRequest(request, response);
     std::map<std::string, std::string> reqHeaders = request.getHeaders();
     if (reqHeaders.find("Connection") != reqHeaders.end() && reqHeaders["Connection"] == "close") {
         response.setCloseConnection(true);
@@ -191,96 +197,4 @@ void ConnectionManager::setPollFds(std::vector<struct pollfd> pollFds) {
 
 void ConnectionManager::setClientBuffers(std::map<int, std::string> clientBuffers) {
     this->clientBuffers = clientBuffers;
-}
-
-const RouteConfig ConnectionManager::routeRequest(const HTTPRequest& request, ServerConfig& serverConfig) {
-    std::string requestPath = request.getURI();
-    std::map<std::string, RouteConfig> routes = serverConfig.getRoutes();
-
-    RouteConfig bestMatch;
-    size_t bestMatchLength = 0;
-
-    for (std::map<std::string, RouteConfig>::iterator it = routes.begin(); it != routes.end(); ++it) {
-        std::string routePath = it->first;
-        if (routePath == "/") {
-            if (requestPath == "/") {
-                return it->second;
-            }
-        } else if (requestPath.find(routePath) == 0) {
-            size_t matchLength = routePath.length();
-            if (matchLength > bestMatchLength) {
-                bestMatch = (it->second);
-                bestMatchLength = matchLength;
-            }
-        }
-    }
-    return bestMatch;
-}
-
-void ConnectionManager::handleRequest(const HTTPRequest& request, HTTPResponse& response, ServerConfig& serverConfig) {
-    const RouteConfig routeConfig = routeRequest(request, serverConfig);
-
-    if (routeConfig.getRoot().empty()) {
-        response.setStatusCode(404);
-        response.setBody("<html><body><h1>404 Not Found</h1></body></html>");
-        response.addHeader("Content-Type", "text/html");
-        return;
-    }
-
-    std::set<std::string> allowedMethods = routeConfig.getMethods();
-    if (allowedMethods.find(request.getMethod()) == allowedMethods.end()) {
-        response.setStatusCode(405);
-        response.addHeader("Allow", joinMethods(allowedMethods));
-        response.setBody("<html><body><h1>405 Method Not Allowed</h1></body></html>");
-        response.addHeader("Content-Type", "text/html");
-        return;
-    }
-
-    std::map<int, std::string> redirectPath = routeConfig.getReturnCodes();
-    if (!redirectPath.empty()) {
-        response.setStatusCode(301);
-        response.addHeader("Location", redirectPath[301]);
-        response.setBody("<html><body><h1>301 Moved Permanently</h1></body></html>");
-        response.addHeader("Content-Type", "text/html");
-        return;
-    }
-
-    std::string root = routeConfig.getRoot();
-    if (root.empty()) {
-        root = serverConfig.getRoot();
-    }
-    std::string filePath = root + request.getURI();
-    resolvePath(filePath, routeConfig, response);
-}
-
-void ConnectionManager::resolvePath(std::string path, const RouteConfig routeConfig, HTTPResponse& response) {
-    struct stat pathStat;
-
-    std::set<std::string> indexFiles = routeConfig.getIndex();
-    int st = stat(path.c_str(), &pathStat);
-    if (st == 0 && S_ISDIR(pathStat.st_mode)) {
-        if (indexFiles.size() > 0) {
-            for (std::set<std::string>::iterator it = indexFiles.begin(); it != indexFiles.end(); ++it) {
-                if (path[path.length() - 1] != '/')
-                    path += "/";
-                std::string indexPath = path + *it;
-                if (stat(indexPath.c_str(), &pathStat) == 0 && S_ISREG(pathStat.st_mode)) {
-                    return serveStaticFile(indexPath, response);
-                }
-            }
-        }
-
-        if (routeConfig.getAutoindex()) {
-            // generateDirectoryListing(path, response); função para listar o diretório
-            response.setStatusCode(200);
-            response.setBody("<html><body><h1>200 OK - era para listar arquivos</h1></body></html>");
-            response.addHeader("Content-Type", "text/html");
-            return;
-        } else {
-            response.setStatusCode(403);
-            response.setBody("<html><body><h1>403 Forbidden</h1></body></html>");
-            response.addHeader("Content-Type", "text/html");
-            return;
-        }
-    }
 }

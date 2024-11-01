@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/26 12:37:07 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/01 09:24:28 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/01 12:09:43 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include "../interfaces/ISocket.hpp"
 #include "../server/Server.hpp"
 #include "../http/HTTPRequest.hpp"
-#include "../http/HTTPResponse.hpp"
+#include "../router/Router.hpp"
 
 class ConnectionManager {
 	private:
@@ -29,6 +29,7 @@ class ConnectionManager {
 		std::map<int, HTTPRequest> requests;
 		std::map<int, std::string> clientBuffers;
 		std::vector<ServerConfig> serverConfigs;
+		Router router;
 
 	public:
 		ConnectionManager(Server &servers);
@@ -47,8 +48,4 @@ class ConnectionManager {
 
 		void setPollFds(std::vector<struct pollfd> pollFds);
 		void setClientBuffers(std::map<int, std::string> clientBuffers);
-
-		const RouteConfig routeRequest(const HTTPRequest& request, ServerConfig& serverConfig);
-    	void handleRequest(const HTTPRequest& request, HTTPResponse& response, ServerConfig& serverConfig);
-		void resolvePath(std::string path, const RouteConfig routeConfig, HTTPResponse& response);
 };
