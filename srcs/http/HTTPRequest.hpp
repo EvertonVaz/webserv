@@ -14,6 +14,7 @@
 
 #include <string>
 #include <map>
+#include "../parser/ServerConfig.hpp"
 
 class HTTPRequest {
 	public:
@@ -36,7 +37,7 @@ class HTTPRequest {
 		std::string rawData;
 		size_t contentLength;
 		bool chunkedEncoding;
-		size_t bodyBytesReceived;
+		size_t maxBodySize;
 
 		bool parseRequestLine(const std::string& line);
 		bool parseHeaderLine(const std::string& line);
@@ -47,7 +48,7 @@ class HTTPRequest {
 		HTTPRequest();
 		~HTTPRequest();
 
-		void appendData(const std::string& data);
+		void appendData(const std::string& data, std::vector<ServerConfig> serverConfigs);
 		bool isComplete() const;
 		bool hasError() const;
 
@@ -56,4 +57,8 @@ class HTTPRequest {
 		std::string getHTTPVersion() const;
 		std::map<std::string, std::string> getHeaders() const;
 		std::string getBody() const;
+		size_t getMaxBodySize() const;
+
+		void setMaxBodySize(size_t size);
+
 };

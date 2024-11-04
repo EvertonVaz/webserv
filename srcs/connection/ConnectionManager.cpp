@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/01 11:54:47 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/04 17:54:47 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void ConnectionManager::readFromClient(int clientSockFd) {
     }
 
     std::string data(buffer, bytesRead);
-    requests[clientSockFd].appendData(data);
+    requests[clientSockFd].appendData(data, serverConfigs);
 
     if (requests[clientSockFd].hasError()) {
         closeConnection(clientSockFd);
@@ -124,17 +124,9 @@ void ConnectionManager::readFromClient(int clientSockFd) {
     }
 }
 
-ServerConfig SelectConfig (HTTPRequest request, std::vector<ServerConfig> serverConfigs) {
-    for (size_t i = 0; i < serverConfigs.size(); i++) {
-        if (request.getHeaders()["host"].find(serverConfigs[i].getHost()) != std::string::npos)
-            return serverConfigs[i];
-    }
-    return ServerConfig();
-}
-
 void ConnectionManager::processRequest(int clientSockFd, const HTTPRequest& request) {
     HTTPResponse response;
-    router = SelectConfig(request, serverConfigs);
+    router = selectConfig(request, serverConfigs);
 
     router.handleRequest(request, response);
     std::map<std::string, std::string> reqHeaders = request.getHeaders();

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 19:58:50 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/01 09:17:07 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/04 17:59:17 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ RouteConfig::RouteConfig() {
     index = std::set<std::string>();
     methods.insert("GET");
     cgi_extensions = std::set<std::string>();
-    allowed_methods = std::set<std::string>();
+    allowed_methods.insert("GET");
     return_codes = std::map<int, std::string>();
 
     initializeDirectiveMap();

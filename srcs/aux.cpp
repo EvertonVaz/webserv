@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:48:25 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/31 18:15:52 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/01 17:49:04 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,14 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+
+ServerConfig selectConfig (HTTPRequest request, std::vector<ServerConfig> serverConfigs) {
+    for (size_t i = 0; i < serverConfigs.size(); i++) {
+        if (request.getHeaders()["host"].find(serverConfigs[i].getHost()) != std::string::npos)
+            return serverConfigs[i];
+    }
+    throw std::runtime_error("No server config found for request");
+}
 
 std::string joinMethods(const std::set<std::string>& methods) {
     std::ostringstream oss;

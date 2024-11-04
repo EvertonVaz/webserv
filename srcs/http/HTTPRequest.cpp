@@ -13,15 +13,20 @@
 #include "HTTPRequest.hpp"
 #include <sstream>
 #include <algorithm>
+#include "../aux.hpp"
 
 HTTPRequest::HTTPRequest() {
     state = REQUEST_LINE;
     contentLength = 0;
     chunkedEncoding = false;
-    bodyBytesReceived = 0;
+    this->maxBodySize = 0;
 }
 
 HTTPRequest::~HTTPRequest() {
+}
+
+void HTTPRequest::setMaxBodySize(size_t size) {
+    maxBodySize = size;
 }
 
 bool HTTPRequest::parseRequestLine(const std::string& line) {
@@ -53,12 +58,12 @@ bool HTTPRequest::parseRequestLine(const std::string& line) {
 bool HTTPRequest::endOfHeader() {
 	std::map<std::string, std::string>::iterator it;
 
-	it = headers.find("Content-Length");
+	it = headers.find("content-length");
 	if (it != headers.end()) {
 		contentLength = static_cast<size_t>(std::atoi(it->second.c_str()));
 	}
 
-	it = headers.find("Transfer-Encoding");
+	it = headers.find("transfer-encoding");
 	if (it != headers.end() && it->second == "chunked") {
 		chunkedEncoding = true;
 	}
@@ -111,12 +116,15 @@ bool HTTPRequest::parseBody() {
 
             if (rawData.size() < pos + 2 + chunkSize + 2)
                 return false;
-
+            if (maxBodySize > 0 && body.size() + chunkSize > maxBodySize) {
+                state = ERROR;
+                return false;
+            }
             body += rawData.substr(pos + 2, chunkSize);
             rawData.erase(0, pos + 2 + chunkSize + 2);
         }
     } else if (contentLength > 0) {
-        if (rawData.size() >= contentLength) {
+        if (rawData.size() >= contentLength && contentLength <= maxBodySize) {
             body = rawData.substr(0, contentLength);
             rawData.erase(0, contentLength);
             state = COMPLETE;
@@ -130,7 +138,7 @@ bool HTTPRequest::parseBody() {
     }
 }
 
-void HTTPRequest::appendData(const std::string& data) {
+void HTTPRequest::appendData(const std::string& data, std::vector<ServerConfig> serverConfigs) {
     rawData += data;
 
     while (state != COMPLETE && state != ERROR) {
@@ -156,8 +164,11 @@ void HTTPRequest::appendData(const std::string& data) {
                 return;
             }
         } else if (state == BODY) {
-            if (!parseBody())
+            maxBodySize = selectConfig(*this, serverConfigs).getMaxBodySize();
+            if (!parseBody()) {
+                state = ERROR;
                 return;
+            }
         }
     }
 }

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 10:51:09 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/31 11:47:57 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/01 16:00:01 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ HTTPResponse::~HTTPResponse() {
 
 void HTTPResponse::setStatusCode(int code) {
     statusCode = code;
-    // Mapear o status code para a reason phrase padrão
     switch (code) {
         case 200: reasonPhrase = "OK"; break;
         case 201: reasonPhrase = "Created"; break;

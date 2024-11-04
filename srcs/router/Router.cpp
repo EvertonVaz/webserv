@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:22 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/01 11:29:08 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/04 18:13:54 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,9 @@ void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
         return;
     }
 
+    // TODO: preciso arrumar o allowedMethods do RouteConfig
+    // erro: se nao tiver nenhum método permitido
+    // ele nao aceita nenhuma requisição, obrigando a ter um método permitido
     std::set<std::string> allowedMethods = routeConfig.getMethods();
     if (allowedMethods.find(request.getMethod()) == allowedMethods.end()) {
         response.setStatusCode(405);

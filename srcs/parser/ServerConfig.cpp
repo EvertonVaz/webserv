@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 20:05:01 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/26 10:06:52 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/01 17:06:06 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ ServerConfig::ServerConfig() {
 	host = "127.0.0.1";
 	root = "./";
 	port = -1;
-	max_body_size = 1000000;
-	server_names.clear();
-	error_page.clear();
+	maxBodySize = 1000000;
+	serverNames.clear();
+	errorPage.clear();
 	routes.clear();
 
 	initializeDirectiveMap();
@@ -36,11 +36,11 @@ std::string ServerConfig::getHost() const {
 };
 
 std::vector<std::string> ServerConfig::getServerName() const {
-	return server_names;
+	return serverNames;
 };
 
 std::map<int, std::string> ServerConfig::getErrorPage() const {
-	return error_page;
+	return errorPage;
 };
 
 std::string ServerConfig::getRoot() const {
@@ -49,6 +49,10 @@ std::string ServerConfig::getRoot() const {
 
 std::map<std::string, RouteConfig> ServerConfig::getRoutes() const {
 	return routes;
+};
+
+size_t ServerConfig::getMaxBodySize() const {
+	return maxBodySize;
 };
 
 void ServerConfig::setListen(const std::string& value) {
@@ -62,7 +66,7 @@ void ServerConfig::setListen(const std::string& value) {
 	} else {
 		port = std::atoi(value.c_str());
 	}
-	if (port < 0 || port > 65535) {
+	if (port < 1025 || port > 65535) {
 		throw std::runtime_error("Invalid port: " + value);
 	}
 };
@@ -80,12 +84,12 @@ void ServerConfig::setServerName(const std::string& server_name) {
 		std::string links;
 		iss >> links;
 		if (!links.empty())
-			server_names.push_back(links);
+			serverNames.push_back(links);
 	}
 };
 
-void ServerConfig::setErrorPage(const std::string& error_page) {
-	std::istringstream iss(error_page);
+void ServerConfig::setErrorPage(const std::string& errorPage) {
+	std::istringstream iss(errorPage);
 	while(iss) {
 		std::string code;
 		std::string path;
@@ -96,10 +100,10 @@ void ServerConfig::setErrorPage(const std::string& error_page) {
 				throw std::runtime_error("Invalid error code: " + code);
 
 			int code_number = std::atoi(code.c_str());
-			if (!this->error_page[code_number].empty())
+			if (!this->errorPage[code_number].empty())
 				throw std::runtime_error("Duplicate error code: " + code);
 
-			this->error_page[code_number] = path;
+			this->errorPage[code_number] = path;
 		}
 	}
 
@@ -110,7 +114,7 @@ void ServerConfig::setRoot(const std::string& root) {
 };
 
 void ServerConfig::setMaxBodySize(const std::string& max_body_size) {
-	this->max_body_size = std::atoi(max_body_size.c_str());
+	this->maxBodySize = std::atoi(max_body_size.c_str());
 };
 
 void ServerConfig::addRoute(const std::string& path, const RouteConfig& route) {
