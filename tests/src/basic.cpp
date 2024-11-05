@@ -3,6 +3,7 @@
 int total_tests = 0;
 int tests_passed = 0;
 int tests_failed = 0;
+std::string path = "./config.conf";
 
 std::vector<TestResult> test_results;
 

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:36:47 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/05 14:36:54 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/05 16:47:22 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@
 #include "../headers/MockServer.hpp"
 #include "../../srcs/parser/ConfigParser.hpp"
 #include <algorithm>
-
-std::string path = "/home/etovaz/nave/webserver/config.conf";
 
 void events(int times, std::vector<struct pollfd> &pollFds, ConnectionManager &connManager, MockSocket &mockSocket) {
     for (int i = 0; i < times; i++) {
@@ -37,14 +35,14 @@ bool test_connection_manager_initialization() {
     RouteConfig routeConfig;
 
 	//Forma de mockar um parser sem utilizar o arquivo de configuração
-    routeConfig.setRoot("/home/etovaz/nave/webserver");
+    routeConfig.setRoot(".");
     routeConfig.setIndex("index.html");
     routeConfig.setMethods("GET");
     serverConfig.setListen("8080");
     serverConfig.setHost("127.0.0.1");
-    serverConfig.setRoot("/home/etovaz/nave/webserver");
+    serverConfig.setRoot(".");
     serverConfig.setMaxBodySize("1000");
-    serverConfig.setErrorPage("404 /home/etovaz/nave/webserver/error_pages/404.html");
+    serverConfig.setErrorPage("404 ./error_pages/404.html");
     serverConfig.addRoute("/", routeConfig);
     parser.setServer(serverConfig);
     MockSocket mockSocket = MockSocket();

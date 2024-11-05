@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 20:51:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/05 14:24:22 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/05 16:40:42 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,16 @@ void runConnManagerTests() {
     RUN_TEST(test_connection_manager_read_and_write_simultaneously);
 }
 
+void runRouterTests() {
+    std::cout << "\n\nRouter tests" << std::endl;
+    RUN_TEST(test_route_request);
+}
+
 int main() {
     // runConfigTests();
     // runSererTests();
     // runConnManagerTests();
+    runRouterTests();
     printSummary();
     return 0;
 }

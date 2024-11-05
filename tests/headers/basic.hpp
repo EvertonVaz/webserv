@@ -11,6 +11,7 @@
 #define YELLOW  "\033[33m"
 #define RESET   "\033[0m"
 
+extern std::string path;
 extern int total_tests;
 extern int tests_passed;
 extern int tests_failed;
