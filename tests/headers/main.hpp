@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 20:16:41 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/05 16:40:25 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/05 19:55:55 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,3 +53,8 @@ bool test_connection_manager_close_connection_on_error();
 bool test_connection_manager_read_and_write_simultaneously();
 
 bool test_route_request();
+bool test_handle_request_serve_static_file();
+bool test_handle_request_method_not_allowed();
+bool test_handle_request_redirect();
+bool test_handle_request_autoindex_enabled();
+bool test_handle_request_autoindex_disabled_no_index();

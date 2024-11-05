@@ -6,11 +6,10 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:22 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/05 15:43:25 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/05 20:01:53 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// Router.cpp
 #include "Router.hpp"
 #include <sys/stat.h>
 #include "../aux.hpp"
@@ -114,16 +113,17 @@ void Router::resolvePath(std::string path, const RouteConfig routeConfig, HTTPRe
         }
 
         if (routeConfig.getAutoindex()) {
+            // TODO: implementar autoindex
             // generateDirectoryListing(path, response); função para listar o diretório
             response.setStatusCode(200);
             response.setBody("<html><body><h1>200 OK - era para listar arquivos</h1></body></html>");
             response.addHeader("Content-Type", "text/html");
             return;
-        } else {
-            response.setStatusCode(403);
-            response.setBody("<html><body><h1>403 Forbidden</h1></body></html>");
-            response.addHeader("Content-Type", "text/html");
-            return;
         }
+    } else {
+        response.setStatusCode(403);
+        response.setBody("<html><body><h1>403 Forbidden</h1></body></html>");
+        response.addHeader("Content-Type", "text/html");
+        return;
     }
 }

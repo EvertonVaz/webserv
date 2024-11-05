@@ -6,11 +6,10 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 10:51:09 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/01 16:00:01 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/05 19:52:47 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// HTTPResponse.cpp
 #include "HTTPResponse.hpp"
 #include <sstream>
 

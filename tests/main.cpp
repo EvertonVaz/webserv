@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 20:51:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/05 16:40:42 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/06 09:41:54 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,13 +63,19 @@ void runConnManagerTests() {
 void runRouterTests() {
     std::cout << "\n\nRouter tests" << std::endl;
     RUN_TEST(test_route_request);
+    RUN_TEST(test_handle_request_serve_static_file);
+    RUN_TEST(test_handle_request_method_not_allowed);
+    RUN_TEST(test_handle_request_redirect);
+    RUN_TEST(test_handle_request_autoindex_enabled);
+    RUN_TEST(test_handle_request_autoindex_disabled_no_index);
 }
 
 int main() {
-    // runConfigTests();
-    // runSererTests();
+    runConfigTests();
+    runSererTests();
     // runConnManagerTests();
     runRouterTests();
+    
     printSummary();
     return 0;
 }
