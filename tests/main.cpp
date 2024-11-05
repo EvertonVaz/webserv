@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 20:51:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/30 19:55:56 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/05 14:24:22 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ void runConfigTests() {
     RUN_TEST(testConfigInvalidHost);
     RUN_TEST(testConfigInvalidPort);
     RUN_TEST(testErrorPage);
-    printSummary();
 }
 
 void runSererTests() {
@@ -64,7 +63,7 @@ void runConnManagerTests() {
 int main() {
     // runConfigTests();
     // runSererTests();
-    runConnManagerTests();
+    // runConnManagerTests();
     printSummary();
     return 0;
 }

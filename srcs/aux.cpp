@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:48:25 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/01 17:49:04 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/05 17:42:41 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,9 @@ std::string joinMethods(const std::set<std::string>& methods) {
 std::string getContentType(const std::string& extension) {
     if (extension == ".html") return "text/html";
     if (extension == ".css") return "text/css";
-    if (extension == ".js") return "application/javascript";
     if (extension == ".png") return "image/png";
+    if (extension == ".js") return "application/javascript";
+    if (extension == ".json") return "application/json";
     if (extension == ".jpg" || extension == ".jpeg") return "image/jpeg";
     return "application/octet-stream";
 }

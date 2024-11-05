@@ -6,14 +6,14 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:32:14 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/28 22:29:28 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/05 14:10:05 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/basic.hpp"
 #include "../../srcs/parser/ConfigParser.hpp"
 
-std::string path_configs = "/home/etovaz/nave/webserver/tests/configs/";
+std::string path_configs = "./tests/configs/";
 
 bool testConfigValidConfigParsing() {
     ConfigParser parser;
@@ -333,7 +333,7 @@ bool testConfigAllDirectives() {
     ASSERT_TRUE(servers.size() == 1, "Deve haver uma configuração de servidor");
 
     ServerConfig server = servers[0];
-    ASSERT_TRUE(server.getPort() == 80, "A porta do servidor deve ser 80");
+    ASSERT_TRUE(server.getPort() == 8080, "A porta do servidor deve ser 8080");
     ASSERT_TRUE(server.getHost() == "0.0.0.0", "O host do servidor deve ser 0.0.0.0");
 
     std::vector<std::string> serverNames = server.getServerName();

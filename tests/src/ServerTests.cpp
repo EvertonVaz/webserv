@@ -1,11 +1,22 @@
-// ServerTests.cpp
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ServerTests.cpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/05 14:36:28 by Everton           #+#    #+#             */
+/*   Updated: 2024/11/05 14:36:32 by Everton          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../headers/basic.hpp"
 #include "../../srcs/server/Server.hpp"
 #include "../../srcs/parser/ConfigParser.hpp"
 #include "../../srcs/parser/ServerConfig.hpp"
 #include "../headers/MockSocket.hpp"
 
-const std::string filePath = "/home/etovaz/nave/webserver/tests/configs/valid_config.conf";
+const std::string filePath = "./tests/configs/valid_config.conf";
 
 bool testServerInitializationSuccess() {
 	ConfigParser parser;

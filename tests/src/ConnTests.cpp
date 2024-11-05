@@ -1,9 +1,21 @@
-// ConnectionManagerTests.cpp
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ConnTests.cpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/05 14:36:47 by Everton           #+#    #+#             */
+/*   Updated: 2024/11/05 14:36:54 by Everton          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
 #include "../headers/basic.hpp"
 #include "../../srcs/connection/ConnectionManager.hpp"
 #include "../headers/MockSocket.hpp"
 #include "../headers/MockServer.hpp"
-#include "../../srcs/parser/ConfigParser.hpp" // Incluído o MockConfigParser
+#include "../../srcs/parser/ConfigParser.hpp"
 #include <algorithm>
 
 std::string path = "/home/etovaz/nave/webserver/config.conf";
