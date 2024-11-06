@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 10:51:09 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/05 19:52:47 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/06 10:37:38 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,32 @@ HTTPResponse::~HTTPResponse() {
 void HTTPResponse::setStatusCode(int code) {
     statusCode = code;
     switch (code) {
+        case 100: reasonPhrase = "Continue"; break;
+        case 101: reasonPhrase = "Switching Protocols"; break;
+        case 102: reasonPhrase = "Processing"; break;
+        case 103: reasonPhrase = "Early Hints"; break;
+        case 104: reasonPhrase = "Unknown"; break;
         case 200: reasonPhrase = "OK"; break;
         case 201: reasonPhrase = "Created"; break;
+        case 202: reasonPhrase = "Accepted"; break;
+        case 203: reasonPhrase = "Non-Authoritative Information"; break;
         case 204: reasonPhrase = "No Content"; break;
+        case 300: reasonPhrase = "Multiple Choices"; break;
+        case 301: reasonPhrase = "Moved Permanently"; break;
+        case 302: reasonPhrase = "Found"; break;
+        case 303: reasonPhrase = "See Other"; break;
+        case 304: reasonPhrase = "Not Modified"; break;
         case 400: reasonPhrase = "Bad Request"; break;
+        case 401: reasonPhrase = "Unauthorized"; break;
         case 403: reasonPhrase = "Forbidden"; break;
         case 404: reasonPhrase = "Not Found"; break;
         case 405: reasonPhrase = "Method Not Allowed"; break;
         case 500: reasonPhrase = "Internal Server Error"; break;
+        case 501: reasonPhrase = "Not Implemented"; break;
+        case 502: reasonPhrase = "Bad Gateway"; break;
+        case 503: reasonPhrase = "Service Unavailable"; break;
+        case 504: reasonPhrase = "Gateway Timeout"; break;
+        case 505: reasonPhrase = "HTTP Version Not Supported"; break;
         default: reasonPhrase = "Unknown";
     }
 }
