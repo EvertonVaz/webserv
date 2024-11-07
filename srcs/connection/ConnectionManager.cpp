@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/06 20:15:18 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/06 23:01:56 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <sys/stat.h>
 #include "../aux.hpp"
 #include "ConnectionManager.hpp"
+#include "../handlers/ErrorHandler.hpp"
 
 ConnectionManager::ConnectionManager(Server &server) {
 	this->socketInterface = server.getSocketInterface();
@@ -118,9 +119,29 @@ void ConnectionManager::readFromClient(int clientSockFd) {
     requests[clientSockFd].appendData(data, serverConfigs);
 
     if (requests[clientSockFd].hasError()) {
+        HTTPResponse response;
+        ErrorHandler errorHandler;
+        errorHandler.handleError(400, response);
+        sendResponse(clientSockFd, response);
         closeConnection(clientSockFd);
     } else if (requests[clientSockFd].isComplete()) {
         processRequest(clientSockFd, requests[clientSockFd]);
+    }
+}
+
+void ConnectionManager::sendResponse(int clientSockFd, HTTPResponse& response) {
+    std::string responseStr = response.generateResponse();
+    int totalSent = 0;
+    int responseLength = responseStr.size();
+    const char* responseData = responseStr.c_str();
+
+    while (totalSent < responseLength) {
+        int sent = socketInterface->send(clientSockFd, responseData + totalSent, responseLength - totalSent, 0);
+        if (sent < 0) {
+            closeConnection(clientSockFd);
+            return;
+        }
+        totalSent += sent;
     }
 }
 

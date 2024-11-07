@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/26 12:37:07 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/01 12:09:43 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/06 23:02:15 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ class ConnectionManager {
 		void acceptNewConnection(int listenSocketFd);
 		void readFromClient(int clientSocketFd);
 		void processRequest(int clientSockFd, const HTTPRequest& request);
-		void writeToClient(int clientSocketFd);
 		void closeConnection(int clientSocketFd);
+		void sendResponse(int clientSockFd, HTTPResponse& response);
 
 		std::set<int> getListenSockets() const;
         std::vector<struct pollfd> getPollFds() const;

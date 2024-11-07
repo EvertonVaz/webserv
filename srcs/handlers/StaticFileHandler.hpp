@@ -1,7 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   StaticFileHandler.hpp                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/06 22:59:26 by Everton           #+#    #+#             */
+/*   Updated: 2024/11/06 22:59:45 by Everton          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #pragma once
-#include "../http/HTTPRequest.hpp"
-#include "../http/HTTPResponse.hpp"
+
+#include <set>
 #include <string>
+#include "../http/HTTPResponse.hpp"
 
 class StaticFileHandler {
     private:

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:22 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/06 21:49:45 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/06 23:06:32 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 #include "../aux.hpp"
 #include "../handlers/StaticFileHandler.hpp"
+#include "../handlers/ErrorHandler.hpp"
 
 Router::Router() {}
 
@@ -59,32 +60,24 @@ const RouteConfig Router::routeRequest(const HTTPRequest& request) {
 
 void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
     const RouteConfig routeConfig = routeRequest(request);
+    ErrorHandler errorHandler;
 
     if (routeConfig.getRoot().empty()) {
-        response.setStatusCode(404);
-        response.setBody("<html><body><h1>404 Not Found</h1></body></html>");
-        response.addHeader("Content-Type", "text/html");
-        return;
+        return errorHandler.handleError(404, response);
     }
 
-    // TODO: preciso arrumar o allowedMethods do RouteConfig
-    // erro: se nao tiver nenhum método permitido
-    // ele nao aceita nenhuma requisição, obrigando a ter um método permitido
     std::set<std::string> allowedMethods = routeConfig.getMethods();
     if (allowedMethods.find(request.getMethod()) == allowedMethods.end()) {
-        response.setStatusCode(405);
         response.addHeader("Allow", joinMethods(allowedMethods));
-        response.setBody("<html><body><h1>405 Method Not Allowed</h1></body></html>");
-        response.addHeader("Content-Type", "text/html");
-        return;
+        return errorHandler.handleError(405, response);;
     }
 
     std::map<int, std::string> redirectPath = routeConfig.getReturnCodes();
     if (!redirectPath.empty()) {
         response.setStatusCode(301);
         response.addHeader("Location", redirectPath[301]);
-        response.setBody("<html><body><h1>301 Moved Permanently</h1></body></html>");
         response.addHeader("Content-Type", "text/html");
+        response.setBody("<html><body><h1>301 Moved Permanently</h1></body></html>");
         return;
     }
 
