@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:22 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/07 09:51:44 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/07 20:36:53 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,8 @@ void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
 
     std::map<int, std::string> redirectPath = routeConfig.getReturnCodes();
     if (!redirectPath.empty()) {
-        response.setStatusCode(301);
         response.addHeader("Location", redirectPath[301]);
-        response.addHeader("Content-Type", "text/html");
-        response.setBody("<html><body><h1>301 Moved Permanently</h1></body></html>");
+        errorHandler.handleError(301, response);
         return;
     }
 
@@ -91,5 +89,5 @@ void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
     staticHandler.setRootDirectory(root);
     staticHandler.setDirectoryListingEnabled(routeConfig.getAutoindex());
     staticHandler.setIndexFiles(routeConfig.getIndex());
-    staticHandler.handleRequest(response);
+    staticHandler.handleResponse(response);
 }

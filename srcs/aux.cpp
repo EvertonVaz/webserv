@@ -6,15 +6,17 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:48:25 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/06 20:27:45 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/07 20:30:50 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "aux.hpp"
+#include <map>
 #include <sstream>
 #include <cstdlib>
 #include <sstream>
 #include <stdexcept>
+#include <string>
 
 ServerConfig selectConfig(HTTPRequest request, std::vector<ServerConfig> serverConfigs) {
     for (size_t i = 0; i < serverConfigs.size(); i++) {
@@ -108,4 +110,36 @@ bool isValidIPv4(const std::string& ip) {
 		}
 	}
 	return true;
+}
+
+const std::map<int, std::string> httpReasonPhrase() {
+    std::map<int, std::string> reasonPrases;
+    reasonPrases[100] = "Continue";
+    reasonPrases[101] = "Switching Protocols";
+    reasonPrases[102] = "Processing";
+    reasonPrases[103] = "Early Hints";
+    reasonPrases[104] = "Unknown";
+    reasonPrases[200] = "OK";
+    reasonPrases[201] = "Created";
+    reasonPrases[202] = "Accepted";
+    reasonPrases[203] = "Non-Authoritative Information";
+    reasonPrases[204] = "No Content";
+    reasonPrases[300] = "Multiple Choices";
+    reasonPrases[301] = "Moved Permanently";
+    reasonPrases[302] = "Found";
+    reasonPrases[303] = "See Other";
+    reasonPrases[304] = "Not Modified";
+    reasonPrases[400] = "Bad Request";
+    reasonPrases[401] = "Unauthorized";
+    reasonPrases[403] = "Forbidden";
+    reasonPrases[404] = "Not Found";
+    reasonPrases[405] = "Method Not Allowed";
+    reasonPrases[500] = "Internal Server Error";
+    reasonPrases[501] = "Not Implemented";
+    reasonPrases[502] = "Bad Gateway";
+    reasonPrases[503] = "Service Unavailable";
+    reasonPrases[504] = "Gateway Timeout";
+    reasonPrases[505] = "HTTP Version Not Supported";
+
+    return reasonPrases;
 }

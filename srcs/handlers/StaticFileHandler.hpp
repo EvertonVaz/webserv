@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:59:26 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/07 09:50:10 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/07 20:36:49 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ class StaticFileHandler {
         StaticFileHandler(std::string errorPagesPath);
         ~StaticFileHandler();
 
-        void handleRequest(HTTPResponse& response);
+        void handleResponse(HTTPResponse& response);
 
         void setUri(const std::string& uri);
         void setRootDirectory(const std::string& rootDir);

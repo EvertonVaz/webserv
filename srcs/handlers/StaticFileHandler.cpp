@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:59:21 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/07 09:50:47 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/07 20:36:43 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void StaticFileHandler::setIndexFiles(const std::set<std::string>& indexFiles) {
     this->indexFiles = indexFiles;
 }
 
-void StaticFileHandler::handleRequest(HTTPResponse& response) {
+void StaticFileHandler::handleResponse(HTTPResponse& response) {
     ErrorHandler errorHandler(errorPagesPath);
     std::string filePath = rootDirectory + uri;
 

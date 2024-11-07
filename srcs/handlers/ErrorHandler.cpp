@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:59:13 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/07 09:57:31 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/07 19:04:04 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,45 @@ ErrorHandler::ErrorHandler(std::string errorPagesPath) {
 
 ErrorHandler::~ErrorHandler() {}
 
-void ErrorHandler::handleError(int statusCode, HTTPResponse& response, const std::string& customMessage) {
+std::string defaultPage(std::string filePath) {
+    std::string message = "Problema de permissão ou arquivo não encontrado: " + filePath;
+    return "<!DOCTYPE html> \
+            <html lang='pt-BR'> \
+            <head> \
+                <meta charset='UTF-8'> \
+                <title>Error!</title> \
+                <style> \
+                    body { \
+                        background-color: #f8f9fa; \
+                        color: #343a40; \
+                        font-family: Arial, sans-serif; \
+                        text-align: center; \
+                        padding-top: 100px; \
+                    } \
+                    h1 { \
+                        font-size: 50px; \
+                    } \
+                    p { \
+                        font-size: 20px; \
+                    } \
+                    a { \
+                        color: #007bff; \
+                        text-decoration: none; \
+                    } \
+                    a:hover { \
+                        text-decoration: underline; \
+                    } \
+                </style> \
+            </head> \
+            <body> \
+                <h1>Problemas ao abrir o arquivo de erro</h1> \
+                <p>"+ message +"</p> \
+                <p><a href='/'>Voltar para a página inicial</a></p> \
+            </body> \
+            </html>";
+}
+
+void ErrorHandler::handleError(int statusCode, HTTPResponse& response) {
     response.setStatusCode(statusCode);
     response.addHeader("Content-Type", "text/html");
 
@@ -36,23 +74,7 @@ void ErrorHandler::handleError(int statusCode, HTTPResponse& response, const std
         response.setBody(buffer.str());
         file.close();
     } else {
-        std::string message = customMessage;
-        if (message.empty()) {
-            switch (statusCode) {
-                case 400: message = "400 Bad Request"; break;
-                case 403: message = "403 Forbidden"; break;
-                case 404: message = "404 Not Found"; break;
-                case 405: message = "405 Method Not Allowed"; break;
-                case 500: message = "500 Internal Server Error"; break;
-                default: {
-                    std::ostringstream oss;
-                    oss << statusCode << " Error";
-                    message = oss.str();
-                    break;
-                }
-            }
-        }
-        std::string body = "<html><body><h1>" + message + "</h1></body></html>";
+        std::string body = defaultPage(filePath);
         response.setBody(body);
     }
 }

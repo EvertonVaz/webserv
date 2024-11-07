@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/07 09:44:47 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/07 20:02:35 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,6 @@ void ConnectionManager::acceptNewConnection(int listenSockFd) {
     clientPfd.events = POLLIN;
     clientPfd.revents = 0;
     pollFds.push_back(clientPfd);
-
     clientBuffers[clientSockFd] = "";
 
     std::cout << "New connect accept: socket fd " << clientSockFd << std::endl;
@@ -146,10 +145,23 @@ void ConnectionManager::sendResponse(int clientSockFd, HTTPResponse& response) {
     }
 }
 
+void ConnectionManager::closeConnection(int sockFd) {
+    socketInterface->close(sockFd);
+
+    for (size_t i = 0; i < pollFds.size(); ++i) {
+        if (pollFds[i].fd == sockFd) {
+            pollFds.erase(pollFds.begin() + i);
+            break;
+        }
+    }
+
+    clientBuffers.erase(sockFd);
+    std::cout << "Closed connection: socket fd " << sockFd << std::endl;
+}
+
 void ConnectionManager::processRequest(int clientSockFd, const HTTPRequest& request) {
     HTTPResponse response;
     router = selectConfig(request, serverConfigs);
-
     router.handleRequest(request, response);
 
     std::map<std::string, std::string> reqHeaders = request.getHeaders();
@@ -177,39 +189,4 @@ void ConnectionManager::processRequest(int clientSockFd, const HTTPRequest& requ
     } else {
         requests.erase(clientSockFd);
     }
-}
-
-void ConnectionManager::closeConnection(int sockFd) {
-    socketInterface->close(sockFd);
-
-    for (size_t i = 0; i < pollFds.size(); ++i) {
-        if (pollFds[i].fd == sockFd) {
-            pollFds.erase(pollFds.begin() + i);
-            break;
-        }
-    }
-
-    clientBuffers.erase(sockFd);
-
-    std::cout << "Closed connection: socket fd " << sockFd << std::endl;
-}
-
-std::set<int> ConnectionManager::getListenSockets() const {
-    return listenSockets;
-}
-
-std::vector<struct pollfd> ConnectionManager::getPollFds() const {
-    return pollFds;
-}
-
-std::map<int, std::string> ConnectionManager::getClientBuffers() const {
-    return clientBuffers;
-}
-
-void ConnectionManager::setPollFds(std::vector<struct pollfd> pollFds) {
-    this->pollFds = pollFds;
-}
-
-void ConnectionManager::setClientBuffers(std::map<int, std::string> clientBuffers) {
-    this->clientBuffers = clientBuffers;
 }

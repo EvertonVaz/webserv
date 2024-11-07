@@ -25,9 +25,7 @@ HTTPRequest::HTTPRequest() {
 HTTPRequest::~HTTPRequest() {
 }
 
-void HTTPRequest::setMaxBodySize(size_t size) {
-    maxBodySize = size;
-}
+
 
 bool HTTPRequest::parseRequestLine(const std::string& line) {
     std::istringstream iss(line);
@@ -171,32 +169,4 @@ void HTTPRequest::appendData(const std::string& data, std::vector<ServerConfig> 
             }
         }
     }
-}
-
-bool HTTPRequest::isComplete() const {
-    return state == COMPLETE;
-}
-
-bool HTTPRequest::hasError() const {
-    return state == ERROR;
-}
-
-std::string HTTPRequest::getMethod() const {
-    return method;
-}
-
-std::string HTTPRequest::getURI() const {
-    return uri;
-}
-
-std::string HTTPRequest::getHTTPVersion() const {
-    return httpVersion;
-}
-
-std::map<std::string, std::string> HTTPRequest::getHeaders() const {
-    return headers;
-}
-
-std::string HTTPRequest::getBody() const {
-    return body;
 }

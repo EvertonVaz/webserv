@@ -1,7 +1,7 @@
 NAME = webserv
 TEST_NAME = test_executable
-FLAGS = -Wall -Werror -Wextra -g3 -std=c++98
-CC = c++
+FLAGS = -Wall -Werror -Wextra -std=c++98
+CC = c++ -g3
 
 # Colors
 BLUE = "\033[34;1m"
