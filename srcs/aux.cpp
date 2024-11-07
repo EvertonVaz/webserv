@@ -6,18 +6,17 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:48:25 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/05 17:42:41 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/06 20:27:45 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "aux.hpp"
 #include <sstream>
 #include <cstdlib>
-#include <fstream>
 #include <sstream>
 #include <stdexcept>
 
-ServerConfig selectConfig (HTTPRequest request, std::vector<ServerConfig> serverConfigs) {
+ServerConfig selectConfig(HTTPRequest request, std::vector<ServerConfig> serverConfigs) {
     for (size_t i = 0; i < serverConfigs.size(); i++) {
         if (request.getHeaders()["host"].find(serverConfigs[i].getHost()) != std::string::npos)
             return serverConfigs[i];
@@ -44,23 +43,6 @@ std::string getContentType(const std::string& extension) {
     if (extension == ".json") return "application/json";
     if (extension == ".jpg" || extension == ".jpeg") return "image/jpeg";
     return "application/octet-stream";
-}
-
-void serveStaticFile(const std::string& filePath, HTTPResponse& response) {
-    std::ifstream file(filePath.c_str(), std::ios::in | std::ios::binary);
-    std::string extension = filePath.substr(filePath.find_last_of('.'));
-    if (!file.is_open()) {
-        response.setStatusCode(404);
-        response.setBody("<html><body><h1>404 Not Found</h1></body></html>");
-        response.addHeader("Content-Type", "text/html");
-        return;
-    }
-    std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-    response.setStatusCode(200);
-    response.setBody(content);
-    response.addHeader("Content-Type", getContentType(extension));
-
-    file.close();
 }
 
 bool removeTrailingSemicolon(std::string &s, const std::string &key) {

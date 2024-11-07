@@ -14,6 +14,7 @@
 
 #include <string>
 #include <map>
+#include "../parser/RouteConfig.hpp"
 #include "../parser/ServerConfig.hpp"
 
 class HTTPRequest {

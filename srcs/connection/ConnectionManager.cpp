@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/04 17:54:47 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/06 20:15:18 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,7 @@ void ConnectionManager::processRequest(int clientSockFd, const HTTPRequest& requ
     router = selectConfig(request, serverConfigs);
 
     router.handleRequest(request, response);
+
     std::map<std::string, std::string> reqHeaders = request.getHeaders();
     if (reqHeaders.find("Connection") != reqHeaders.end() && reqHeaders["Connection"] == "close") {
         response.setCloseConnection(true);

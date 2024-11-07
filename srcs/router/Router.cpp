@@ -6,13 +6,14 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:22 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/05 20:01:53 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/06 21:49:45 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Router.hpp"
 #include <sys/stat.h>
 #include "../aux.hpp"
+#include "../handlers/StaticFileHandler.hpp"
 
 Router::Router() {}
 
@@ -91,39 +92,11 @@ void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
     if (root.empty()) {
         root = serverConfig.getRoot();
     }
-    std::string filePath = root + request.getURI();
-    resolvePath(filePath, routeConfig, response);
-}
 
-void Router::resolvePath(std::string path, const RouteConfig routeConfig, HTTPResponse& response) {
-    struct stat pathStat;
-
-    std::set<std::string> indexFiles = routeConfig.getIndex();
-    int st = stat(path.c_str(), &pathStat);
-    if (st == 0 && S_ISDIR(pathStat.st_mode)) {
-        if (indexFiles.size() > 0) {
-            for (std::set<std::string>::iterator it = indexFiles.begin(); it != indexFiles.end(); ++it) {
-                if (path[path.length() - 1] != '/')
-                    path += "/";
-                std::string indexPath = path + *it;
-                if (stat(indexPath.c_str(), &pathStat) == 0 && S_ISREG(pathStat.st_mode)) {
-                    return serveStaticFile(indexPath, response);
-                }
-            }
-        }
-
-        if (routeConfig.getAutoindex()) {
-            // TODO: implementar autoindex
-            // generateDirectoryListing(path, response); função para listar o diretório
-            response.setStatusCode(200);
-            response.setBody("<html><body><h1>200 OK - era para listar arquivos</h1></body></html>");
-            response.addHeader("Content-Type", "text/html");
-            return;
-        }
-    } else {
-        response.setStatusCode(403);
-        response.setBody("<html><body><h1>403 Forbidden</h1></body></html>");
-        response.addHeader("Content-Type", "text/html");
-        return;
-    }
+    StaticFileHandler staticHandler;
+    staticHandler.setUri(request.getURI());
+    staticHandler.setRootDirectory(root);
+    staticHandler.setDirectoryListingEnabled(routeConfig.getAutoindex());
+    staticHandler.setIndexFiles(routeConfig.getIndex());
+    staticHandler.handleRequest(response);
 }

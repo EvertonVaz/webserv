@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 16:10:10 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/05 21:25:14 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/06 22:43:41 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,9 +181,8 @@ bool test_handle_request_autoindex_enabled() {
     ServerConfig config;
 	RouteConfig routeConfig;
 
-	routeConfig.setRoot("./var/www/");
+	routeConfig.setRoot("./var/www");
 	routeConfig.setMethods({"GET"});
-	routeConfig.setIndex({"index.html"});
 	routeConfig.setAutoindex("on");
     config.setHost("127.0.0.1");
     config.setListen("8080");
@@ -217,7 +216,7 @@ bool test_handle_request_autoindex_enabled() {
     ASSERT_TRUE(response.getHeaders().at("Content-Type") == "text/html", "Content-Type deve ser 'text/html'");
 
     // Verificar se o corpo da resposta contém a mensagem de autoindex
-    ASSERT_TRUE(response.getBody().find("200 OK - era para listar arquivos") != std::string::npos, "Corpo da resposta deve conter mensagem de autoindex");
+    ASSERT_TRUE(response.getBody().find("Index of") != std::string::npos, "Corpo da resposta deve conter mensagem de autoindex");
 
     return true;
 }
@@ -230,7 +229,7 @@ bool test_handle_request_autoindex_disabled_no_index() {
     ServerConfig config;
 	RouteConfig routeConfig;
 
-	routeConfig.setRoot("./var/www/");
+	routeConfig.setRoot("./var/www");
 	routeConfig.setMethods({"GET"});
 	routeConfig.setIndex({"index.html"});
 	routeConfig.setAutoindex("off");
@@ -258,11 +257,11 @@ bool test_handle_request_autoindex_disabled_no_index() {
     router.handleRequest(request, response);
 
     // ====== Verificações ======
-    // Verificar se o status code é 403
-    ASSERT_TRUE(response.getStatusCode() == 403, "Status code deve ser 403 Forbidden");
+    // Verificar se o status code é 404
+    ASSERT_TRUE(response.getStatusCode() == 404, "Status code deve ser 404 Not Found");
 
     // Verificar se o corpo da resposta contém a mensagem de erro
-    ASSERT_TRUE(response.getBody().find("403 Forbidden") != std::string::npos, "Corpo da resposta deve conter '403 Forbidden'");
+    ASSERT_TRUE(response.getBody().find("404 Not Found") != std::string::npos, "Corpo da resposta deve conter '404 Not Found'");
 
     // Verificar se o Content-Type está correto
     ASSERT_TRUE(response.getHeaders().find("Content-Type") != response.getHeaders().end(), "Header 'Content-Type' deve existir");

@@ -1,6 +1,7 @@
 {
-	"JSON TEST": "HELLO WORLD",
-	"OUTRO": {
-		"TESTE": "TESTE"
-	}
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Image",
+    "description": "An image",
+    "type": "object",
+    "path": "./var/www/images/"
 }
