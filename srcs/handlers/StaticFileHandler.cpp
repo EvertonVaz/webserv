@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:59:21 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/06 23:14:37 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/07 09:50:47 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@
 #include <climits>
 #include <cstdlib>
 
-StaticFileHandler::StaticFileHandler() {
+StaticFileHandler::StaticFileHandler(std::string errorPagesPath) {
+    this->errorPagesPath = errorPagesPath;
     uriIsFile = false;
     directoryListingEnabled = false;
 }
@@ -47,7 +48,7 @@ void StaticFileHandler::setIndexFiles(const std::set<std::string>& indexFiles) {
 }
 
 void StaticFileHandler::handleRequest(HTTPResponse& response) {
-    ErrorHandler errorHandler;
+    ErrorHandler errorHandler(errorPagesPath);
     std::string filePath = rootDirectory + uri;
 
     if (!indexFiles.empty())
@@ -96,7 +97,7 @@ bool StaticFileHandler::isPathSafe(const std::string& path) {
 void StaticFileHandler::serveFile(const std::string& filePath, HTTPResponse& response) {
     std::ifstream file(filePath.c_str(), std::ios::in | std::ios::binary);
     if (!file.is_open()) {
-        return ErrorHandler().handleError(404, response);;
+        return ErrorHandler(errorPagesPath).handleError(404, response);;
     }
 
     std::string extension = filePath.substr(filePath.find_last_of('.'));
@@ -112,7 +113,7 @@ void StaticFileHandler::serveFile(const std::string& filePath, HTTPResponse& res
 void StaticFileHandler::listDirectory(const std::string& dirPath, HTTPResponse& response) {
     DIR* dir = opendir(dirPath.c_str());
     if (!dir)
-        return ErrorHandler().handleError(500, response);
+        return ErrorHandler(errorPagesPath).handleError(500, response);
 
     std::ostringstream body;
     body << "<html><body>";

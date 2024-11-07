@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 20:05:01 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/01 17:06:06 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/07 09:59:00 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ ServerConfig::ServerConfig() {
 	port = -1;
 	maxBodySize = 1000000;
 	serverNames.clear();
-	errorPage.clear();
+	errorPage = "./var/www/error/";
 	routes.clear();
 
 	initializeDirectiveMap();
@@ -39,7 +39,7 @@ std::vector<std::string> ServerConfig::getServerName() const {
 	return serverNames;
 };
 
-std::map<int, std::string> ServerConfig::getErrorPage() const {
+std::string ServerConfig::getErrorPage() const {
 	return errorPage;
 };
 
@@ -89,24 +89,7 @@ void ServerConfig::setServerName(const std::string& server_name) {
 };
 
 void ServerConfig::setErrorPage(const std::string& errorPage) {
-	std::istringstream iss(errorPage);
-	while(iss) {
-		std::string code;
-		std::string path;
-		iss >> code;
-		iss >> path;
-		if (!code.empty() && !path.empty()) {
-			if (!isNumber(code))
-				throw std::runtime_error("Invalid error code: " + code);
-
-			int code_number = std::atoi(code.c_str());
-			if (!this->errorPage[code_number].empty())
-				throw std::runtime_error("Duplicate error code: " + code);
-
-			this->errorPage[code_number] = path;
-		}
-	}
-
+	this->errorPage = errorPage;
 };
 
 void ServerConfig::setRoot(const std::string& root) {

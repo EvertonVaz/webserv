@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:22 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/06 23:06:32 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/07 09:51:44 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ const RouteConfig Router::routeRequest(const HTTPRequest& request) {
 
 void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
     const RouteConfig routeConfig = routeRequest(request);
-    ErrorHandler errorHandler;
+    ErrorHandler errorHandler(serverConfig.getErrorPage());
 
     if (routeConfig.getRoot().empty()) {
         return errorHandler.handleError(404, response);
@@ -86,7 +86,7 @@ void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
         root = serverConfig.getRoot();
     }
 
-    StaticFileHandler staticHandler;
+    StaticFileHandler staticHandler(serverConfig.getErrorPage());
     staticHandler.setUri(request.getURI());
     staticHandler.setRootDirectory(root);
     staticHandler.setDirectoryListingEnabled(routeConfig.getAutoindex());

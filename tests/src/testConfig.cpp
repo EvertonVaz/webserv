@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 18:32:14 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/05 14:10:05 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/07 09:59:33 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -385,11 +385,12 @@ bool testErrorPage() {
     ConfigParser parser;
     try {
         parser.loadConfig(path_configs + "error_page.conf");
-        ServerConfig server = parser.getServers()[0];
-        std::map<int, std::string> errorPages = server.getErrorPage();
-        ASSERT_TRUE(errorPages.size() == 5, "Deve haver cinco páginas de erro configuradas");
-        ASSERT_TRUE(errorPages[404] == "/404.html", "esperado: /404.html - real: " + errorPages[404]);
-        ASSERT_TRUE(errorPages[504] == "/504.html", "esperado: /504.html - real: " + errorPages[504]);
+        ServerConfig config = parser.getServers()[0];
+
+        config.setListen("localhost:8080");
+        ASSERT_TRUE(config.getErrorPage() == "./var/www/error/", "O path padrão dos arquivos de erro deve ser ./var/www/error/");
+        config.setErrorPage("/var/www/html/error");
+        ASSERT_TRUE(config.getErrorPage() == "./var/www/html/error", "O path dos arquivos de erro deve ser /var/www/html/error");
     } catch (const std::exception& e) {
         ASSERT_TRUE(false, "Exceção lançada durante o parsing: " + std::string(e.what()));
     }

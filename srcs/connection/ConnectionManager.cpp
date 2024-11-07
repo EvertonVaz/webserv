@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/06 23:01:56 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/07 09:44:47 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,8 @@ void ConnectionManager::readFromClient(int clientSockFd) {
 
     if (requests[clientSockFd].hasError()) {
         HTTPResponse response;
-        ErrorHandler errorHandler;
+        ServerConfig config = selectConfig(requests[clientSockFd], serverConfigs);
+        ErrorHandler errorHandler(config.getErrorPage());
         errorHandler.handleError(400, response);
         sendResponse(clientSockFd, response);
         closeConnection(clientSockFd);

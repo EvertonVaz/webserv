@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 19:06:31 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/01 16:54:05 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/07 08:44:40 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ class ServerConfig {
 		std::string root;
 		int maxBodySize;
         std::vector<std::string> serverNames;
-        std::map<int, std::string> errorPage;
+        std::string errorPage;
         std::map<std::string, RouteConfig> routes;
 
 		void initializeDirectiveMap();
@@ -41,7 +41,7 @@ class ServerConfig {
         std::string getHost() const;
 		std::string getRoot() const;
         std::vector<std::string> getServerName() const;
-		std::map<int, std::string> getErrorPage() const;
+		std::string getErrorPage() const;
 		std::map<std::string, RouteConfig> getRoutes() const;
 		size_t getMaxBodySize() const;
 

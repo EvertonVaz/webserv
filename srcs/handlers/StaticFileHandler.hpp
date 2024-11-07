@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:59:26 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/06 22:59:45 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/07 09:50:10 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ class StaticFileHandler {
         bool uriIsFile;
         std::string uri;
         std::string rootDirectory;
+        std::string errorPagesPath;
         bool directoryListingEnabled;
         std::set<std::string> indexFiles;
 
@@ -30,7 +31,7 @@ class StaticFileHandler {
         std::string getContentType(const std::string& extension);
 
     public:
-        StaticFileHandler();
+        StaticFileHandler(std::string errorPagesPath);
         ~StaticFileHandler();
 
         void handleRequest(HTTPResponse& response);
@@ -39,4 +40,5 @@ class StaticFileHandler {
         void setRootDirectory(const std::string& rootDir);
         void setDirectoryListingEnabled(bool enabled);
         void setIndexFiles(const std::set<std::string>& indexFiles);
+        void setErrorPagesPath(const std::string& path);
 };
