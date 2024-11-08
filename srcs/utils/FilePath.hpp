@@ -6,13 +6,13 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 11:07:26 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/08 14:49:02 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/09 10:25:44 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <set>
+#include <list>
 #include <string>
 
 class FilePath {
@@ -20,11 +20,11 @@ class FilePath {
         std::string _path;
         std::string _root;
         std::string _uri;
-        std::set<std::string> _index;
+        std::list<std::string> _index;
         bool _isSafe;
         bool _isFile;
         bool _isDirectory;
-        bool _isCgi;
+        bool _autoindex;
 
         void setIsDirectory(bool enabled);
         void setIsFile(bool isFile);
@@ -34,7 +34,7 @@ class FilePath {
         std::string constructorSafeFilePath();
 
     public:
-        FilePath(std::string root, std::string uri, std::set<std::string> index);
+        FilePath(std::string root, std::string uri, std::list<std::string> index, bool autoindex);
         ~FilePath();
 
         bool getIsFile();
@@ -43,4 +43,5 @@ class FilePath {
         bool getIsSafe();
         std::string getUri();
         std::string getPath();
+        void setAutoIndex(bool autoindex);
 };

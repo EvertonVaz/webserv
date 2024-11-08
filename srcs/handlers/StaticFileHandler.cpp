@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:59:21 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/08 13:28:58 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/08 15:42:17 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void StaticFileHandler::handleResponse(HTTPResponse& response) {
         return errorHandler.handleError(404, response);
     }
 
-    if (filePath.getIsDirectory()) {
+    if (!filePath.getIsFile() && filePath.getIsDirectory()) {
         if (directoryListingEnabled) {
             listDirectory(filePath.getPath(), response);
         } else {

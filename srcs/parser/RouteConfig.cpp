@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 19:58:50 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/08 14:21:43 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/09 10:24:09 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ RouteConfig::RouteConfig() {
     root = "";
     upload_enable = false;
     upload_path = "";
-    index.insert("index.html");
+    index.push_back("index.html");
     methods.insert("GET");
     cgi_extensions = std::set<std::string>();
     allowed_methods.insert("GET");
@@ -64,7 +64,7 @@ std::string RouteConfig::getUploadPath() const {
 	return upload_path;
 }
 
-std::set<std::string> RouteConfig::getIndex() const {
+std::list<std::string> RouteConfig::getIndex() const {
 	return index;
 }
 
@@ -105,7 +105,7 @@ void RouteConfig::setIndex(const std::string& index) {
 		std::string word;
 		iss >> word;
 		if (!word.empty())
-			this->index.insert(word);
+			this->index.push_front(word);
 	}
 }
 

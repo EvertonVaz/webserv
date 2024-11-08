@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 11:15:05 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/08 14:48:17 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/09 10:26:00 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,14 @@
 #include <sys/stat.h>
 #include <cstdlib>
 
-FilePath::FilePath(std::string root, std::string uri, std::set<std::string> index)
-    : _root(root), _uri(uri), _index(index) {
+FilePath::FilePath(std::string root, std::string uri, std::list<std::string> index, bool autoindex)
+    : _root(root), _uri(uri), _index(index), _autoindex(autoindex) {
     _isFile = false;
     _isDirectory = false;
 
-    if (_uri[_uri.length() - 1] != '/')
+    isPathExist(_root + uri);
+    if (_isDirectory && uri[uri.length() - 1] != '/')
         _uri += "/";
-
     _path = constructorSafeFilePath();
 }
 
@@ -55,6 +55,9 @@ bool FilePath::isPathSafe(std::string path, std::string root) {
 }
 
 bool FilePath::isPathExist(std::string path) {
+    if (path[path.length() - 1] == '/')
+        path.erase(path.length() - 1);
+
     struct stat statBuf;
     if (stat(path.c_str(), &statBuf) == -1) {
         return false;
@@ -64,32 +67,32 @@ bool FilePath::isPathExist(std::string path) {
         setIsDirectory(true);
     } else if (S_ISREG(statBuf.st_mode)) {
         setIsFile(true);
+        setIsDirectory(false);
     }
 
     return _isFile || _isDirectory;
 }
 
-
 std::string FilePath::constructorSafeFilePath() {
     std::string filePath = _root + _uri;
 
-    std::set<std::string>::iterator it = _index.begin();
-    for (; it != _index.end(); ++it) {
-        filePath += *it;
-        if (isPathExist(filePath))
-            break;
+    if (!_autoindex && _isDirectory) {
+        std::list<std::string>::iterator it = _index.begin();
+        for (; it != _index.end(); ++it) {
+            filePath += *it;
+            if (isPathExist(filePath))
+                break;
+        }
     }
 
     if (filePath[filePath.length() - 1] == '/')
         filePath.erase(filePath.length() - 1);
-
-    isPathSafe(filePath, _root);
-    if (!_isSafe) {
+    isPathExist(filePath);
+    if (!isPathSafe(filePath, _root)) {
         setIsFile(false);
         setIsDirectory(false);
         return "";
     }
-
     return filePath;
 }
 
@@ -111,4 +114,8 @@ bool FilePath::getIsSafe() {
 
 std::string FilePath::getUri() {
     return _uri;
+}
+
+void FilePath::setAutoIndex(bool autoindex) {
+    _autoindex = autoindex;
 }

@@ -6,15 +6,16 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 19:07:32 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/08 14:39:07 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/09 10:23:22 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <set>
-#include <string>
 #include <map>
+#include <set>
+#include <list>
+#include <string>
 
 class RouteConfig {
 	private:
@@ -22,7 +23,7 @@ class RouteConfig {
 		std::string root;
 		bool upload_enable;
 		std::string upload_path;
-		std::set<std::string> index;
+		std::list<std::string> index;
 		std::set<std::string> methods;
 		std::set<std::string> cgi_extensions;
 		std::set<std::string> allowed_methods;
@@ -44,7 +45,7 @@ class RouteConfig {
 		std::string getRoot() const;
 		bool getUploadEnable() const;
 		std::string getUploadPath() const;
-		std::set<std::string> getIndex() const;
+		std::list<std::string> getIndex() const;
 		std::set<std::string> getMethods() const;
 		std::set<std::string> getCgiExtensions() const;
 		std::set<std::string> getAllowedMethods() const;

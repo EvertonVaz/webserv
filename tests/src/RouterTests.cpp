@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 16:10:10 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/07 20:04:30 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/08 17:21:58 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,3 +270,16 @@ bool test_handle_request_autoindex_disabled_no_index() {
     return true;
 }
 
+bool test_handle_no_root() {
+    // ====== Configuração Inicial ======
+    // Configuração do servidor com rota para "/files" que ativa autoindex
+    MockConfigParser parser;
+    ServerConfig config;
+    RouteConfig routeConfig;
+
+    routeConfig.setMethods({"GET"});
+    routeConfig.setAutoindex("on");
+    // config.setHost("
+
+    return true;
+}

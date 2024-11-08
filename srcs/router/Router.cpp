@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:22 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/08 14:50:42 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/08 16:57:11 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
         return errorHandler.handleError(404, response);
     }
 
-    FilePath filePath(root, request.getURI(), routeConfig.getIndex());
+    FilePath filePath(root, request.getURI(), routeConfig.getIndex(), routeConfig.getAutoindex());
 
     std::set<std::string> allowedMethods = routeConfig.getMethods();
     if (allowedMethods.find(request.getMethod()) == allowedMethods.end()) {
@@ -96,6 +96,7 @@ void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
     }
 
     if (routeConfig.getCgiExtensions().size() > 0){
+        // TODO: Implement CGIHandler
         // CGIHandler cgiHandler(request, routeConfig);
     } else {
         StaticFileHandler staticHandler(serverConfig.getErrorPage(), filePath);
