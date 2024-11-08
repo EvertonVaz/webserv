@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:59:21 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/07 20:36:43 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/08 12:23:45 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ void StaticFileHandler::handleResponse(HTTPResponse& response) {
 bool StaticFileHandler::isPathSafe(const std::string& path) {
     char resolvedRoot[PATH_MAX];
     char resolvedPath[PATH_MAX];
+
 
     realpath(rootDirectory.c_str(), resolvedRoot);
     realpath(path.c_str(), resolvedPath);
