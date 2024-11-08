@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 11:07:26 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/08 12:16:41 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/08 14:49:02 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ class FilePath {
         bool _isSafe;
         bool _isFile;
         bool _isDirectory;
+        bool _isCgi;
 
         void setIsDirectory(bool enabled);
         void setIsFile(bool isFile);

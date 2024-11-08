@@ -6,11 +6,12 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:48:25 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/07 20:30:50 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/08 13:27:16 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "aux.hpp"
+#include <linux/limits.h>
 #include <map>
 #include <sstream>
 #include <cstdlib>
@@ -35,16 +36,6 @@ std::string joinMethods(const std::set<std::string>& methods) {
         oss << *it;
     }
     return oss.str();
-}
-
-std::string getContentType(const std::string& extension) {
-    if (extension == ".html") return "text/html";
-    if (extension == ".css") return "text/css";
-    if (extension == ".png") return "image/png";
-    if (extension == ".js") return "application/javascript";
-    if (extension == ".json") return "application/json";
-    if (extension == ".jpg" || extension == ".jpeg") return "image/jpeg";
-    return "application/octet-stream";
 }
 
 bool removeTrailingSemicolon(std::string &s, const std::string &key) {
@@ -142,4 +133,15 @@ const std::map<int, std::string> httpReasonPhrase() {
     reasonPrases[505] = "HTTP Version Not Supported";
 
     return reasonPrases;
+}
+
+std::string getContentType(const std::string& extension) {
+    if (extension == ".html") return "text/html";
+    if (extension == ".css") return "text/css";
+    if (extension == ".js") return "application/javascript";
+    if (extension == ".json") return "application/json";
+    if (extension == ".png") return "image/png";
+    if (extension == ".jpg" || extension == ".jpeg") return "image/jpeg";
+    if (extension == ".gif") return "image/gif";
+    return "application/octet-stream";
 }

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 19:07:32 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/31 23:24:30 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/08 14:39:07 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ class RouteConfig {
 		RouteConfig(const RouteConfig& other);
 		RouteConfig& operator=(const RouteConfig& other);
 		~RouteConfig();
-		
+
 		bool getAutoindex() const;
 		std::string getRoot() const;
 		bool getUploadEnable() const;
@@ -61,4 +61,9 @@ class RouteConfig {
 		void setReturnCodes(const std::string& return_codes);
 
 		void applyDirective(const std::string& key, const std::string& value);
+
+		bool operator==(const RouteConfig& other) const;
+		bool operator!=(const RouteConfig& other) const;
+		bool operator<(const RouteConfig& other) const;
+		bool operator>(const RouteConfig& other) const;
 };

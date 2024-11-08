@@ -6,15 +6,17 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:27:24 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/29 01:30:11 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/08 14:26:49 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
+#include <vector>
 #include "Server.hpp"
 #include "SocketImp.hpp"
 
 Server::Server(const ConfigParser &parser, ISocket *socket) {
+	std::set<ServerConfig> initailServers;
 	if (!socket) {
 		socketInterface = new SocketImp();
 		ownSocket = true;
@@ -24,8 +26,13 @@ Server::Server(const ConfigParser &parser, ISocket *socket) {
 		ownSocket = false;
 	}
 	servers = parser.getServers();
-	for (size_t i = 0; i < servers.size(); i++)
+	for (size_t i = 0; i < servers.size(); i++) {
+		if (initailServers.find(servers[i]) != initailServers.end())
+			continue;
 		initServer(servers[i]);
+		ServerConfig conf = servers[i];
+		initailServers.insert(servers[i]);
+	}
 }
 
 Server::~Server() {

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 19:58:50 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/04 17:59:17 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/08 14:21:43 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ RouteConfig::RouteConfig() {
     root = "";
     upload_enable = false;
     upload_path = "";
-    index = std::set<std::string>();
+    index.insert("index.html");
     methods.insert("GET");
     cgi_extensions = std::set<std::string>();
     allowed_methods.insert("GET");

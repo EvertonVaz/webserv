@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 11:15:05 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/08 12:18:10 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/08 14:48:17 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,12 +62,13 @@ bool FilePath::isPathExist(std::string path) {
 
     if (S_ISDIR(statBuf.st_mode)) {
         setIsDirectory(true);
-    } else if (!S_ISREG(statBuf.st_mode)) {
+    } else if (S_ISREG(statBuf.st_mode)) {
         setIsFile(true);
     }
 
     return _isFile || _isDirectory;
 }
+
 
 std::string FilePath::constructorSafeFilePath() {
     std::string filePath = _root + _uri;
@@ -75,15 +76,15 @@ std::string FilePath::constructorSafeFilePath() {
     std::set<std::string>::iterator it = _index.begin();
     for (; it != _index.end(); ++it) {
         filePath += *it;
-        if (isPathExist(filePath)) {
+        if (isPathExist(filePath))
             break;
-        }
     }
 
     if (filePath[filePath.length() - 1] == '/')
         filePath.erase(filePath.length() - 1);
 
-    if (!isPathSafe(filePath, _root)) {
+    isPathSafe(filePath, _root);
+    if (!_isSafe) {
         setIsFile(false);
         setIsDirectory(false);
         return "";

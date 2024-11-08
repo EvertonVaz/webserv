@@ -25,6 +25,7 @@ SRC = $(wildcard $(SRC_DIR)/parser/*.cpp) \
       $(wildcard $(SRC_DIR)/http/*.cpp) \
       $(wildcard $(SRC_DIR)/router/*.cpp) \
       $(wildcard $(SRC_DIR)/handlers/*.cpp) \
+	  $(wildcard $(SRC_DIR)/utils/*.cpp) \
       $(SRC_DIR)/aux.cpp $(SRC_DIR)/main.cpp
 
 TEST_SRC = $(wildcard $(TEST_DIR)/src/*.cpp) \

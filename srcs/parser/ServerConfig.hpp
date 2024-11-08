@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 19:06:31 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/07 08:44:40 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/08 14:38:27 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,9 @@ class ServerConfig {
 		void addRoute(const std::string& path, const RouteConfig& route);
 
 		void applyDirective(const std::string& key, const std::string& value);
+
+		bool operator==(const ServerConfig& other) const;
+		bool operator!=(const ServerConfig& other) const;
+		bool operator<(const ServerConfig& other) const;
+		bool operator>(const ServerConfig& other) const;
 };

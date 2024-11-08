@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:22 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/07 20:36:53 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/08 14:50:42 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 #include "../aux.hpp"
 #include "../handlers/StaticFileHandler.hpp"
 #include "../handlers/ErrorHandler.hpp"
+#include "../utils/FilePath.hpp"
+// #include "../handlers/CGIHandler.hpp"
 
 Router::Router() {}
 
@@ -58,36 +60,46 @@ const RouteConfig Router::routeRequest(const HTTPRequest& request) {
     return bestMatch;
 }
 
+static inline std::string setRoot(std::string routeRoot, std::string serverRoot) {
+    if (routeRoot.empty()) {
+        return serverRoot;
+    }
+    return routeRoot;
+}
+
+bool Router::isCGIRequest(std::string uri) const {
+    // std::string uri = request.getURI();
+    return uri.find(".php") != std::string::npos;
+}
+
 void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
     const RouteConfig routeConfig = routeRequest(request);
     ErrorHandler errorHandler(serverConfig.getErrorPage());
+    std::string root = setRoot(routeConfig.getRoot(), serverConfig.getRoot());
 
-    if (routeConfig.getRoot().empty()) {
+    if (root.empty()) {
         return errorHandler.handleError(404, response);
     }
+
+    FilePath filePath(root, request.getURI(), routeConfig.getIndex());
 
     std::set<std::string> allowedMethods = routeConfig.getMethods();
     if (allowedMethods.find(request.getMethod()) == allowedMethods.end()) {
         response.addHeader("Allow", joinMethods(allowedMethods));
-        return errorHandler.handleError(405, response);;
+        return errorHandler.handleError(405, response);
     }
 
     std::map<int, std::string> redirectPath = routeConfig.getReturnCodes();
     if (!redirectPath.empty()) {
         response.addHeader("Location", redirectPath[301]);
-        errorHandler.handleError(301, response);
-        return;
+        return errorHandler.handleError(301, response);
     }
 
-    std::string root = routeConfig.getRoot();
-    if (root.empty()) {
-        root = serverConfig.getRoot();
+    if (routeConfig.getCgiExtensions().size() > 0){
+        // CGIHandler cgiHandler(request, routeConfig);
+    } else {
+        StaticFileHandler staticHandler(serverConfig.getErrorPage(), filePath);
+        staticHandler.setDirectoryListingEnabled(routeConfig.getAutoindex());
+        return staticHandler.handleResponse(response);
     }
-
-    StaticFileHandler staticHandler(serverConfig.getErrorPage());
-    staticHandler.setUri(request.getURI());
-    staticHandler.setRootDirectory(root);
-    staticHandler.setDirectoryListingEnabled(routeConfig.getAutoindex());
-    staticHandler.setIndexFiles(routeConfig.getIndex());
-    staticHandler.handleResponse(response);
 }
