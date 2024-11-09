@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:10:43 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/01 15:53:18 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/09 14:25:06 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ ConfigParser::ConfigParser() {
     state = STATE_GLOBAL;
     initializeGlobalKeywords();
 }
+
+ConfigParser::~ConfigParser() {}
 
 ConfigParser *ConfigParser::loadConfig(const std::string& filename) {
     std::ifstream file(filename.c_str());

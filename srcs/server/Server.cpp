@@ -6,12 +6,14 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:27:24 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/08 14:26:49 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/09 17:59:45 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
+#include <cstring>
 #include <vector>
+#include <netdb.h>
+#include <iostream>
 #include "Server.hpp"
 #include "SocketImp.hpp"
 
@@ -78,9 +80,11 @@ void Server::setupSocket(int sockfd, const ServerConfig &serverConfig, struct so
 	}
 }
 
+// TODO: vamos testar isso aqui na 42, e ver como funciona
 void Server::initServer(const ServerConfig &serverConfig) {
 	int opt = 1;
 	struct sockaddr_in addr;
+	// struct addrinfo hints, *res;
 	int sockfd = socketInterface->socket(AF_INET, SOCK_STREAM, 0);
 
 	configureSocket(sockfd, opt);
@@ -88,6 +92,20 @@ void Server::initServer(const ServerConfig &serverConfig) {
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(serverConfig.getPort());
+
+	// memset(&hints, 0, sizeof(hints));
+	// hints.ai_family = AF_INET;
+	// hints.ai_socktype = SOCK_STREAM;
+
+	// int status = getaddrinfo("batata", NULL, &hints, &res);
+	// if (status != 0) {
+	// 	socketInterface->close(sockfd);
+	// 	throw std::runtime_error("getaddrinfo failed");
+	// }
+
+	// struct sockaddr_in *ipv4 = (struct sockaddr_in *)res->ai_addr;
+	// addr.sin_addr = ipv4->sin_addr;
+	// freeaddrinfo(res);
 
 	setupSocket(sockfd, serverConfig, addr);
 

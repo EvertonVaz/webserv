@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:08:43 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/05 19:18:28 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/09 14:25:10 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ class ConfigParser {
 
 	public:
         ConfigParser();
+		~ConfigParser();
 		ConfigParser *loadConfig(const std::string& filename);
 		ConfigParser *parse();
         virtual std::vector<ServerConfig> getServers() const;

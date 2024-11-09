@@ -2,6 +2,7 @@
 
 Obrigatorio colocar uma porta!
 
+o separador é um espaço
 acrescente um root no server ou todos os location do server precisarão ter um root
 se a rota for cgi adicione pelo menos 1 item ao cgi_extension
 caso nao adicione um arquivo ao location, o arquivo padrao será index.html

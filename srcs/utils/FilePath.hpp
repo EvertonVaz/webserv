@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 11:07:26 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/09 10:25:44 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/09 14:51:19 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@ class FilePath {
         bool _isFile;
         bool _isDirectory;
         bool _autoindex;
+        bool _canRead;
+        bool _canWrite;
+        bool _canExecute;
 
         void setIsDirectory(bool enabled);
         void setIsFile(bool isFile);
@@ -41,6 +44,9 @@ class FilePath {
         bool getIsDirectory();
         bool getPathExist();
         bool getIsSafe();
+        bool getCanRead();
+        bool getCanWrite();
+        bool getCanExecute();
         std::string getUri();
         std::string getPath();
         void setAutoIndex(bool autoindex);

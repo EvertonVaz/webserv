@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:59:21 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/08 15:42:17 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/09 14:52:01 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ StaticFileHandler::~StaticFileHandler() {}
 void StaticFileHandler::handleResponse(HTTPResponse& response) {
     ErrorHandler errorHandler(errorPagesPath);
 
-    if (!filePath.getIsSafe()) {
+    if (!filePath.getIsSafe() && filePath.getCanRead()) {
         return errorHandler.handleError(403, response);
     }
 
@@ -55,7 +55,7 @@ void StaticFileHandler::handleResponse(HTTPResponse& response) {
 void StaticFileHandler::serveFile(const std::string& filePath, HTTPResponse& response) {
     std::ifstream file(filePath.c_str(), std::ios::in | std::ios::binary);
     if (!file.is_open()) {
-        return ErrorHandler(errorPagesPath).handleError(404, response);;
+        return ErrorHandler(errorPagesPath).handleError(403, response);;
     }
 
     std::string extension = filePath.substr(filePath.find_last_of('.'));

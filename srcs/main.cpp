@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:14:57 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/01 11:59:45 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/09 14:26:48 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,14 @@ int main(int argc, char **argv) {
             std::cout << "Servidor iniciado com sucesso." << std::endl;
         } else {
             std::cout << "Falha ao iniciar o servidor." << std::endl;
-            exit(EXIT_FAILURE);
+            return 1;
         }
 
         ConnectionManager connManager(server);
         connManager.run();
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
-        exit(EXIT_FAILURE);
+        return 1;
     }
     return 0;
 }

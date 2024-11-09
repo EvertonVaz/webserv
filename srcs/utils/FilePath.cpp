@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 11:15:05 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/09 10:26:00 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/09 14:51:42 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ FilePath::FilePath(std::string root, std::string uri, std::list<std::string> ind
     _isFile = false;
     _isDirectory = false;
 
+    if (_root[_root.length() - 1] == '/')
+        _root.erase(_root.length() - 1);
     isPathExist(_root + uri);
     if (_isDirectory && uri[uri.length() - 1] != '/')
         _uri += "/";
@@ -70,6 +72,9 @@ bool FilePath::isPathExist(std::string path) {
         setIsDirectory(false);
     }
 
+    _canRead = (statBuf.st_mode & S_IRUSR) != 0;
+    _canWrite = (statBuf.st_mode & S_IWUSR) != 0;
+    _canExecute = (statBuf.st_mode & S_IXUSR) != 0;
     return _isFile || _isDirectory;
 }
 
@@ -118,4 +123,16 @@ std::string FilePath::getUri() {
 
 void FilePath::setAutoIndex(bool autoindex) {
     _autoindex = autoindex;
+}
+
+bool FilePath::getCanRead() {
+    return _canRead;
+}
+
+bool FilePath::getCanWrite() {
+    return _canWrite;
+}
+
+bool FilePath::getCanExecute() {
+    return _canExecute;
 }
