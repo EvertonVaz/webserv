@@ -1,21 +1,38 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   CGIHandler.hpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 10:05:26 by Everton           #+#    #+#             */
+/*   Updated: 2024/11/10 10:05:29 by Everton          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #pragma once
 
+#include "ErrorHandler.hpp"
+#include "../utils/FilePath.hpp"
 #include "../http/HTTPRequest.hpp"
 #include "../http/HTTPResponse.hpp"
-#include "../parser/RouteConfig.hpp"
 
 class CGIHandler {
     private:
-        HTTPRequest _request;
-        RouteConfig _routeConfig;
+        ErrorHandler& errorHandler;
+        FilePath& filePath;
+        const HTTPRequest& request;
+        std::vector<std::string> envVarsStorage;
 
-        void setEnvironmentVariables(char**& envp);
-        void executeCGI(int input_fd, int output_fd);
-        std::string getScriptPath() const;
+        void executeCGI(HTTPResponse& response);
+        void setEnvironment(char**& envp);
+        void handleFork(int inputPipe[], int outputPipe[]);
+        void fillResponse(std::string cgiOutput, HTTPResponse& response);
 
     public:
-        CGIHandler(const HTTPRequest& request, const RouteConfig& routeConfig);
+        CGIHandler(ErrorHandler& errorHandler, FilePath& filePath, const HTTPRequest& request);
         ~CGIHandler();
+
 
         void handleResponse(HTTPResponse& response);
 };

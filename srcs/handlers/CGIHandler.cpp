@@ -1,77 +1,168 @@
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   CGIHandler.cpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 10:00:00 by Everton           #+#    #+#             */
+/*   Updated: 2024/11/10 10:00:00 by Everton          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "CGIHandler.hpp"
+#include <iostream>
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <cstring>
+#include <sstream>
 
-CGIHandler::CGIHandler(const HTTPRequest& request, const RouteConfig& routeConfig)
-    : _request(request), _routeConfig(routeConfig) {}
+CGIHandler::CGIHandler(ErrorHandler& errorHandler, FilePath& filePath, const HTTPRequest& request)
+    : errorHandler(errorHandler), filePath(filePath), request(request) {
+}
 
-CGIHandler::~CGIHandler() {}
+CGIHandler::~CGIHandler() {
+}
 
 void CGIHandler::handleResponse(HTTPResponse& response) {
-    (void)response;
+    if (!filePath.getCanExecute()) {
+        return errorHandler.handleError(403, response);
+    }
+    executeCGI(response);
+}
+
+void CGIHandler::handleFork(int *inputPipe, int *outputPipe) {
+    char** envp = NULL;
+    setEnvironment(envp);
+
+    dup2(inputPipe[0], STDIN_FILENO);
+    dup2(outputPipe[1], STDOUT_FILENO);
+
+    close(inputPipe[1]);
+    close(outputPipe[0]);
+    std::string path = filePath.getPath();
+
+    char* argv[] = { const_cast<char*>(path.c_str()), NULL };
+    execve(argv[0], argv, envp);
+    exit(1);
+}
+
+void CGIHandler::fillResponse(std::string cgiOutput, HTTPResponse& response) {
+    size_t headerEnd = cgiOutput.find("\n\n");
+    if (headerEnd != std::string::npos) {
+        std::string headers = cgiOutput.substr(0, headerEnd);
+        std::string body = cgiOutput.substr(headerEnd + 2);
+
+        std::istringstream headerStream(headers);
+        std::string line;
+        while (std::getline(headerStream, line) && line != "\r") {
+            size_t pos = line.find(": ");
+            if (pos != std::string::npos) {
+                std::string key = line.substr(0, pos);
+                std::string value = line.substr(pos + 2);
+                response.addHeader(key, value);
+            }
+        }
+        response.setBody(body);
+        response.setStatusCode(200);
+    }
+}
+
+void CGIHandler::executeCGI(HTTPResponse& response) {
     int inputPipe[2];
     int outputPipe[2];
+
     if (pipe(inputPipe) == -1 || pipe(outputPipe) == -1) {
-        // TODO: Tratar erro
-        return;
+        return errorHandler.handleError(500, response);
     }
 
     pid_t pid = fork();
     if (pid == -1) {
-        // TODO: Tratar erro no fork
-        return;
-    }
-
-    if (pid == 0) {
-        dup2(inputPipe[0], STDIN_FILENO);
-        dup2(outputPipe[1], STDOUT_FILENO);
-        close(inputPipe[1]);
-        close(outputPipe[0]);
-
-        char** envp = NULL;
-        setEnvironmentVariables(envp);
-        std::string scriptPath = getScriptPath();
-        char* argv[] = { const_cast<char*>(scriptPath.c_str()), NULL };
-        execve(argv[0], argv, envp);
-
-        _exit(1);
+        std::cout << "Fork failed" << std::endl;
+        return errorHandler.handleError(500, response);
+    } else if (pid == 0) {
+        handleFork(inputPipe, outputPipe);
     } else {
         close(inputPipe[0]);
         close(outputPipe[1]);
 
-        // Enviar dados para o script CGI (se necessário)
-        // ...código para escrever no inputPipe[1] se for método POST...
-
+        if (request.getMethod() == "POST") {
+            std::string body = request.getBody();
+            write(inputPipe[1], body.c_str(), body.length());
+        }
         close(inputPipe[1]);
 
-        // Ler a saída do script CGI
         char buffer[1024];
-        ssize_t bytesRead;
         std::string cgiOutput;
+        ssize_t bytesRead;
         while ((bytesRead = read(outputPipe[0], buffer, sizeof(buffer))) > 0) {
             cgiOutput.append(buffer, bytesRead);
         }
-
-        // Processar a saída do CGI e preencher a resposta
-        // ...código para atualizar response com cgiOutput...
-
         close(outputPipe[0]);
-        waitpid(pid, NULL, 0);
+
+        int status;
+        waitpid(pid, &status, 0);
+        if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
+            fillResponse(cgiOutput, response);
+        } else {
+            return errorHandler.handleError(500, response);
+        }
     }
 }
 
-void CGIHandler::setEnvironmentVariables(char**& envp) {
-    (void)envp;
-    // Configurar as variáveis de ambiente necessárias para o script CGI
-    // Exemplo: REQUEST_METHOD, QUERY_STRING, CONTENT_LENGTH, CONTENT_TYPE, etc.
-}
+void CGIHandler::setEnvironment(char**& envp) {
+    extern char **environ;
+    envVarsStorage.clear();
+    for (char **env = environ; *env != NULL; ++env) {
+        envVarsStorage.push_back(std::string(*env));
+    }
+    // Método da requisição (GET, POST, etc.)
+    envVarsStorage.push_back("REQUEST_METHOD=" + request.getMethod());
 
-std::string CGIHandler::getScriptPath() const {
-    // Retorna o caminho completo para o script CGI baseado na URI e root
-    // Exemplo: combinar _routeConfig.getRoot() com _request.getURI()
-    return "";
-}
+    // Consulta da string (para métodos GET) - Descomentado se necessário
+    envVarsStorage.push_back("QUERY_STRING=" + request.getQueryString());
 
+    // Conteúdo da requisição (para métodos POST)
+    if (request.getMethod() == "POST") {
+        std::ostringstream oss;
+        oss << request.getContentLength();
+        envVarsStorage.push_back("CONTENT_LENGTH=" + oss.str());
+        envVarsStorage.push_back("CONTENT_TYPE=" + request.getContentType());
+    }
+
+    // Informação do script
+    envVarsStorage.push_back("SCRIPT_NAME=" + filePath.getPath());
+
+    // Informação do servidor
+    std::string host = request.getHeaders().at("host");
+    size_t colonPos = host.find(":");
+    if (colonPos != std::string::npos) {
+        envVarsStorage.push_back("SERVER_NAME=" + host.substr(0, colonPos));
+        envVarsStorage.push_back("SERVER_PORT=" + host.substr(colonPos + 1));
+    } else {
+        envVarsStorage.push_back("SERVER_NAME=" + host);
+        envVarsStorage.push_back("SERVER_PORT=80"); // Porta padrão HTTP
+    }
+
+    // Variáveis adicionais conforme a necessidade
+    envVarsStorage.push_back("GATEWAY_INTERFACE=CGI/1.1");
+    envVarsStorage.push_back("SERVER_PROTOCOL=HTTP/1.1");
+    envVarsStorage.push_back("REMOTE_ADDR=127.0.0.1");
+    envVarsStorage.push_back("REMOTE_PORT=12345");
+
+    // Converter as strings para C-strings
+    std::vector<char*> envpVec;
+    for (std::vector<std::string>::iterator it = envVarsStorage.begin(); it != envVarsStorage.end(); ++it) {
+        envpVec.push_back(const_cast<char*>(it->c_str()));
+    }
+    envpVec.push_back(NULL); // Finalizar com NULL
+
+    // Alocar memória para envp
+    size_t envCount = envpVec.size();
+    envp = new char*[envCount];
+    for (size_t i = 0; i < envCount; ++i) {
+        envp[i] = envpVec[i];
+    }
+}

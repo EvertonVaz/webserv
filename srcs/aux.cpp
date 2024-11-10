@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:48:25 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/09 16:24:21 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/10 20:18:29 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,11 @@
 #include <vector>
 
 ServerConfig selectConfig(HTTPRequest request, std::vector<ServerConfig> serverConfigs) {
-    std::vector<std::string> serverName;
-    std::string host = serverConfigs[0].getHost();
     for (size_t i = 0; i < serverConfigs.size(); i++) {
-        serverName = serverConfigs[i].getServerName();
+        std::string host = serverConfigs[i].getHost();
+        std::vector<std::string> serverName = serverConfigs[i].getServerName();
         bool findHost = request.getHeaders()["host"].find(host) != std::string::npos;
-        if (findHost)
+        if (findHost || host == "0.0.0.0")
             return serverConfigs[i];
         else {
             for (size_t j = 0; j < serverName.size(); j++) {

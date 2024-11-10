@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   HTTPRequest.cpp                                        :+:      :+:    :+:   */
+/*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 20:55:57 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/30 21:32:30 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/10 21:55:17 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,7 @@ HTTPRequest::HTTPRequest() {
 HTTPRequest::~HTTPRequest() {
 }
 
-
-
+// TODO: Tratar parametros de URL ou pensar em uma forma de fazer isso
 bool HTTPRequest::parseRequestLine(const std::string& line) {
     std::istringstream iss(line);
     if (!(iss >> method >> uri >> httpVersion)) {
@@ -53,12 +52,26 @@ bool HTTPRequest::parseRequestLine(const std::string& line) {
     return true;
 }
 
+void HTTPRequest::handleQueryString() {
+    size_t pos = uri.find("?");
+    if (pos != std::string::npos) {
+        queryString = uri.substr(pos + 1);
+        uri.erase(pos);
+    }
+}
+
 bool HTTPRequest::endOfHeader() {
 	std::map<std::string, std::string>::iterator it;
 
+    handleQueryString();
 	it = headers.find("content-length");
 	if (it != headers.end()) {
 		contentLength = static_cast<size_t>(std::atoi(it->second.c_str()));
+	}
+
+    it = headers.find("content-type");
+	if (it != headers.end()) {
+		contentType = static_cast<size_t>(std::atoi(it->second.c_str()));
 	}
 
 	it = headers.find("transfer-encoding");

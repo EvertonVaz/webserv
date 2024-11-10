@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 20:26:19 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/07 20:26:58 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/10 21:40:07 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,10 @@ std::string HTTPRequest::getURI() const {
     return uri;
 }
 
+std::string HTTPRequest::getQueryString() const {
+    return queryString;
+}
+
 std::string HTTPRequest::getHTTPVersion() const {
     return httpVersion;
 }
@@ -42,4 +46,12 @@ std::map<std::string, std::string> HTTPRequest::getHeaders() const {
 
 std::string HTTPRequest::getBody() const {
     return body;
+}
+
+size_t HTTPRequest::getContentLength() const {
+    return contentLength;
+}
+
+std::string HTTPRequest::getContentType() const {
+    return contentType;
 }

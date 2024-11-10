@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:22 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/08 16:57:11 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/09 18:48:43 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "../handlers/StaticFileHandler.hpp"
 #include "../handlers/ErrorHandler.hpp"
 #include "../utils/FilePath.hpp"
-// #include "../handlers/CGIHandler.hpp"
+#include "../handlers/CGIHandler.hpp"
 
 Router::Router() {}
 
@@ -67,11 +67,6 @@ static inline std::string setRoot(std::string routeRoot, std::string serverRoot)
     return routeRoot;
 }
 
-bool Router::isCGIRequest(std::string uri) const {
-    // std::string uri = request.getURI();
-    return uri.find(".php") != std::string::npos;
-}
-
 void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
     const RouteConfig routeConfig = routeRequest(request);
     ErrorHandler errorHandler(serverConfig.getErrorPage());
@@ -95,12 +90,20 @@ void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
         return errorHandler.handleError(301, response);
     }
 
-    if (routeConfig.getCgiExtensions().size() > 0){
-        // TODO: Implement CGIHandler
-        // CGIHandler cgiHandler(request, routeConfig);
+    if (isCgiRequest(filePath.getPath(), routeConfig.getCgiExtensions())) {
+        CGIHandler cgiHandler(errorHandler, filePath, request);
+        return cgiHandler.handleResponse(response);
     } else {
-        StaticFileHandler staticHandler(serverConfig.getErrorPage(), filePath);
+        StaticFileHandler staticHandler(errorHandler, filePath);
         staticHandler.setDirectoryListingEnabled(routeConfig.getAutoindex());
         return staticHandler.handleResponse(response);
     }
+}
+
+bool Router::isCgiRequest(const std::string& path, const std::set<std::string>& cgiExtensions) {
+    size_t dotPos = path.find_last_of('.');
+    if (dotPos == std::string::npos)
+        return false;
+    std::string extension = path.substr(dotPos);
+    return cgiExtensions.find(extension) != cgiExtensions.end();
 }

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   HTTPRequest.hpp                                        :+:      :+:    :+:   */
+/*   HTTPRequest.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 20:39:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/30 21:41:03 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/10 21:39:55 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 #include <string>
 #include <map>
-#include "../parser/RouteConfig.hpp"
 #include "../parser/ServerConfig.hpp"
 
 class HTTPRequest {
@@ -30,7 +29,9 @@ class HTTPRequest {
 	private:
 		std::string method;
 		std::string uri;
+		std::string queryString;
 		std::string httpVersion;
+		std::string contentType;
 		std::map<std::string, std::string> headers;
 		std::string body;
 
@@ -43,6 +44,7 @@ class HTTPRequest {
 		bool parseRequestLine(const std::string& line);
 		bool parseHeaderLine(const std::string& line);
 		bool endOfHeader();
+		void handleQueryString();
 		bool parseBody();
 
 	public:
@@ -55,9 +57,12 @@ class HTTPRequest {
 
 		std::string getMethod() const;
 		std::string getURI() const;
+		std::string getQueryString() const;
 		std::string getHTTPVersion() const;
 		std::map<std::string, std::string> getHeaders() const;
 		std::string getBody() const;
+		std::string getContentType() const;
+		size_t getContentLength() const;
 		size_t getMaxBodySize() const;
 
 		void setMaxBodySize(size_t size);
