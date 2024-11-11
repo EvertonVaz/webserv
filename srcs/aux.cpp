@@ -21,16 +21,22 @@
 #include <vector>
 
 ServerConfig selectConfig(HTTPRequest request, std::vector<ServerConfig> serverConfigs) {
+    std::string requestHost = request.getHeaders().at("host");
+    std::string requestPort = requestHost.substr(requestHost.find(":") + 1);
+    requestHost = requestHost.substr(0, requestHost.find(":"));
     for (size_t i = 0; i < serverConfigs.size(); i++) {
         std::string host = serverConfigs[i].getHost();
-        std::vector<std::string> serverName = serverConfigs[i].getServerName();
-        bool findHost = request.getHeaders()["host"].find(host) != std::string::npos;
-        if (findHost || host == "0.0.0.0")
+        int port = serverConfigs[i].getPort();
+
+        bool findHost = host == requestHost || host == "0.0.0.0";
+        bool findPort = port == std::atoi(requestPort.c_str());
+        if (findHost && findPort)
             return serverConfigs[i];
         else {
+            std::vector<std::string> serverName = serverConfigs[i].getServerName();
             for (size_t j = 0; j < serverName.size(); j++) {
-                bool findName = request.getHeaders()["host"].find(serverName[j]) != std::string::npos;
-                if (findName)
+                bool findServerName = serverName[j] == requestHost;
+                if (findServerName && findPort)
                     return serverConfigs[i];
             }
         }

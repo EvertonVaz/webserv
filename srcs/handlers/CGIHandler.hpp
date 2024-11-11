@@ -26,7 +26,9 @@ class CGIHandler {
 
         void executeCGI(HTTPResponse& response);
         void setEnvironment(char**& envp);
-        void handleFork(int inputPipe[], int outputPipe[]);
+        void handleExec(int *inputPipe, int *outputPipe);
+        void handlePOST(int *inputPipe, int *outputPipe, const HTTPRequest& request);
+        std::string readCGI(int *outputPipe);
         void fillResponse(std::string cgiOutput, HTTPResponse& response);
 
     public:

@@ -18,13 +18,13 @@
 #include <fcntl.h>
 #include <cstring>
 #include <sstream>
+#include <cerrno>
 
 CGIHandler::CGIHandler(ErrorHandler& errorHandler, FilePath& filePath, const HTTPRequest& request)
     : errorHandler(errorHandler), filePath(filePath), request(request) {
 }
 
-CGIHandler::~CGIHandler() {
-}
+CGIHandler::~CGIHandler() {}
 
 void CGIHandler::handleResponse(HTTPResponse& response) {
     if (!filePath.getCanExecute()) {
@@ -33,7 +33,7 @@ void CGIHandler::handleResponse(HTTPResponse& response) {
     executeCGI(response);
 }
 
-void CGIHandler::handleFork(int *inputPipe, int *outputPipe) {
+void CGIHandler::handleExec(int *inputPipe, int *outputPipe) {
     char** envp = NULL;
     setEnvironment(envp);
 
@@ -46,6 +46,7 @@ void CGIHandler::handleFork(int *inputPipe, int *outputPipe) {
 
     char* argv[] = { const_cast<char*>(path.c_str()), NULL };
     execve(argv[0], argv, envp);
+    std::cerr << "Execve failed: " << strerror(errno) << std::endl;
     exit(1);
 }
 
@@ -70,6 +71,28 @@ void CGIHandler::fillResponse(std::string cgiOutput, HTTPResponse& response) {
     }
 }
 
+void CGIHandler::handlePOST(int *inputPipe, int *outputPipe, const HTTPRequest& request) {
+    close(inputPipe[0]);
+    close(outputPipe[1]);
+    if (request.getMethod() == "POST") {
+        std::string body = request.getBody();
+        write(inputPipe[1], body.c_str(), body.length());
+    }
+    close(inputPipe[1]);
+}
+
+std::string CGIHandler::readCGI(int *outputPipe) {
+    char buffer[1024];
+    std::string cgiOutput;
+    ssize_t bytesRead;
+    while ((bytesRead = read(outputPipe[0], buffer, sizeof(buffer))) > 0) {
+        cgiOutput.append(buffer, bytesRead);
+    }
+    close(outputPipe[0]);
+
+    return cgiOutput;
+}
+
 void CGIHandler::executeCGI(HTTPResponse& response) {
     int inputPipe[2];
     int outputPipe[2];
@@ -83,24 +106,11 @@ void CGIHandler::executeCGI(HTTPResponse& response) {
         std::cout << "Fork failed" << std::endl;
         return errorHandler.handleError(500, response);
     } else if (pid == 0) {
-        handleFork(inputPipe, outputPipe);
+        handleExec(inputPipe, outputPipe);
     } else {
-        close(inputPipe[0]);
-        close(outputPipe[1]);
 
-        if (request.getMethod() == "POST") {
-            std::string body = request.getBody();
-            write(inputPipe[1], body.c_str(), body.length());
-        }
-        close(inputPipe[1]);
-
-        char buffer[1024];
-        std::string cgiOutput;
-        ssize_t bytesRead;
-        while ((bytesRead = read(outputPipe[0], buffer, sizeof(buffer))) > 0) {
-            cgiOutput.append(buffer, bytesRead);
-        }
-        close(outputPipe[0]);
+        handlePOST(inputPipe, outputPipe, request);
+        std::string cgiOutput = readCGI(outputPipe);
 
         int status;
         waitpid(pid, &status, 0);
@@ -113,8 +123,8 @@ void CGIHandler::executeCGI(HTTPResponse& response) {
 }
 
 void CGIHandler::setEnvironment(char**& envp) {
-    extern char **environ;
     envVarsStorage.clear();
+    extern char **environ;
     for (char **env = environ; *env != NULL; ++env) {
         envVarsStorage.push_back(std::string(*env));
     }
