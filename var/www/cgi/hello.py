@@ -100,20 +100,8 @@ def main():
             print("    </div>")
             print("</body>")
             print("</html>")
-    except Exception as e:
-        print("Content-Type: text/html")
-        print()
-        print("<!DOCTYPE html>")
-        print("<html lang='pt-BR'>")
-        print("<head><title>Error</title></head>")
-        print("<body>")
-        print("    <div class='container'>")
-        print("        <h1>Ocorreu um erro</h1>")
-        print(f"        <pre>{html.escape(str(e))}</pre>")
-        print("        <a href='/' class='button'>Voltar</a>")
-        print("    </div>")
-        print("</body>")
-        print("</html>")
+    except:
+        exit(1)
 
 if __name__ == "__main__":
     main()

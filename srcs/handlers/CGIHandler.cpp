@@ -12,6 +12,7 @@
 /* ************************************************************************** */
 
 #include "CGIHandler.hpp"
+#include <cstddef>
 #include <iostream>
 #include <unistd.h>
 #include <sys/wait.h>
@@ -35,8 +36,14 @@ void CGIHandler::handleResponse(HTTPResponse& response) {
 
 void CGIHandler::handleExec(int *inputPipe, int *outputPipe) {
     char** envp = NULL;
-    setEnvironment(envp);
+    setEnvironment();
 
+    size_t envCount = envVarsStorage.size();
+    envp = new char*[envCount];
+    for (size_t i = 0; i < envCount; i++) {
+        envp[i] = const_cast<char*>(envVarsStorage[i].c_str());
+    }
+    envp[envCount] = NULL;
     dup2(inputPipe[0], STDIN_FILENO);
     dup2(outputPipe[1], STDOUT_FILENO);
 
@@ -108,7 +115,6 @@ void CGIHandler::executeCGI(HTTPResponse& response) {
     } else if (pid == 0) {
         handleExec(inputPipe, outputPipe);
     } else {
-
         handlePOST(inputPipe, outputPipe, request);
         std::string cgiOutput = readCGI(outputPipe);
 
@@ -122,57 +128,27 @@ void CGIHandler::executeCGI(HTTPResponse& response) {
     }
 }
 
-void CGIHandler::setEnvironment(char**& envp) {
+void CGIHandler::setEnvironment(void) {
     envVarsStorage.clear();
+    std::string host = request.getHeaders().at("host");
+    size_t colonPos = host.find(":");
     extern char **environ;
+
     for (char **env = environ; *env != NULL; ++env) {
         envVarsStorage.push_back(std::string(*env));
     }
-    // Método da requisição (GET, POST, etc.)
-    envVarsStorage.push_back("REQUEST_METHOD=" + request.getMethod());
 
-    // Consulta da string (para métodos GET) - Descomentado se necessário
-    envVarsStorage.push_back("QUERY_STRING=" + request.getQueryString());
-
-    // Conteúdo da requisição (para métodos POST)
     if (request.getMethod() == "POST") {
         std::ostringstream oss;
         oss << request.getContentLength();
         envVarsStorage.push_back("CONTENT_LENGTH=" + oss.str());
         envVarsStorage.push_back("CONTENT_TYPE=" + request.getContentType());
     }
-
-    // Informação do script
+    envVarsStorage.push_back("REQUEST_METHOD=" + request.getMethod());
+    envVarsStorage.push_back("QUERY_STRING=" + request.getQueryString());
     envVarsStorage.push_back("SCRIPT_NAME=" + filePath.getPath());
-
-    // Informação do servidor
-    std::string host = request.getHeaders().at("host");
-    size_t colonPos = host.find(":");
-    if (colonPos != std::string::npos) {
-        envVarsStorage.push_back("SERVER_NAME=" + host.substr(0, colonPos));
-        envVarsStorage.push_back("SERVER_PORT=" + host.substr(colonPos + 1));
-    } else {
-        envVarsStorage.push_back("SERVER_NAME=" + host);
-        envVarsStorage.push_back("SERVER_PORT=80"); // Porta padrão HTTP
-    }
-
-    // Variáveis adicionais conforme a necessidade
+    envVarsStorage.push_back("SERVER_NAME=" + host.substr(0, colonPos));
+    envVarsStorage.push_back("SERVER_PORT=" + host.substr(colonPos + 1));
     envVarsStorage.push_back("GATEWAY_INTERFACE=CGI/1.1");
     envVarsStorage.push_back("SERVER_PROTOCOL=HTTP/1.1");
-    envVarsStorage.push_back("REMOTE_ADDR=127.0.0.1");
-    envVarsStorage.push_back("REMOTE_PORT=12345");
-
-    // Converter as strings para C-strings
-    std::vector<char*> envpVec;
-    for (std::vector<std::string>::iterator it = envVarsStorage.begin(); it != envVarsStorage.end(); ++it) {
-        envpVec.push_back(const_cast<char*>(it->c_str()));
-    }
-    envpVec.push_back(NULL); // Finalizar com NULL
-
-    // Alocar memória para envp
-    size_t envCount = envpVec.size();
-    envp = new char*[envCount];
-    for (size_t i = 0; i < envCount; ++i) {
-        envp[i] = envpVec[i];
-    }
 }

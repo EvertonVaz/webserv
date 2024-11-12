@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 10:05:26 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/10 10:05:29 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/11 21:39:54 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ class CGIHandler {
         std::vector<std::string> envVarsStorage;
 
         void executeCGI(HTTPResponse& response);
-        void setEnvironment(char**& envp);
+        void setEnvironment(void);
         void handleExec(int *inputPipe, int *outputPipe);
         void handlePOST(int *inputPipe, int *outputPipe, const HTTPRequest& request);
         std::string readCGI(int *outputPipe);
