@@ -6,7 +6,7 @@
 #    By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/11 21:44:16 by Everton           #+#    #+#              #
-#    Updated: 2024/11/11 22:10:33 by Everton          ###   ########.fr        #
+#    Updated: 2024/11/12 11:37:18 by Everton          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ async def send_request(session, url):
 
 async def stress_test():
     url = 'http://localhost:8080/'
-    num_requests = 1000
+    num_requests = 10000
     tasks = []
 
     async with aiohttp.ClientSession() as session:
@@ -33,4 +33,5 @@ async def stress_test():
         await asyncio.gather(*tasks)
 
 asyncio.run(stress_test())
-print('Total requests:', len(res))
+print('Total requests: {:,}'.format(len(res)))
+# print('Total requests:', len(res))

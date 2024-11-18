@@ -16,7 +16,7 @@ SRC_DIR = ./srcs
 TEST_DIR = ./tests
 OBJ_DIR = ./obj
 TEST_OBJ_DIR = ./obj/test
-INCLUDES = -I./interfaces
+INCLUDES = -I./interfaces -I./srcs/
 
 # Source files
 SRC = $(wildcard $(SRC_DIR)/parser/*.cpp) \
@@ -26,6 +26,7 @@ SRC = $(wildcard $(SRC_DIR)/parser/*.cpp) \
       $(wildcard $(SRC_DIR)/router/*.cpp) \
       $(wildcard $(SRC_DIR)/handlers/*.cpp) \
 	  $(wildcard $(SRC_DIR)/utils/*.cpp) \
+	  $(wildcard $(SRC_DIR)/logger/*.cpp) \
       $(SRC_DIR)/aux.cpp $(SRC_DIR)/main.cpp
 
 TEST_SRC = $(wildcard $(TEST_DIR)/src/*.cpp) \

@@ -6,12 +6,13 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 10:51:09 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/07 20:20:50 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/15 07:12:57 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "HTTPResponse.hpp"
 #include <sstream>
+#include "HTTPResponse.hpp"
+#include "../logger/Logger.hpp"
 
 HTTPResponse::HTTPResponse() {
 	httpVersion = "HTTP/1.1";
@@ -26,18 +27,18 @@ HTTPResponse::~HTTPResponse() {
 static inline std::string getHTTPDate() {
     time_t now = time(NULL);
     if (now == ((time_t)-1)) {
-        throw std::runtime_error("Error getting current time");
+        Logger::getInstance().log(Logger::ERROR, "Error getting current time");
     }
 
     struct tm *gmt = gmtime(&now);
     if (gmt == NULL) {
-        throw std::runtime_error("Error converting time to GMT");
+        Logger::getInstance().log(Logger::ERROR, "Error converting time to GMT");
     }
 
     char buf[30];
     size_t bytes = strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S GMT", gmt);
     if (bytes == 0) {
-        throw std::runtime_error("Error formatting time");
+        Logger::getInstance().log(Logger::ERROR, "Error formatting time");
     }
     return std::string(buf);
 }

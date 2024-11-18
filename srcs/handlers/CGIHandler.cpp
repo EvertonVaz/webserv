@@ -11,15 +11,16 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "CGIHandler.hpp"
+#include <cerrno>
+#include <cstring>
+#include <sstream>
 #include <cstddef>
+#include <fcntl.h>
 #include <iostream>
 #include <unistd.h>
 #include <sys/wait.h>
-#include <fcntl.h>
-#include <cstring>
-#include <sstream>
-#include <cerrno>
+#include "CGIHandler.hpp"
+#include "../logger/Logger.hpp"
 
 CGIHandler::CGIHandler(ErrorHandler& errorHandler, FilePath& filePath, const HTTPRequest& request)
     : errorHandler(errorHandler), filePath(filePath), request(request) {
@@ -53,7 +54,7 @@ void CGIHandler::handleExec(int *inputPipe, int *outputPipe) {
 
     char* argv[] = { const_cast<char*>(path.c_str()), NULL };
     execve(argv[0], argv, envp);
-    std::cerr << "Execve failed: " << strerror(errno) << std::endl;
+    Logger::getInstance().log(Logger::ERROR, "Execve failed: " + std::string(strerror(errno)));
     exit(1);
 }
 
@@ -110,7 +111,7 @@ void CGIHandler::executeCGI(HTTPResponse& response) {
 
     pid_t pid = fork();
     if (pid == -1) {
-        std::cout << "Fork failed" << std::endl;
+        Logger::getInstance().log(Logger::ERROR, "Fork failed");
         return errorHandler.handleError(500, response);
     } else if (pid == 0) {
         handleExec(inputPipe, outputPipe);

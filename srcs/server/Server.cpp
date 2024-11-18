@@ -6,16 +6,17 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:27:24 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/10 12:25:47 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/15 07:20:56 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cstring>
 #include <vector>
 #include <netdb.h>
-#include <iostream>
+#include "../aux.hpp"
 #include "Server.hpp"
 #include "SocketImp.hpp"
+#include "../logger/Logger.hpp"
 
 Server::Server(const ConfigParser &parser, ISocket *socket) {
 	std::set<ServerConfig> initailServers;
@@ -110,7 +111,10 @@ void Server::initServer(const ServerConfig &serverConfig) {
 	setupSocket(sockfd, serverConfig, addr);
 
 	listenSockets.push_back(sockfd);
-	std::cout << "Servidor escutando em " << serverConfig.getHost() << ":" << serverConfig.getPort() << std::endl;
+	Logger::getInstance()
+		.log(Logger::INFO, "Servidor escutando em "
+			+ serverConfig.getHost() + ":"
+			+ itostr(serverConfig.getPort()));
 }
 
 bool Server::isListening() const {

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:48:25 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/10 20:18:29 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/15 07:21:54 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include "./logger/Logger.hpp"
 
 ServerConfig selectConfig(HTTPRequest request, std::vector<ServerConfig> serverConfigs) {
     std::string requestHost = request.getHeaders().at("host");
@@ -41,7 +42,9 @@ ServerConfig selectConfig(HTTPRequest request, std::vector<ServerConfig> serverC
             }
         }
     }
-    throw std::runtime_error("No server config found for request");
+    Logger::getInstance()
+        .log(Logger::ERROR, "No server config found for request");
+    return ServerConfig();
 }
 
 std::string joinMethods(const std::set<std::string>& methods) {
@@ -161,4 +164,10 @@ std::string getContentType(const std::string& extension) {
     if (extension == ".jpg" || extension == ".jpeg") return "image/jpeg";
     if (extension == ".gif") return "image/gif";
     return "application/octet-stream";
+}
+
+std::string itostr(const int value) {
+    std::ostringstream oss;
+    oss << value;
+    return oss.str();
 }
