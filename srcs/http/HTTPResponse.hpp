@@ -6,14 +6,15 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 10:45:21 by Everton           #+#    #+#             */
-/*   Updated: 2024/10/31 10:50:32 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/18 10:56:39 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <string>
 #include <map>
+#include <string>
+#include "../logger/Logger.hpp"
 
 class HTTPResponse {
     private:
@@ -22,8 +23,10 @@ class HTTPResponse {
         std::string reasonPhrase;
         std::map<std::string, std::string> headers;
         std::string body;
-
+        Logger* logger;
         bool closeConnection;
+
+        std::string getHTTPDate();
 
     public:
         HTTPResponse();
@@ -45,6 +48,7 @@ class HTTPResponse {
 
         std::string generateResponse();
 
+        // TODO: Reavaliar a ideia abaixo e decidir se é necessário
         // Método para enviar a resposta (pode ser implementado no ConnectionManager)
         // void sendResponse(int clientSockFd, ISocket* socketInterface);
 };

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 10:51:09 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/15 07:12:57 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/18 10:57:02 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,26 +19,27 @@ HTTPResponse::HTTPResponse() {
 	statusCode = 200;
 	reasonPhrase = "OK";
 	closeConnection = false;
+    logger = &Logger::getInstance();
 }
 
 HTTPResponse::~HTTPResponse() {
 }
 
-static inline std::string getHTTPDate() {
+std::string HTTPResponse::getHTTPDate() {
     time_t now = time(NULL);
     if (now == ((time_t)-1)) {
-        Logger::getInstance().log(Logger::ERROR, "Error getting current time");
+        logger->log(Logger::ERROR, "Error getting current time");
     }
 
     struct tm *gmt = gmtime(&now);
     if (gmt == NULL) {
-        Logger::getInstance().log(Logger::ERROR, "Error converting time to GMT");
+        logger->log(Logger::ERROR, "Error converting time to GMT");
     }
 
     char buf[30];
     size_t bytes = strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S GMT", gmt);
     if (bytes == 0) {
-        Logger::getInstance().log(Logger::ERROR, "Error formatting time");
+        logger->log(Logger::ERROR, "Error formatting time");
     }
     return std::string(buf);
 }

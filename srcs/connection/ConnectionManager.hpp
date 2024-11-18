@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/26 12:37:07 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/06 23:02:15 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/18 10:46:19 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,11 @@
 #include <vector>
 #include <poll.h>
 #include <string>
-#include "../interfaces/ISocket.hpp"
 #include "../server/Server.hpp"
-#include "../http/HTTPRequest.hpp"
 #include "../router/Router.hpp"
+#include "../logger/Logger.hpp"
+#include "../http/HTTPRequest.hpp"
+#include "../interfaces/ISocket.hpp"
 
 class ConnectionManager {
 	private:
@@ -30,6 +31,7 @@ class ConnectionManager {
 		std::map<int, std::string> clientBuffers;
 		std::vector<ServerConfig> serverConfigs;
 		Router router;
+		Logger* logger;
 
 	public:
 		ConnectionManager(Server &servers);

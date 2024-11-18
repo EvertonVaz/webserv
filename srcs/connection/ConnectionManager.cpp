@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/15 16:29:56 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/18 10:59:52 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ ConnectionManager::ConnectionManager(Server &server) {
 	clientBuffers = std::map<int, std::string>();
 	std::vector<int> serverListenSockets = server.getListenSockets();
     this->serverConfigs = server.getServers();
+    this->logger = &Logger::getInstance();
 
 	for (size_t i = 0; i < serverListenSockets.size(); i++) {
 		struct pollfd pfd;
@@ -47,7 +48,7 @@ void ConnectionManager::run() {
 		int ret = socketInterface->poll(pollFds.data(), pollFds.size(), -1);
 
 		if (ret == -1) {
-			Logger::getInstance().log(Logger::ERROR, "poll() falhou");
+			logger->log(Logger::ERROR, "poll() falhou");
 			break ;
 		}
 		handleEvents();
@@ -85,13 +86,13 @@ void ConnectionManager::acceptNewConnection(int listenSockFd) {
     int clientSockFd = socketInterface->accept(listenSockFd, (struct sockaddr*)&clientAddr, &clientLen);
 
     if (clientSockFd < 0) {
-        Logger::getInstance().log(Logger::ERROR, "Falha ao aceitar nova conexão");
+        logger->log(Logger::ERROR, "Falha ao aceitar nova conexão");
         return;
     }
 
     if (socketInterface->fcntl(clientSockFd, F_SETFL, O_NONBLOCK) < 0) {
         socketInterface->close(clientSockFd);
-        Logger::getInstance().log(Logger::ERROR, "Fail to set client socket to non-blocking");
+        logger->log(Logger::ERROR, "Fail to set client socket to non-blocking");
     }
 
     struct pollfd clientPfd;
@@ -101,7 +102,7 @@ void ConnectionManager::acceptNewConnection(int listenSockFd) {
     pollFds.push_back(clientPfd);
     clientBuffers[clientSockFd] = "";
 
-    Logger::getInstance().log(Logger::INFO, "Nova conexão aceita: socket fd " + itostr(clientSockFd));
+    logger->log(Logger::INFO, "Nova conexão aceita: socket fd " + itostr(clientSockFd));
 }
 
 void ConnectionManager::readFromClient(int clientSockFd) {
@@ -124,7 +125,7 @@ void ConnectionManager::readFromClient(int clientSockFd) {
         ErrorHandler errorHandler(config.getErrorPage());
         errorHandler.handleError(400, response);
         sendResponse(clientSockFd, response);
-        Logger::getInstance().log(Logger::WARNING, "Erro na requisição do cliente socket fd " + itostr(clientSockFd));
+        logger->log(Logger::WARNING, "Erro na requisição do cliente socket fd " + itostr(clientSockFd));
         closeConnection(clientSockFd);
     } else if (requests[clientSockFd].isComplete()) {
         processRequest(clientSockFd, requests[clientSockFd]);
@@ -141,7 +142,7 @@ void ConnectionManager::sendResponse(int clientSockFd, HTTPResponse& response) {
         int sent = socketInterface->send(clientSockFd, responseData + totalSent, responseLength - totalSent, 0);
         if (sent < 0) {
             closeConnection(clientSockFd);
-            Logger::getInstance().log(Logger::ERROR, "Erro ao enviar resposta para o cliente socket fd " + itostr(clientSockFd));
+            logger->log(Logger::ERROR, "Erro ao enviar resposta para o cliente socket fd " + itostr(clientSockFd));
             return;
         }
         totalSent += sent;
@@ -159,11 +160,10 @@ void ConnectionManager::closeConnection(int sockFd) {
     }
 
     clientBuffers.erase(sockFd);
-    Logger::getInstance().log(Logger::INFO, "Conexão fechada: socket fd " + itostr(sockFd));
+    logger->log(Logger::INFO, "Conexão fechada: socket fd " + itostr(sockFd));
 }
 
 void ConnectionManager::processRequest(int clientSockFd, const HTTPRequest& request) {
-    Logger& logger = Logger::getInstance();
     HTTPResponse response;
     router = selectConfig(request, serverConfigs);
     router.handleRequest(request, response);
@@ -182,7 +182,7 @@ void ConnectionManager::processRequest(int clientSockFd, const HTTPRequest& requ
         int sent = socketInterface->send(clientSockFd, responseData + totalSent, responseLength - totalSent, 0);
         if (sent < 0) {
             closeConnection(clientSockFd);
-            logger.log(Logger::ERROR, "Erro ao enviar resposta para o cliente socket fd " + itostr(clientSockFd));
+            logger->log(Logger::ERROR, "Erro ao enviar resposta para o cliente socket fd " + itostr(clientSockFd));
             return;
         }
         totalSent += sent;
