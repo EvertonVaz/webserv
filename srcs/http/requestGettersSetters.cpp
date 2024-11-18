@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 20:26:19 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/10 21:40:07 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/18 17:58:27 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,12 @@ size_t HTTPRequest::getContentLength() const {
 
 std::string HTTPRequest::getContentType() const {
     return contentType;
+}
+
+void HTTPRequest::setState(ParseState newState) {
+    state = newState;
+}
+
+HTTPRequest::ParseState HTTPRequest::getState() const {
+    return state;
 }

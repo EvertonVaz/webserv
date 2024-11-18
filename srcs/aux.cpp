@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:48:25 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/15 07:21:54 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/18 18:17:08 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,13 @@ ServerConfig selectConfig(HTTPRequest request, std::vector<ServerConfig> serverC
 
         bool findHost = host == requestHost || host == "0.0.0.0";
         bool findPort = port == std::atoi(requestPort.c_str());
-        if (findHost && findPort)
+        if ((findHost && findPort) || findHost)
             return serverConfigs[i];
         else {
             std::vector<std::string> serverName = serverConfigs[i].getServerName();
             for (size_t j = 0; j < serverName.size(); j++) {
                 bool findServerName = serverName[j] == requestHost;
-                if (findServerName && findPort)
+                if ((findServerName && findPort) || findServerName)
                     return serverConfigs[i];
             }
         }

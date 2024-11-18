@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/18 10:59:52 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/18 19:08:53 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@
 #include "../logger/Logger.hpp"
 
 ConnectionManager::ConnectionManager(Server &server) {
-	this->socketInterface = server.getSocketInterface();
-	clientBuffers = std::map<int, std::string>();
-	std::vector<int> serverListenSockets = server.getListenSockets();
-    this->serverConfigs = server.getServers();
     this->logger = &Logger::getInstance();
+    this->serverConfigs = server.getServers();
+	clientBuffers = std::map<int, std::string>();
+	this->socketInterface = server.getSocketInterface();
+	std::vector<int> serverListenSockets = server.getListenSockets();
 
 	for (size_t i = 0; i < serverListenSockets.size(); i++) {
 		struct pollfd pfd;
@@ -121,8 +121,7 @@ void ConnectionManager::readFromClient(int clientSockFd) {
 
     if (requests[clientSockFd].hasError()) {
         HTTPResponse response;
-        ServerConfig config = selectConfig(requests[clientSockFd], serverConfigs);
-        ErrorHandler errorHandler(config.getErrorPage());
+        ErrorHandler errorHandler("");
         errorHandler.handleError(400, response);
         sendResponse(clientSockFd, response);
         logger->log(Logger::WARNING, "Erro na requisição do cliente socket fd " + itostr(clientSockFd));
@@ -132,11 +131,29 @@ void ConnectionManager::readFromClient(int clientSockFd) {
     }
 }
 
+void ConnectionManager::processRequest(int clientSockFd, const HTTPRequest& request) {
+    HTTPResponse response;
+    router = selectConfig(request, serverConfigs);
+    router.handleRequest(request, response);
+
+    std::map<std::string, std::string> reqHeaders = request.getHeaders();
+    if (reqHeaders.find("Connection") != reqHeaders.end() && reqHeaders["Connection"] == "close") {
+        response.setCloseConnection(true);
+    }
+
+    sendResponse(clientSockFd, response);
+
+    if (response.shouldCloseConnection()) {
+        closeConnection(clientSockFd);
+    }
+}
+
 void ConnectionManager::sendResponse(int clientSockFd, HTTPResponse& response) {
     std::string responseStr = response.generateResponse();
     int totalSent = 0;
     int responseLength = responseStr.size();
     const char* responseData = responseStr.c_str();
+    requests.erase(clientSockFd);
 
     while (totalSent < responseLength) {
         int sent = socketInterface->send(clientSockFd, responseData + totalSent, responseLength - totalSent, 0);
@@ -161,36 +178,4 @@ void ConnectionManager::closeConnection(int sockFd) {
 
     clientBuffers.erase(sockFd);
     logger->log(Logger::INFO, "Conexão fechada: socket fd " + itostr(sockFd));
-}
-
-void ConnectionManager::processRequest(int clientSockFd, const HTTPRequest& request) {
-    HTTPResponse response;
-    router = selectConfig(request, serverConfigs);
-    router.handleRequest(request, response);
-
-    std::map<std::string, std::string> reqHeaders = request.getHeaders();
-    if (reqHeaders.find("Connection") != reqHeaders.end() && reqHeaders["Connection"] == "close") {
-        response.setCloseConnection(true);
-    }
-
-    std::string responseStr = response.generateResponse();
-    int totalSent = 0;
-    int responseLength = responseStr.size();
-    const char* responseData = responseStr.c_str();
-
-    while (totalSent < responseLength) {
-        int sent = socketInterface->send(clientSockFd, responseData + totalSent, responseLength - totalSent, 0);
-        if (sent < 0) {
-            closeConnection(clientSockFd);
-            logger->log(Logger::ERROR, "Erro ao enviar resposta para o cliente socket fd " + itostr(clientSockFd));
-            return;
-        }
-        totalSent += sent;
-    }
-
-    if (response.shouldCloseConnection()) {
-        closeConnection(clientSockFd);
-    } else {
-        requests.erase(clientSockFd);
-    }
 }

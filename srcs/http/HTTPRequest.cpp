@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 20:55:57 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/10 21:55:17 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/18 17:59:22 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,13 +140,11 @@ bool HTTPRequest::parseBody() {
             rawData.erase(0, contentLength);
             state = COMPLETE;
             return true;
-        } else {
-            return false;
         }
-    } else {
-        state = COMPLETE;
-        return true;
+        return false;
     }
+    state = COMPLETE;
+    return true;
 }
 
 void HTTPRequest::appendData(const std::string& data, std::vector<ServerConfig> serverConfigs) {
@@ -160,8 +158,7 @@ void HTTPRequest::appendData(const std::string& data, std::vector<ServerConfig> 
             std::string line = rawData.substr(0, pos);
             rawData.erase(0, pos + 2);
             if (!parseRequestLine(line)) {
-                state = ERROR;
-                return;
+                return setState(ERROR);
             }
             state = HEADERS;
         } else if (state == HEADERS) {
@@ -171,14 +168,12 @@ void HTTPRequest::appendData(const std::string& data, std::vector<ServerConfig> 
             std::string line = rawData.substr(0, pos);
             rawData.erase(0, pos + 2);
             if (!parseHeaderLine(line)) {
-                state = ERROR;
-                return;
+                return setState(ERROR);
             }
         } else if (state == BODY) {
             maxBodySize = selectConfig(*this, serverConfigs).getMaxBodySize();
             if (!parseBody()) {
-                state = ERROR;
-                return;
+                return setState(ERROR);
             }
         }
     }

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 20:39:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/10 21:39:55 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/18 17:57:50 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,8 @@ class HTTPRequest {
 		std::string getContentType() const;
 		size_t getContentLength() const;
 		size_t getMaxBodySize() const;
+		ParseState getState() const;
 
+		void setState(ParseState state);
 		void setMaxBodySize(size_t size);
-
 };
