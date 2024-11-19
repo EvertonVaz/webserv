@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:52:05 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/14 22:40:13 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/19 10:23:57 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,4 @@ std::string getContentType(const std::string& extension);
 std::string joinMethods(const std::set<std::string>& methods);
 ServerConfig selectConfig(HTTPRequest request, std::vector<ServerConfig> serverConfigs);
 const std::map<int, std::string> httpReasonPhrase();
-
 std::string itostr(const int value);

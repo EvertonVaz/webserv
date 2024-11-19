@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:27:24 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/15 07:20:56 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/19 10:38:45 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,11 +77,9 @@ void Server::setupSocket(int sockfd, const ServerConfig &serverConfig, struct so
 	if (socketInterface->listen(sockfd, SOMAXCONN) < 0) {
 		socketInterface->close(sockfd);
 		throw std::runtime_error("listen failed");
-
 	}
 }
 
-// TODO: vamos testar isso aqui na 42, e ver como funciona e apos apagar ou descomentar a parte comentada
 void Server::initServer(const ServerConfig &serverConfig) {
 	int opt = 1;
 	struct sockaddr_in addr;
@@ -92,21 +90,6 @@ void Server::initServer(const ServerConfig &serverConfig) {
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(serverConfig.getPort());
-
-	// struct addrinfo hints, *res;
-	// memset(&hints, 0, sizeof(hints));
-	// hints.ai_family = AF_INET;
-	// hints.ai_socktype = SOCK_STREAM;
-
-	// int status = getaddrinfo("localhost", NULL, &hints, &res);
-	// if (status != 0) {
-	// 	socketInterface->close(sockfd);
-	// 	throw std::runtime_error("getaddrinfo failed");
-	// }
-
-	// struct sockaddr_in *ipv4 = (struct sockaddr_in *)res->ai_addr;
-	// addr.sin_addr = ipv4->sin_addr;
-	// freeaddrinfo(res);
 
 	setupSocket(sockfd, serverConfig, addr);
 
