@@ -2,17 +2,18 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Saudação</title>
+    <title>Upload de Arquivos</title>
     <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Hello World</h1>
-        <p>Bem-vindo a página personalizada com tema escuro! Esperamos que você goste do design moderno e agradável.</p>
-        <a href="/images" class="button">Imagens</a>
-        <a href="/files" class="button">Arquivos</a>
-        <a href="/cgi" class="button">CGI</a>
+        <h1>Upload de Arquivos</h1>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <br><br>
+            <input type="submit" value="Enviar" class="button">
+        </form>
+        <p><a href="/" class="button">Voltar para a página inicial</a></p>
     </div>
 </body>
 </html>
-

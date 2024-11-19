@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:41 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/09 18:38:18 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/19 16:23:55 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,4 +32,5 @@ public:
     const RouteConfig routeRequest(const HTTPRequest& request);
     void handleRequest(const HTTPRequest& request, HTTPResponse& response);
     void resolvePath(std::string path, const RouteConfig routeConfig, HTTPResponse& response);
+    ServerConfig getServerConfig() const;
 };

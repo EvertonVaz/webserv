@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/26 12:37:07 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/18 10:46:19 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/19 14:28:24 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ class ConnectionManager {
 		void handleEvents();
 		void acceptNewConnection(int listenSocketFd);
 		void readFromClient(int clientSocketFd);
-		void processRequest(int clientSockFd, const HTTPRequest& request);
+		void processRequest(int clientSockFd, HTTPRequest& request);
 		void closeConnection(int clientSocketFd);
 		void sendResponse(int clientSockFd, HTTPResponse& response);
 

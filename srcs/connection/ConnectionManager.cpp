@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/19 10:29:31 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/19 17:02:43 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,9 +110,8 @@ void ConnectionManager::readFromClient(int clientSockFd) {
     int bytesRead = socketInterface->recv(clientSockFd, buffer, sizeof(buffer), 0);
 
     if (bytesRead <= 0) {
-        if (bytesRead == 0) {
+        if (bytesRead == 0)
             closeConnection(clientSockFd);
-        }
         return;
     }
 
@@ -131,10 +130,18 @@ void ConnectionManager::readFromClient(int clientSockFd) {
     }
 }
 
-void ConnectionManager::processRequest(int clientSockFd, const HTTPRequest& request) {
+void ConnectionManager::processRequest(int clientSockFd, HTTPRequest& request) {
     HTTPResponse response;
     router = selectConfig(request, serverConfigs);
     router.handleRequest(request, response);
+    std::string uploadPath = router.getServerConfig().getRoutes()[request.getURI()].getUploadPath();
+    request.setUploadPath(uploadPath);
+    if (request.getMethod() == "POST") {
+        if (!request.saveUploadedFile(uploadPath)) {
+            ErrorHandler errorHandler("");
+            errorHandler.handleError(500, response);
+        }
+    }
 
     std::map<std::string, std::string> reqHeaders = request.getHeaders();
     if (reqHeaders.find("Connection") != reqHeaders.end() && reqHeaders["Connection"] == "close") {

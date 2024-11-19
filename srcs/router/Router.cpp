@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:22 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/09 18:48:43 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/19 16:24:11 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,7 @@ Router& Router::operator=(const Router& other) {
     return *this;
 }
 
-Router::~Router() {
-}
+Router::~Router() {}
 
 const RouteConfig Router::routeRequest(const HTTPRequest& request) {
     std::string requestPath = request.getURI();
@@ -106,4 +105,8 @@ bool Router::isCgiRequest(const std::string& path, const std::set<std::string>& 
         return false;
     std::string extension = path.substr(dotPos);
     return cgiExtensions.find(extension) != cgiExtensions.end();
+}
+
+ServerConfig Router::getServerConfig() const {
+    return serverConfig;
 }

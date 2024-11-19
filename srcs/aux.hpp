@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:52:05 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/19 10:23:57 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/19 14:48:02 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include <string>
 #include <cctype>
 #include <vector>
-#include <sstream>
 #include "http/HTTPRequest.hpp"
 #include "parser/ServerConfig.hpp"
 

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 20:55:57 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/19 11:22:45 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/19 16:52:52 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <sstream>
 #include <algorithm>
 #include "../aux.hpp"
+#include <fstream>
 
 HTTPRequest::HTTPRequest() {
     state = REQUEST_LINE;
@@ -22,8 +23,7 @@ HTTPRequest::HTTPRequest() {
     this->maxBodySize = 0;
 }
 
-HTTPRequest::~HTTPRequest() {
-}
+HTTPRequest::~HTTPRequest() {}
 
 // TODO: Tratar parametros de URL ou pensar em uma forma de fazer isso
 bool HTTPRequest::parseRequestLine(const std::string& line) {
@@ -45,7 +45,6 @@ bool HTTPRequest::parseRequestLine(const std::string& line) {
     if (httpVersion != "HTTP/1.1" && httpVersion != "HTTP/1.0") {
         return setState(ERROR), false;
     }
-
     return true;
 }
 
@@ -68,7 +67,7 @@ bool HTTPRequest::endOfHeader() {
 
     it = headers.find("content-type");
 	if (it != headers.end()) {
-		contentType = static_cast<size_t>(std::atoi(it->second.c_str()));
+		contentType = it->second;
 	}
 
 	it = headers.find("transfer-encoding");
@@ -81,7 +80,6 @@ bool HTTPRequest::endOfHeader() {
 	} else {
 		state = COMPLETE;
 	}
-
 	return true;
 }
 
@@ -92,8 +90,7 @@ bool HTTPRequest::parseHeaderLine(const std::string& line) {
 
     size_t pos = line.find(":");
     if (pos == std::string::npos) {
-        state = ERROR;
-        return false;
+        return setState(ERROR), false;
     }
 
     std::string key = line.substr(0, pos);
@@ -109,6 +106,10 @@ bool HTTPRequest::parseHeaderLine(const std::string& line) {
 }
 
 bool HTTPRequest::parseBody() {
+    if (contentType.find("multipart/form-data") != std::string::npos) {
+        // Handle multipart/form-data
+        return saveUploadedFile(uploadPath);
+    }
     if (chunkedEncoding) {
         while (true) {
             size_t pos = rawData.find("\r\n");
@@ -118,15 +119,14 @@ bool HTTPRequest::parseBody() {
             std::string chunkSizeStr = rawData.substr(0, pos);
             size_t chunkSize = std::strtoul(chunkSizeStr.c_str(), NULL, 16);
             if (chunkSize == 0) {
-                state = COMPLETE;
-                return true;
+                return setState(COMPLETE), true;
             }
 
             if (rawData.size() < pos + 2 + chunkSize + 2)
                 return false;
             if (maxBodySize > 0 && body.size() + chunkSize > maxBodySize) {
-                state = ERROR;
-                return false;
+
+                return setState(ERROR), false;
             }
             body += rawData.substr(pos + 2, chunkSize);
             rawData.erase(0, pos + 2 + chunkSize + 2);
@@ -135,12 +135,25 @@ bool HTTPRequest::parseBody() {
         if (rawData.size() >= contentLength && contentLength <= maxBodySize) {
             body = rawData.substr(0, contentLength);
             rawData.erase(0, contentLength);
-            state = COMPLETE;
-            return true;
+            return setState(COMPLETE), true;
         }
         return false;
     }
-    state = COMPLETE;
+    return setState(COMPLETE), true;
+}
+
+bool HTTPRequest::saveUploadedFile(const std::string& directory) {
+    size_t pos = body.find("\r\n\r\n");
+    if (pos == std::string::npos) {
+        return setState(ERROR), false;
+    }
+    std::string fileContent = body.substr(pos + 4);
+    std::ofstream outFile((directory + "/uploaded_file").c_str());
+    if (!outFile) {
+        return setState(ERROR), false;
+    }
+    outFile << fileContent;
+    outFile.close();
     return true;
 }
 

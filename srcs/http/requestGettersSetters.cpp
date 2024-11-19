@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 20:26:19 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/18 17:58:27 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/19 16:28:04 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,4 +62,12 @@ void HTTPRequest::setState(ParseState newState) {
 
 HTTPRequest::ParseState HTTPRequest::getState() const {
     return state;
+}
+
+void HTTPRequest::setUploadPath(const std::string& path) {
+    uploadPath = path;
+}
+
+std::string HTTPRequest::getUploadPath() const {
+    return uploadPath;
 }
