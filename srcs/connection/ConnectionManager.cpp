@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/18 19:08:53 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/19 10:29:31 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,11 @@ void ConnectionManager::processRequest(int clientSockFd, const HTTPRequest& requ
     if (reqHeaders.find("Connection") != reqHeaders.end() && reqHeaders["Connection"] == "close") {
         response.setCloseConnection(true);
     }
-
+    logger->logRoute(
+        "Requisição processada",
+        request.getMethod(),
+        request.getURI(),
+        response.getStatusCode());
     sendResponse(clientSockFd, response);
 
     if (response.shouldCloseConnection()) {

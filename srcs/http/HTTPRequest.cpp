@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 20:55:57 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/18 17:59:22 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/19 11:22:45 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,7 @@ HTTPRequest::~HTTPRequest() {
 bool HTTPRequest::parseRequestLine(const std::string& line) {
     std::istringstream iss(line);
     if (!(iss >> method >> uri >> httpVersion)) {
-        state = ERROR;
-        return false;
+        return setState(ERROR), false;
     }
     std::string methods[] = {"GET", "POST", "DELETE"};
     bool validMethod = false;
@@ -41,12 +40,10 @@ bool HTTPRequest::parseRequestLine(const std::string& line) {
         }
     }
     if (!validMethod) {
-        state = ERROR;
-        return false;
+        return setState(ERROR), false;
     }
     if (httpVersion != "HTTP/1.1" && httpVersion != "HTTP/1.0") {
-        state = ERROR;
-        return false;
+        return setState(ERROR), false;
     }
 
     return true;

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:59:21 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/09 18:20:07 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/19 11:49:59 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,18 +73,34 @@ void StaticFileHandler::listDirectory(const std::string& dirPath, HTTPResponse& 
         return errorHandler.handleError(500, response);
 
     std::ostringstream body;
-    body << "<html><body>";
-    body << "<h1>Index of " << dirPath << "</h1><ul>";
+    body << "<!DOCTYPE html>";
+    body << "<html lang='en'>";
+    body << "<head>";
+    body << "    <meta charset='UTF-8'>";
+    body << "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>";
+    body << "    <title>Index of " << filePath.getUri() << "</title>";
+    body << "    <link rel='stylesheet' href='" << filePath.getUri() << "styles.css'>";
+    body << "</head>";
+    body << "<body>";
+    body << "    <div class='container'>";
+    body << "        <h1>Index of " << filePath.getUri() << "</h1>";
+    body << "        <ul>";
 
     struct dirent* entry;
     while ((entry = readdir(dir)) != NULL) {
         std::string name = entry->d_name;
         if (name != "." && name != "..") {
-            body << "<li><a href=\"" << filePath.getUri() + name << "\">" << name << "</a></li>";
+            std::string fullPath = filePath.getUri() + name;
+            body << "            <li><a href='" << fullPath << "'>" << name << "</a></li>";
         }
     }
 
-    body << "</ul></body></html>";
+    body << "        </ul>";
+    body << "        <a href='/' class='button'>Voltar para a página inicial</a>";
+    body << "    </div>";
+    body << "</body>";
+    body << "</html>";
+
     closedir(dir);
     response.setStatusCode(200);
     response.setBody(body.str());
