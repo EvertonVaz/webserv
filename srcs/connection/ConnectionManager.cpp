@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/19 17:02:43 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/22 11:12:32 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,16 +107,12 @@ void ConnectionManager::acceptNewConnection(int listenSockFd) {
 
 void ConnectionManager::readFromClient(int clientSockFd) {
     char buffer[1024];
-    int bytesRead = socketInterface->recv(clientSockFd, buffer, sizeof(buffer), 0);
+    clientBuffers[clientSockFd] = "";
+    while (socketInterface->recv(clientSockFd, buffer, sizeof(buffer), 0) > 0) {
+        clientBuffers[clientSockFd].append(buffer);
+    };
 
-    if (bytesRead <= 0) {
-        if (bytesRead == 0)
-            closeConnection(clientSockFd);
-        return;
-    }
-
-    std::string data(buffer, bytesRead);
-    requests[clientSockFd].appendData(data, serverConfigs);
+    requests[clientSockFd].appendData(clientBuffers[clientSockFd], serverConfigs);
 
     if (requests[clientSockFd].hasError()) {
         HTTPResponse response;
