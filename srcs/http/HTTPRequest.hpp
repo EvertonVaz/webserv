@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 20:39:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/19 16:28:10 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/22 12:10:09 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,5 @@ class HTTPRequest {
 		void setState(ParseState state);
 		void setMaxBodySize(size_t size);
 		void setUploadPath(const std::string& path);
-
-		bool saveUploadedFile(const std::string& directory);
+		std::string lineConstructor();
 };

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:59:21 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/19 11:49:59 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/22 17:08:04 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void StaticFileHandler::handleResponse(HTTPResponse& response) {
     if (!filePath.getPathExist()) {
         return errorHandler.handleError(404, response);
     }
-
+    // TODO: VERIFICAR COMO O PATH ESTA SENDO CRIADO, SE FOR AUTOINDEX, NAO ADICIONAR O ARQUIVO NO FINAL DO PATH
     if (!filePath.getIsFile() && filePath.getIsDirectory()) {
         if (directoryListingEnabled) {
             listDirectory(filePath.getPath(), response);

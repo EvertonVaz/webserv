@@ -6,10 +6,11 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/19 17:02:43 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/22 15:03:48 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <iostream>
 #include <vector>
 #include <poll.h>
 #include <sys/stat.h>
@@ -106,17 +107,11 @@ void ConnectionManager::acceptNewConnection(int listenSockFd) {
 }
 
 void ConnectionManager::readFromClient(int clientSockFd) {
-    char buffer[1024];
-    int bytesRead = socketInterface->recv(clientSockFd, buffer, sizeof(buffer), 0);
-
-    if (bytesRead <= 0) {
-        if (bytesRead == 0)
-            closeConnection(clientSockFd);
-        return;
-    }
-
-    std::string data(buffer, bytesRead);
-    requests[clientSockFd].appendData(data, serverConfigs);
+    char buffer[65535];
+    clientBuffers[clientSockFd] = "";
+    socketInterface->recv(clientSockFd, buffer, sizeof(buffer), 0);
+    clientBuffers[clientSockFd].append(buffer);
+    requests[clientSockFd].appendData(clientBuffers[clientSockFd], serverConfigs);
 
     if (requests[clientSockFd].hasError()) {
         HTTPResponse response;
@@ -133,15 +128,9 @@ void ConnectionManager::readFromClient(int clientSockFd) {
 void ConnectionManager::processRequest(int clientSockFd, HTTPRequest& request) {
     HTTPResponse response;
     router = selectConfig(request, serverConfigs);
-    router.handleRequest(request, response);
     std::string uploadPath = router.getServerConfig().getRoutes()[request.getURI()].getUploadPath();
     request.setUploadPath(uploadPath);
-    if (request.getMethod() == "POST") {
-        if (!request.saveUploadedFile(uploadPath)) {
-            ErrorHandler errorHandler("");
-            errorHandler.handleError(500, response);
-        }
-    }
+    router.handleRequest(request, response);
 
     std::map<std::string, std::string> reqHeaders = request.getHeaders();
     if (reqHeaders.find("Connection") != reqHeaders.end() && reqHeaders["Connection"] == "close") {

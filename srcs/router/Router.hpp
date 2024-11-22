@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:41 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/19 16:23:55 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/22 16:25:58 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,4 +33,5 @@ public:
     void handleRequest(const HTTPRequest& request, HTTPResponse& response);
     void resolvePath(std::string path, const RouteConfig routeConfig, HTTPResponse& response);
     ServerConfig getServerConfig() const;
+    bool getAutoIndex(std::string requestURI);
 };

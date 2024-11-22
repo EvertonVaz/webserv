@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:22 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/19 16:24:11 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/22 17:51:27 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ const RouteConfig Router::routeRequest(const HTTPRequest& request) {
 
     RouteConfig bestMatch;
     size_t bestMatchLength = 0;
-
-    for (std::map<std::string, RouteConfig>::iterator it = routes.begin(); it != routes.end(); ++it) {
+    std::map<std::string, RouteConfig>::iterator it;
+    for (it = routes.begin(); it != routes.end(); ++it) {
         std::string routePath = it->first;
         if (routePath == "/") {
             if (requestPath == "/") {
@@ -64,6 +64,18 @@ static inline std::string setRoot(std::string routeRoot, std::string serverRoot)
         return serverRoot;
     }
     return routeRoot;
+}
+
+// TODO: UMA IDEIA PARA FAZER VERIFICAR O AUTOINDEX
+bool Router::getAutoIndex(std::string requestURI) {
+    std::map<std::string, RouteConfig> routes = serverConfig.getRoutes();
+    std::map<std::string, RouteConfig>::iterator it;
+    for (it = routes.begin(); it != routes.end(); ++it) {
+        if (requestURI.find(it->first) != std::string::npos && routes[it->first].getAutoindex()) {
+            return it->second.getAutoindex();
+        }
+    }
+    return false;
 }
 
 void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
@@ -94,7 +106,7 @@ void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
         return cgiHandler.handleResponse(response);
     } else {
         StaticFileHandler staticHandler(errorHandler, filePath);
-        staticHandler.setDirectoryListingEnabled(routeConfig.getAutoindex());
+        staticHandler.setDirectoryListingEnabled(getAutoIndex(request.getURI()));
         return staticHandler.handleResponse(response);
     }
 }
