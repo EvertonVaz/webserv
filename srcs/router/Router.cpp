@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:22 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/22 17:51:27 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/23 10:53:21 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ Router::Router() {}
 
 Router::Router(const ServerConfig& config) {
     serverConfig = config;
+
 }
 
 Router::Router(const Router& other) {
@@ -66,7 +67,6 @@ static inline std::string setRoot(std::string routeRoot, std::string serverRoot)
     return routeRoot;
 }
 
-// TODO: UMA IDEIA PARA FAZER VERIFICAR O AUTOINDEX
 bool Router::getAutoIndex(std::string requestURI) {
     std::map<std::string, RouteConfig> routes = serverConfig.getRoutes();
     std::map<std::string, RouteConfig>::iterator it;
@@ -86,8 +86,8 @@ void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
     if (root.empty()) {
         return errorHandler.handleError(404, response);
     }
-
-    FilePath filePath(root, request.getURI(), routeConfig.getIndex(), routeConfig.getAutoindex());
+    bool autoIndex = getAutoIndex(request.getURI());
+    FilePath filePath(root, request.getURI(), routeConfig.getIndex(), autoIndex);
 
     std::set<std::string> allowedMethods = routeConfig.getMethods();
     if (allowedMethods.find(request.getMethod()) == allowedMethods.end()) {
@@ -106,7 +106,7 @@ void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
         return cgiHandler.handleResponse(response);
     } else {
         StaticFileHandler staticHandler(errorHandler, filePath);
-        staticHandler.setDirectoryListingEnabled(getAutoIndex(request.getURI()));
+        staticHandler.setDirectoryListingEnabled(autoIndex);
         return staticHandler.handleResponse(response);
     }
 }

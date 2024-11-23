@@ -1,6 +1,6 @@
 NAME = webserv
 TEST_NAME = test_executable
-FLAGS = -Wall -Werror -Wextra -std=c++98 -fno-limit-debug-info
+FLAGS = -Wall -Werror -Wextra -std=c++98 #-fno-limit-debug-info
 CC = c++ -g3
 
 # Colors
