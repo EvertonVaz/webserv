@@ -91,11 +91,14 @@ void CGIHandler::handlePOST(int *inputPipe, int *outputPipe, const HTTPRequest& 
 }
 
 std::string CGIHandler::readCGI(int *outputPipe) {
-    char buffer[1024];
+    char buffer[MAX_BUFFER_SIZE];
     std::string cgiOutput;
     ssize_t bytesRead;
     while ((bytesRead = read(outputPipe[0], buffer, sizeof(buffer))) > 0) {
         cgiOutput.append(buffer, bytesRead);
+    }
+    if (bytesRead == -1) {
+        logger->log(Logger::ERROR, "Read failed: " + std::string(strerror(errno)));
     }
     close(outputPipe[0]);
 

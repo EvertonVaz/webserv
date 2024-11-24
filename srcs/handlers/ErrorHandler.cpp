@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:59:13 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/07 19:04:04 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/25 09:52:13 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,4 +77,8 @@ void ErrorHandler::handleError(int statusCode, HTTPResponse& response) {
         std::string body = defaultPage(filePath);
         response.setBody(body);
     }
+}
+
+void ErrorHandler::setErrorPagesPath(const std::string& path) {
+    errorPagesPath = path;
 }

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 20:55:57 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/22 12:44:24 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/25 13:37:40 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,23 +113,24 @@ bool HTTPRequest::parseBody() {
 
             std::string chunkSizeStr = rawData.substr(0, pos);
             size_t chunkSize = std::strtoul(chunkSizeStr.c_str(), NULL, 16);
-            if (chunkSize == 0) {
+            if (chunkSize == 0)
                 return setState(COMPLETE), true;
-            }
             if (rawData.size() < pos + 2 + chunkSize + 2)
                 return false;
-            if (maxBodySize > 0 && body.size() + chunkSize > maxBodySize) {
+            if (maxBodySize > 0 && body.size() + chunkSize > maxBodySize)
+                return false;
 
-                return setState(ERROR), false;
-            }
             body += rawData.substr(pos + 2, chunkSize);
             rawData.erase(0, pos + 2 + chunkSize + 2);
         }
     } else if (contentLength > 0) {
-        if (rawData.size() >= contentLength && contentLength <= maxBodySize) {
-            body = rawData.substr(0, contentLength);
-            rawData.erase(0, contentLength);
-            return setState(COMPLETE), true;
+        bool isSafe = body.size() <= contentLength && body.size() <= maxBodySize;
+        if (contentLength <= maxBodySize && isSafe) {
+            body += rawData;
+            rawData.clear();
+            if (contentLength == body.size())
+                setState(COMPLETE);
+            return true;
         }
         return false;
     }
@@ -162,11 +163,13 @@ void HTTPRequest::appendData(const std::string& data, std::vector<ServerConfig> 
             if (!parseHeaderLine(line)) {
                 return setState(ERROR);
             }
-        } else if (state == BODY) {
+        } else if (state == BODY && rawData.size() > 0) {
             maxBodySize = selectConfig(*this, serverConfigs).getMaxBodySize();
             if (!parseBody()) {
                 return setState(ERROR);
             }
         }
+        if (rawData.size() == 0)
+            return;
     }
 }

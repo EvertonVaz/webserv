@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 20:39:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/22 12:10:09 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/25 13:23:08 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 #include <string>
 #include <map>
 #include "../parser/ServerConfig.hpp"
+
+#define MAX_BUFFER_SIZE 65535
 
 class HTTPRequest {
 	public:
@@ -72,4 +74,8 @@ class HTTPRequest {
 		void setMaxBodySize(size_t size);
 		void setUploadPath(const std::string& path);
 		std::string lineConstructor();
+
+
 };
+
+std::ostream& operator<<(std::ostream& os, const HTTPRequest& request);

@@ -6,10 +6,11 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/22 15:03:48 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/25 13:54:41 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <cstddef>
 #include <iostream>
 #include <vector>
 #include <poll.h>
@@ -109,8 +110,13 @@ void ConnectionManager::acceptNewConnection(int listenSockFd) {
 void ConnectionManager::readFromClient(int clientSockFd) {
     char buffer[65535];
     clientBuffers[clientSockFd] = "";
-    socketInterface->recv(clientSockFd, buffer, sizeof(buffer), 0);
-    clientBuffers[clientSockFd].append(buffer);
+    size_t bytesRead = socketInterface->recv(clientSockFd, buffer, sizeof(buffer), 0);
+    if (bytesRead <= 0) {
+        logger->log(Logger::WARNING, "Erro ao ler dados do cliente socket fd " + itostr(clientSockFd));
+        closeConnection(clientSockFd);
+        return;
+    }
+    clientBuffers[clientSockFd] += std::string(buffer, bytesRead);
     requests[clientSockFd].appendData(clientBuffers[clientSockFd], serverConfigs);
 
     if (requests[clientSockFd].hasError()) {
