@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/26 12:37:07 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/19 14:28:24 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/25 21:33:57 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include "../logger/Logger.hpp"
 #include "../http/HTTPRequest.hpp"
 #include "../interfaces/ISocket.hpp"
+#include "../handlers/methods/PostHandler.hpp"
 
 class ConnectionManager {
 	private:
@@ -32,6 +33,9 @@ class ConnectionManager {
 		std::vector<ServerConfig> serverConfigs;
 		Router router;
 		Logger* logger;
+		PostHandler postHandler;
+
+		void handleReadError(int clientSockFd, const HTTPRequest& request);
 
 	public:
 		ConnectionManager(Server &servers);

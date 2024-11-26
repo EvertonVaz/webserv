@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 20:39:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/25 13:23:08 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/25 20:56:45 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 #include "../parser/ServerConfig.hpp"
 
 #define MAX_BUFFER_SIZE 65535
+#define KB * 1024
+#define MB * 1024 KB
 
 class HTTPRequest {
 	public:
@@ -25,7 +27,12 @@ class HTTPRequest {
 			HEADERS,
 			BODY,
 			COMPLETE,
-			ERROR
+			ERROR400 = 400,
+			ERROR413 = 413,
+			ERROR414 = 414,
+			ERROR431 = 431,
+			ERROR501 = 501,
+			ERROR505 = 505
     	};
 
 	private:
@@ -49,6 +56,8 @@ class HTTPRequest {
 		bool endOfHeader();
 		void handleQueryString();
 		bool parseBody();
+		std::string lineConstructor();
+		bool chunkedEncondingHandler();
 
 	public:
 		HTTPRequest();
@@ -73,9 +82,6 @@ class HTTPRequest {
 		void setState(ParseState state);
 		void setMaxBodySize(size_t size);
 		void setUploadPath(const std::string& path);
-		std::string lineConstructor();
-
-
 };
 
 std::ostream& operator<<(std::ostream& os, const HTTPRequest& request);

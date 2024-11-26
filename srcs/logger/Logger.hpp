@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 06:28:58 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/19 10:26:19 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/25 21:28:43 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 class Logger {
     public:
-        enum LogLevel { INFO, WARNING, ERROR, DEFAULT };
+        enum LogLevel { INFO, WARNING, DEFAULT, ERROR = 400 };
 
     private:
         bool ArchiveEnabled;

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 20:26:19 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/24 12:40:24 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/25 21:00:45 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ bool HTTPRequest::isComplete() const {
 }
 
 bool HTTPRequest::hasError() const {
-    return state == ERROR;
+    return state >= ERROR400;
 }
 
 void HTTPRequest::setMaxBodySize(size_t size) {

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Métodos Multipart POST</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 5px auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .columns {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, auto);
+            gap: 20px;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Ajuste para a Coluna 3 ocupar duas linhas */
+        .column3 {
+            grid-row: span 2;
+        }
+
+        .form-container {
+            border: 1px solid #ccc; /* Borda cinza clara */
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .form-container form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        /* Responsividade */
+        @media (max-width: 800px) {
+            .columns {
+                grid-template-columns: 1fr;
+                grid-template-rows: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Métodos Multipart POST</h1>
+
+        <div class="columns">
+            <!-- Coluna 1 -->
+            <div class="column">
+                <!-- Formulário para upload de um único arquivo -->
+                <div class="form-container">
+                    <h2>Upload de Arquivo Único</h2>
+                    <form action="/upload" method="post" enctype="multipart/form-data">
+                        <input type="file" name="file" required>
+                        <br><br>
+                        <input type="submit" value="Enviar Arquivo Único" class="button">
+                    </form>
+                </div>
+
+                <!-- Formulário com campos ocultos e upload de arquivo -->
+                <div class="form-container">
+                    <h2>Upload com Campos Ocultos</h2>
+                    <form action="/upload" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="token" value="123456789">
+                        <input type="file" name="file" required>
+                        <br><br>
+                        <input type="submit" value="Enviar com Campo Oculto" class="button">
+                    </form>
+                </div>
+            </div>
+
+            <!-- Coluna 2 -->
+            <div class="column">
+                <!-- Formulário para upload de múltiplos arquivos -->
+                <div class="form-container">
+                    <h2>Upload de Múltiplos Arquivos</h2>
+                    <form action="/upload" method="post" enctype="multipart/form-data">
+                        <input type="file" name="files[]" multiple required>
+                        <br><br>
+                        <input type="submit" value="Enviar Múltiplos Arquivos" class="button">
+                    </form>
+                </div>
+
+                <!-- Formulário para upload de arquivos com tipos específicos -->
+                <div class="form-container">
+                    <h2>Upload de Arquivos Específicos</h2>
+                    <form action="/upload" method="post" enctype="multipart/form-data">
+                        <input type="file" name="image" accept="image/*" required>
+                        <br><br>
+                        <input type="submit" value="Enviar Imagem" class="button">
+                    </form>
+                </div>
+            </div>
+
+            <!-- Coluna 3 -->
+            <div class="column">
+                <!-- Formulário com campos de texto e upload de arquivo -->
+                <div class="form-container">
+                    <h2>Upload com Dados Adicionais</h2>
+                    <br><br>
+                    <form action="/upload" method="post" enctype="multipart/form-data">
+                        <label for="nome">Nome:</label>
+                        <input type="text" name="nome" id="nome" required>
+                        <br><br>
+                        <label for="descricao">Descrição:</label>
+                        <textarea name="descricao" id="descricao" required></textarea>
+                        <br><br>
+                        <input type="file" name="file" required>
+                        <input type="submit" value="Enviar Arquivo com Dados" class="button">
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <p style="text-align: center;"><a href="/" class="button">Voltar para a Página Inicial</a></p>
+    </div>
+</body>
+</html>

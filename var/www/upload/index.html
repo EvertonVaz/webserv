@@ -2,18 +2,16 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Upload de Arquivos</title>
+    <title>Métodos de Upload</title>
     <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Upload de Arquivos</h1>
-        <form action="/upload" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" required>
-            <br><br>
-            <input type="submit" value="Enviar" class="button">
-        </form>
-        <p><a href="/" class="button">Voltar para a página inicial</a></p>
+        <h1>Escolha o Tipo de Upload</h1>
+        <p>Selecione o método de envio que deseja utilizar:</p>
+        <a href="upload/multipart.html" class="button">Método Multipart POST</a>
+        <!-- Você pode adicionar mais botões para outros métodos aqui -->
+        <p><a href="/" class="button">Voltar para a Página Inicial</a></p>
     </div>
 </body>
 </html>

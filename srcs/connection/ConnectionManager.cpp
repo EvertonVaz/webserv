@@ -6,19 +6,18 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/25 13:54:41 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/25 21:58:55 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <cstddef>
-#include <iostream>
 #include <vector>
 #include <poll.h>
+#include <cstddef>
 #include <sys/stat.h>
 #include "../aux.hpp"
+#include "../logger/Logger.hpp"
 #include "ConnectionManager.hpp"
 #include "../handlers/ErrorHandler.hpp"
-#include "../logger/Logger.hpp"
 
 ConnectionManager::ConnectionManager(Server &server) {
     this->logger = &Logger::getInstance();
@@ -26,6 +25,7 @@ ConnectionManager::ConnectionManager(Server &server) {
 	clientBuffers = std::map<int, std::string>();
 	this->socketInterface = server.getSocketInterface();
 	std::vector<int> serverListenSockets = server.getListenSockets();
+    PostHandler postHandler;
 
 	for (size_t i = 0; i < serverListenSockets.size(); i++) {
 		struct pollfd pfd;
@@ -103,8 +103,22 @@ void ConnectionManager::acceptNewConnection(int listenSockFd) {
     clientPfd.revents = 0;
     pollFds.push_back(clientPfd);
     clientBuffers[clientSockFd] = "";
+    std::string msg = "Nova conexão aceita: socket fd ";
+    logger->log(Logger::INFO, msg + itostr(clientSockFd));
+}
 
-    logger->log(Logger::INFO, "Nova conexão aceita: socket fd " + itostr(clientSockFd));
+void ConnectionManager::handleReadError(int clientSockFd, const HTTPRequest& request) {
+    HTTPResponse response;
+    std::string path = selectConfig(request, serverConfigs).getErrorPage();
+    ErrorHandler errorHandler(path);
+    errorHandler.handleError(request.getState(), response);
+    sendResponse(clientSockFd, response);
+    logger->logRoute(
+        "Erro na requisição ",
+        request.getMethod(),
+        request.getURI(),
+        response.getStatusCode());
+    closeConnection(clientSockFd);
 }
 
 void ConnectionManager::readFromClient(int clientSockFd) {
@@ -112,20 +126,13 @@ void ConnectionManager::readFromClient(int clientSockFd) {
     clientBuffers[clientSockFd] = "";
     size_t bytesRead = socketInterface->recv(clientSockFd, buffer, sizeof(buffer), 0);
     if (bytesRead <= 0) {
-        logger->log(Logger::WARNING, "Erro ao ler dados do cliente socket fd " + itostr(clientSockFd));
-        closeConnection(clientSockFd);
         return;
     }
     clientBuffers[clientSockFd] += std::string(buffer, bytesRead);
     requests[clientSockFd].appendData(clientBuffers[clientSockFd], serverConfigs);
 
     if (requests[clientSockFd].hasError()) {
-        HTTPResponse response;
-        ErrorHandler errorHandler("");
-        errorHandler.handleError(400, response);
-        sendResponse(clientSockFd, response);
-        logger->log(Logger::WARNING, "Erro na requisição do cliente socket fd " + itostr(clientSockFd));
-        closeConnection(clientSockFd);
+        handleReadError(clientSockFd, requests[clientSockFd]);
     } else if (requests[clientSockFd].isComplete()) {
         processRequest(clientSockFd, requests[clientSockFd]);
     }
@@ -138,6 +145,10 @@ void ConnectionManager::processRequest(int clientSockFd, HTTPRequest& request) {
     request.setUploadPath(uploadPath);
     router.handleRequest(request, response);
 
+    if (request.getMethod() == "POST") {
+        postHandler.setRequest(request);
+        postHandler.handlePost();
+    }
     std::map<std::string, std::string> reqHeaders = request.getHeaders();
     if (reqHeaders.find("Connection") != reqHeaders.end() && reqHeaders["Connection"] == "close") {
         response.setCloseConnection(true);

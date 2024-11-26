@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 06:29:15 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/19 12:25:32 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/25 21:57:10 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,17 +98,16 @@ std::string Logger::getStatusColor(int status) {
     } else if (status >= 300 && status < 400) {
         return "\033[48;5;226;30m" + itostr(status) + "\033[0m";
     } else if (status >= 400 && status < 600) {
-        return "\033[48;5;196;30m" + itostr(status) + "\033[0m";
+        return "\033[48;5;196;38;5;15m"  + itostr(status) + "\033[0m";
     } else {
         return itostr(status);
     }
 }
 
 std::string Logger::getLevelString(LogLevel level) {
-    switch (level) {
-        case INFO:    return "\033[48;5;153;30mINFO\033[0m";
-        case WARNING: return "\033[48;5;226;30mWARNING\033[0m";
-        case ERROR:   return "\033[48;5;196;30mERROR\033[0m";
-        default:      return "";
-    }
+
+    if (level == INFO) return "\033[48;5;153;30mINFO\033[0m";
+    if (level == WARNING) return "\033[48;5;226;30mWARNING\033[0m";
+    if (level >= ERROR) return "\033[48;5;196;30mERROR\033[0m";
+    return "DEFAULT";
 }
