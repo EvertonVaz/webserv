@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:48:25 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/26 12:58:01 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/27 14:35:44 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,4 +170,14 @@ std::string itostr(const int value) {
     std::ostringstream oss;
     oss << value;
     return oss.str();
+}
+
+std::string getProgram(const std::string& cgiExtension) {
+    if (cgiExtension.find(".py") != std::string::npos) {
+        return "/usr/bin/python3";
+    }
+    if (cgiExtension.find(".php") != std::string::npos) {
+        return "/usr/bin/php-cgi";
+    }
+    return "";
 }

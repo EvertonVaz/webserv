@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:22 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/27 12:39:13 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/27 15:33:47 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
         return errorHandler.handleError(301, response);
     }
 
-    if (isCgiRequest(filePath.getPath(), routeConfig.getCgiExtensions())) {
+    if (filePath.getPath().find("cgi") != std::string::npos) {
         CGIHandler cgiHandler(errorHandler, filePath, request);
         return cgiHandler.handleResponse(response);
     } else {
@@ -119,14 +119,6 @@ void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
         staticHandler.setDirectoryListingEnabled(autoIndex);
         return staticHandler.handleResponse(response);
     }
-}
-
-bool Router::isCgiRequest(const std::string& path, const std::set<std::string>& cgiExtensions) {
-    size_t dotPos = path.find_last_of('.');
-    if (dotPos == std::string::npos)
-        return false;
-    std::string extension = path.substr(dotPos);
-    return cgiExtensions.find(extension) != cgiExtensions.end();
 }
 
 ServerConfig Router::getServerConfig() const {

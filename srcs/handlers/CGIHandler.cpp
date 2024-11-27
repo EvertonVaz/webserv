@@ -19,11 +19,11 @@
 #include <iostream>
 #include <unistd.h>
 #include <sys/wait.h>
+#include "../aux.hpp"
 #include "CGIHandler.hpp"
 
 CGIHandler::CGIHandler(ErrorHandler& errorHandler, FilePath& filePath, const HTTPRequest& request)
-    : errorHandler(errorHandler), filePath(filePath), request(request)
-{
+    : errorHandler(errorHandler), filePath(filePath), request(request) {
     logger = &Logger::getInstance();
 }
 
@@ -52,7 +52,6 @@ void CGIHandler::handleExec(int *inputPipe, int *outputPipe) {
     close(inputPipe[1]);
     close(outputPipe[0]);
     std::string path = filePath.getPath();
-
     char* argv[] = { const_cast<char*>(path.c_str()), NULL };
     execve(argv[0], argv, envp);
     logger->log(Logger::ERROR, "Execve failed: " + std::string(strerror(errno)));
@@ -128,6 +127,7 @@ void CGIHandler::executeCGI(HTTPResponse& response) {
         if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
             fillResponse(cgiOutput, response);
         } else {
+            logger->log(Logger::ERROR, "CGI executed with status: " + itostr(status));
             return errorHandler.handleError(500, response);
         }
     }
@@ -149,6 +149,7 @@ void CGIHandler::setEnvironment(void) {
         envVarsStorage.push_back("CONTENT_LENGTH=" + oss.str());
         envVarsStorage.push_back("CONTENT_TYPE=" + request.getContentType());
     }
+    envVarsStorage.push_back("PATH_INFO=" + request.getURI());
     envVarsStorage.push_back("REQUEST_METHOD=" + request.getMethod());
     envVarsStorage.push_back("QUERY_STRING=" + request.getQueryString());
     envVarsStorage.push_back("SCRIPT_NAME=" + filePath.getPath());

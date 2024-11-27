@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="container">
+        <h1>Acessando o CGI/Post/JSON</h1>
+        <p>Estamos acessando o CGI/Post/JSON</p>
+        <form method="post">
+            <input type="text" name="key1" placeholder="Key 1">
+            <input type="text" name="key2" placeholder="Key 2">
+            <button type="submit">Enviar</button>
+        </form>
+        {% if data %}
+            <h2>Dados Recebidos:</h2>
+            <pre>{{ data | tojson(indent=2) }}</pre>
+        {% endif %}
+    </div>
+{% endblock %}

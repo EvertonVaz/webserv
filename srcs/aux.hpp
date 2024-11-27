@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:52:05 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/19 14:48:02 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/27 14:31:14 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,3 +29,4 @@ std::string joinMethods(const std::set<std::string>& methods);
 ServerConfig selectConfig(HTTPRequest request, std::vector<ServerConfig> serverConfigs);
 const std::map<int, std::string> httpReasonPhrase();
 std::string itostr(const int value);
+std::string getProgram(const std::string& cgiExtension);

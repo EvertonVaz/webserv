@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
+#!./venv/bin/python3
 import os
-import sys
 import re
 import fnmatch
 from urllib.parse import parse_qs, quote
