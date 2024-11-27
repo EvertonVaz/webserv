@@ -30,7 +30,7 @@ body {
 h1 {
     font-size: 3em;
     margin-bottom: 20px;
-    color: #BB86FC; /* Cor vibrante para destaque */
+    color: #1F8EF1; /* Cor vibrante para destaque */
     animation: fadeIn 2s ease-in-out;
 }
 
@@ -53,11 +53,34 @@ p {
     to { transform: translateY(0); opacity: 1; }
 }
 
+/* Lista de variáveis de ambiente */
+ul {
+    list-style-type: none;
+    text-align: left;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+li {
+    padding: 5px 0;
+    border-bottom: 1px solid #333;
+}
+
+ul li a {
+    color: #1F8EF1;
+    text-decoration: none;
+}
+
+ul li a:hover {
+    text-decoration: underline;
+}
+
 /* Botão estilizado */
 .button {
     margin-top: 30px;
     padding: 10px 20px;
-    background-color: #BB86FC;
+    background-color: #1F8EF1;
     color: #121212;
     border: none;
     border-radius: 5px;

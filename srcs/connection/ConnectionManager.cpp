@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/27 12:09:45 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/27 17:03:15 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ void ConnectionManager::handleEvents() {
                 closeConnection(pollFds[i].fd);
             }
         }
-
         pollFds[i].revents = 0;
     }
 }

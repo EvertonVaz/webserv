@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:41 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/27 15:33:39 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/27 16:17:02 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ public:
     Router& operator=(const Router& other);
     ~Router();
 
+    bool isCgiRequest(const std::string& path, const std::set<std::string>& cgiExtensions);
     const RouteConfig routeRequest(const HTTPRequest& request);
     void handleRequest(const HTTPRequest& request, HTTPResponse& response);
     void resolvePath(std::string path, const RouteConfig routeConfig, HTTPResponse& response);

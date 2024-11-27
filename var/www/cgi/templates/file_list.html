@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Explorador de Arquivos</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="cgi/static/css/styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Explorador de Arquivos - {path}</h1>
+        <h1>Explorador de Arquivos - {{ path }}</h1>
         <ul>
-            {items_list}
+            {% for name, rel_path in items %}
+                <li><a href="/cgi?path=/list_files&dir={{ rel_path|urlencode }}">{{ name }}</a></li>
+            {% endfor %}
         </ul>
-        <a href="/cgi" class="button">Voltar</a>
+        <p><a href="/cgi" class="button">Voltar</a></p>
     </div>
 </body>
 </html>

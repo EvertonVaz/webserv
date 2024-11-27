@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 11:15:05 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/27 15:52:14 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/27 16:16:24 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,8 @@ FilePath::FilePath(std::string root, std::string uri, std::list<std::string> ind
 
     if (_root[_root.length() - 1] == '/')
         _root.erase(_root.length() - 1);
-    if (_uri.find("cgi") != std::string::npos)
-        _uri = "/cgi";
     isPathExist(_root + _uri);
-    if (_isDirectory && uri[uri.length() - 1] != '/')
+    if (_isDirectory && _uri[_uri.length() - 1] != '/')
         _uri += "/";
     _path = constructorSafeFilePath();
 }

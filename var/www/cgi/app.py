@@ -5,9 +5,14 @@ import html
 import urllib.parse
 import re
 import fnmatch
+import jinja2
 
 # Enable CGI error reporting
 # cgitb.enable()
+
+# Set up Jinja2 template environment
+template_loader = jinja2.FileSystemLoader(searchpath=os.path.join(os.path.dirname(__file__), 'templates'))
+template_env = jinja2.Environment(loader=template_loader)
 
 def read_gitignore(root_dir):
     patterns = []
@@ -40,30 +45,25 @@ def list_directory(current_path, root_dir, patterns):
             items.append((item, rel_path))
     return items
 
+# Replace the render_template function
 def render_template(template_name, context={}):
-    template_path = os.path.join(os.path.dirname(__file__), 'templates', template_name)
-    with open(template_path, 'r', encoding='utf-8') as f:
-        template = f.read()
-    # Replace placeholders in the template
-    for key, value in context.items():
-        if isinstance(value, str):
-            template = template.replace('{' + key + '}', value)
-    return template
+    template = template_env.get_template(template_name)
+    return template.render(context)
 
 def main():
     # Get environment variables
     method = os.environ.get('REQUEST_METHOD', 'GET')
-    path_info = os.environ.get('PATH_INFO', 'cgi/')
     query_string = os.environ.get('QUERY_STRING', '')
     params = urllib.parse.parse_qs(query_string)
-    print({'method': method, 'path_info': path_info, 'query_string': query_string, 'params': params})
-    if path_info in ('/cgi', '/cgi/'):
-        # Handle the '/cgi' route
+    path = params.get('path', [''])[0]  # Get 'path' parameter from query string
+
+    if path in ('', '/'):
+        # Handle the default route '/cgi?path='
         content = render_template('index.html')
-    elif path_info in ('/cgi/post', '/cgi/post/'):
-        # Handle the '/cgi/post' route
+    elif path in ('/post', '/post/'):
+        # Handle the '/post' route '/cgi?path=/post'
         content = render_template('post.html')
-    elif path_info == '/cgi/post/json':
+    elif path == '/post/json':
         data = None
         if method == 'POST':
             # Read the input data from stdin
@@ -77,19 +77,15 @@ def main():
             content = render_template('json_post.html', {'data': data, 'if_data': '', '/if_data': ''})
         else:
             content = render_template('json_post.html', {'data': '', 'if_data': '<!--', '/if_data': '-->'})
-    elif path_info == '/cgi/list_files':
+    elif path == '/list_files':
         root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
-        path = params.get('path', [''])[0]
-        current_path = os.path.normpath(os.path.join(root_dir, path))
+        dir_path = params.get('dir', [''])[0]  # Get 'dir' parameter for directory path
+        current_path = os.path.normpath(os.path.join(root_dir, dir_path))
         if not current_path.startswith(root_dir):
             current_path = root_dir
         patterns = read_gitignore(root_dir)
         items = list_directory(current_path, root_dir, patterns)
-        items_list = ''
-        for name, rel_path in items:
-            item_link = f'<li><a href="/cgi/list_files?path={urllib.parse.quote(rel_path)}">{html.escape(name)}</a></li>'
-            items_list += item_link
-        context = {'path': html.escape(path), 'items_list': items_list}
+        context = {'path': dir_path, 'items': items}
         content = render_template('file_list.html', context)
     else:
         # Handle 404 Not Found
