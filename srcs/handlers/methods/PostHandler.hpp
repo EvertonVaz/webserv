@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 09:08:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/26 08:50:25 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/27 12:01:39 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ class PostHandler {
         bool boundaryCreate();
         bool handleMultiPart();
         bool handleHeaders();
-        bool createDirectory(const std::string& path);
+        bool directoryExists(const std::string& path);
     public:
         PostHandler();
         ~PostHandler();

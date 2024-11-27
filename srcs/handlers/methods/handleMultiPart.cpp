@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 08:30:54 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/26 11:34:22 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/27 12:43:54 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,18 @@
 #include <algorithm>
 #include <cstddef>
 #include <fstream>
+#include <string>
+
+bool find(std::string str, std::string sep1, std::string sep2, size_t& pos) {
+    pos = 0;
+    if (str.find(sep1, pos) < str.find(sep2, pos))
+        pos = str.find(sep1, pos);
+    else
+        pos = str.find(sep2, pos);
+    if (str.find('\n', 0) == 0)
+        pos += 1;
+    return pos != std::string::npos;
+}
 
 bool PostHandler::boundaryCreate() {
     std::string boundaryPrefix = "boundary=";
@@ -27,17 +39,6 @@ bool PostHandler::boundaryCreate() {
         return false;
     _body = _body.substr(_body.find(_boundary) + _boundary.length()+2);
     return true;
-}
-
-bool find(std::string str, std::string sep1, std::string sep2, size_t& pos) {
-    pos = 0;
-    if (str.find(sep1, pos) < str.find(sep2, pos))
-        pos = str.find(sep1, pos);
-    else
-        pos = str.find(sep2, pos);
-    if (str.find('\n', 0) == 0)
-        pos += 1;
-    return pos != std::string::npos;
 }
 
 bool PostHandler::handleHeaders() {
@@ -80,10 +81,6 @@ bool PostHandler::handleMultiPart() {
         std::string content = _body.substr(0, boundaryPos);
         if (!_headers["filename"].empty()) {
             std::string filePath = _request.getUploadPath() + "/" + _headers["filename"];
-            if (!createDirectory(_request.getUploadPath())) {
-                return false;
-            }
-
             std::ofstream outFile(filePath.c_str(), std::ios::binary);
             if (!outFile.is_open()) {
                 return false;
@@ -92,10 +89,9 @@ bool PostHandler::handleMultiPart() {
             outFile.close();
             _body = _body.substr(boundaryPos + _boundary.length());
         } else if (!_headers["name"].empty()) {
-            // É um campo de formulário simples, pode ser armazenado se necessário
-            // Por exemplo, armazenar em um map<string, string> fields;
+            std::string key = _headers["name"];
+            std::string value = content.substr(0, content.length() - 2);
         }
     }
-
     return true;
 }

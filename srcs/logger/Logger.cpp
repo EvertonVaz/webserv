@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 06:29:15 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/25 21:57:10 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/27 11:05:41 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ std::string Logger::getMethodColor(const std::string& method) {
     } else if (method == "DELETE") {
         return "\033[48;5;196;30mDELETE\033[0m";
     } else {
-        return "METODO NÃO RECONHECIDO";
+        return "\033[48;5;226;30m" + method + "\033[0m";
     }
 }
 

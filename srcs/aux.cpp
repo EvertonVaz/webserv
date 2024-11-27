@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:48:25 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/18 18:17:08 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/26 12:58:01 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include "./logger/Logger.hpp"
 
 ServerConfig selectConfig(HTTPRequest request, std::vector<ServerConfig> serverConfigs) {
-    std::string requestHost = request.getHeaders().at("host");
+    std::string requestHost = request.getHeaders()["host"];
     std::string requestPort = requestHost.substr(requestHost.find(":") + 1);
     requestHost = requestHost.substr(0, requestHost.find(":"));
     for (size_t i = 0; i < serverConfigs.size(); i++) {

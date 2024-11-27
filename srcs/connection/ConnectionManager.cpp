@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/25 21:58:55 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/27 12:09:45 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ ConnectionManager::ConnectionManager(Server &server) {
 	clientBuffers = std::map<int, std::string>();
 	this->socketInterface = server.getSocketInterface();
 	std::vector<int> serverListenSockets = server.getListenSockets();
-    PostHandler postHandler;
 
 	for (size_t i = 0; i < serverListenSockets.size(); i++) {
 		struct pollfd pfd;
@@ -145,10 +144,6 @@ void ConnectionManager::processRequest(int clientSockFd, HTTPRequest& request) {
     request.setUploadPath(uploadPath);
     router.handleRequest(request, response);
 
-    if (request.getMethod() == "POST") {
-        postHandler.setRequest(request);
-        postHandler.handlePost();
-    }
     std::map<std::string, std::string> reqHeaders = request.getHeaders();
     if (reqHeaders.find("Connection") != reqHeaders.end() && reqHeaders["Connection"] == "close") {
         response.setCloseConnection(true);

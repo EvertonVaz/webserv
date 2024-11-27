@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:41 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/23 10:52:41 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/27 12:04:39 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,12 @@
 #include "../http/HTTPResponse.hpp"
 #include "../parser/ServerConfig.hpp"
 #include "../parser/RouteConfig.hpp"
+#include "../handlers/methods/PostHandler.hpp"
 
 class Router {
 private:
     ServerConfig serverConfig;
+    PostHandler postHandler;
 
 public:
     Router();
@@ -34,4 +36,5 @@ public:
     void resolvePath(std::string path, const RouteConfig routeConfig, HTTPResponse& response);
     ServerConfig getServerConfig() const;
     bool getAutoIndex(std::string requestURI);
+    bool handlePost(const HTTPRequest& request);
 };

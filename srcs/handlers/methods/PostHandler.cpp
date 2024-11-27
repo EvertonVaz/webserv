@@ -6,13 +6,12 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 09:08:56 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/26 09:40:12 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/27 12:44:23 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <sys/stat.h>
-#include <sys/types.h>
 #include "PostHandler.hpp"
+#include <sys/stat.h>
 
 PostHandler::PostHandler() {
     _logger = &Logger::getInstance();
@@ -27,6 +26,9 @@ void PostHandler::setRequest(const HTTPRequest& request) {
 }
 
 bool PostHandler::handlePost() {
+    if (!directoryExists(_request.getUploadPath())) {
+        return false;
+    }
     if (_request.getHeaders().find("content-type") == _request.getHeaders().end()) {
         return false;
     }
@@ -36,22 +38,10 @@ bool PostHandler::handlePost() {
     return false;
 }
 
-bool PostHandler::createDirectory(const std::string& path) {
-    size_t pos = 0;
-    std::string dir;
-    int mkdirRet;
-
-    while ((pos = path.find('/', pos)) != std::string::npos) {
-        dir = path.substr(0, pos++);
-        if (dir.empty()) continue;
-        mkdirRet = mkdir(dir.c_str(), 0755);
-        if (mkdirRet && errno != EEXIST) {
-            return false;
-        }
-    }
-    mkdirRet = mkdir(path.c_str(), 0755);
-    if (mkdirRet && errno != EEXIST) {
+bool PostHandler::directoryExists(const std::string& path) {
+    struct stat st;
+    if (stat(path.c_str(), &st) != 0) {
         return false;
     }
-    return true;
+    return (st.st_mode & S_IFDIR) != 0;
 }

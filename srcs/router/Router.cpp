@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:22 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/23 10:53:21 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/27 12:39:13 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,8 @@
 
 Router::Router() {}
 
-Router::Router(const ServerConfig& config) {
-    serverConfig = config;
-
+Router::Router(const ServerConfig& config) : serverConfig(config) {
+    PostHandler postHandler;
 }
 
 Router::Router(const Router& other) {
@@ -78,6 +77,15 @@ bool Router::getAutoIndex(std::string requestURI) {
     return false;
 }
 
+bool Router::handlePost(const HTTPRequest& request) {
+    if (request.getMethod() != "POST") {
+        return false;
+    }
+    postHandler.setRequest(request);
+    bool hasError = postHandler.handlePost();
+    return !hasError;
+}
+
 void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
     const RouteConfig routeConfig = routeRequest(request);
     ErrorHandler errorHandler(serverConfig.getErrorPage());
@@ -105,6 +113,8 @@ void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
         CGIHandler cgiHandler(errorHandler, filePath, request);
         return cgiHandler.handleResponse(response);
     } else {
+        if (handlePost(request))
+            return errorHandler.handleError(500, response);
         StaticFileHandler staticHandler(errorHandler, filePath);
         staticHandler.setDirectoryListingEnabled(autoIndex);
         return staticHandler.handleResponse(response);

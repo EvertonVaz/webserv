@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 20:55:57 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/25 21:12:42 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/26 13:02:58 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ bool HTTPRequest::parseRequestLine(const std::string& line) {
     if (!validMethod) {
         return setState(ERROR501), false;
     }
-    if (httpVersion != "HTTP/1.1" && httpVersion != "HTTP/1.0") {
+    if (httpVersion != "HTTP/1.1") {
         return setState(ERROR505), false;
     }
     return true;
