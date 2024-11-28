@@ -9,8 +9,8 @@
             <button type="submit">Enviar</button>
         </form>
         {% if data %}
-            <h2>Dados Recebidos:</h2>
-            <pre>{{ data | tojson(indent=2) }}</pre>
+        <h2>Dados Recebidos:</h2>
+        <pre>{{ data | tojson(indent=2) }}</pre>
         {% endif %}
         <p><a href="/cgi" class="button">Voltar</a></p></p>
     </div>

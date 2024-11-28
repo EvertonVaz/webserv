@@ -80,11 +80,15 @@ void CGIHandler::fillResponse(std::string cgiOutput, HTTPResponse& response) {
 }
 
 void CGIHandler::handlePOST(int *inputPipe, int *outputPipe, const HTTPRequest& request) {
+
     close(inputPipe[0]);
     close(outputPipe[1]);
     if (request.getMethod() == "POST") {
         std::string body = request.getBody();
-        write(inputPipe[1], body.c_str(), body.length());
+        ssize_t bytesWritten = write(inputPipe[1], body.c_str(), body.length());
+        if (bytesWritten == -1) {
+            throw std::runtime_error("Erro ao escrever no pipe de entrada");
+        }
     }
     close(inputPipe[1]);
 }
@@ -100,7 +104,6 @@ std::string CGIHandler::readCGI(int *outputPipe) {
         logger->log(Logger::ERROR, "Read failed: " + std::string(strerror(errno)));
     }
     close(outputPipe[0]);
-
     return cgiOutput;
 }
 
@@ -111,7 +114,6 @@ void CGIHandler::executeCGI(HTTPResponse& response) {
     if (pipe(inputPipe) == -1 || pipe(outputPipe) == -1) {
         return errorHandler.handleError(500, response);
     }
-
     pid_t pid = fork();
     if (pid == -1) {
         logger->log(Logger::ERROR, "Fork failed");

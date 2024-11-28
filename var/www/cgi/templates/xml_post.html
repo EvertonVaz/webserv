@@ -1,0 +1,17 @@
+
+{% extends "layout.html" %}
+{% block content %}
+    <div class="container">
+        <h1>Acessando o CGI/Post/XML</h1>
+        <p>Estamos acessando o CGI/Post/XML</p>
+        <form method="post">
+            <textarea name="xmlData" placeholder="Insira seu XML aqui" rows="10" cols="50"></textarea>
+            <button type="submit">Enviar</button>
+        </form>
+        {% if data %}
+            <h2>Dados Recebidos:</h2>
+            <pre>{{ data | tojson(indent=2) }}</pre>
+        {% endif %}
+        <p><a href="/cgi" class="button">Voltar</a></p>
+    </div>
+{% endblock %}

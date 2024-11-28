@@ -6,17 +6,19 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:14:57 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/22 10:25:52 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/28 09:56:40 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdexcept>
+#include <csignal>
 #include "./server/Server.hpp"
 #include "./logger/Logger.hpp"
 #include "./parser/ConfigParser.hpp"
 #include "./connection/ConnectionManager.hpp"
 
 int main(int argc, char **argv) {
+    signal(SIGPIPE, SIG_IGN);
     Logger& logger = Logger::getInstance();
     try {
         // TODO: Criar uma logica para salvar o log em um arquivo

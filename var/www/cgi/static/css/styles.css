@@ -94,3 +94,65 @@ ul li a:hover {
 .button:hover {
     background-color: #9A67EA;
 }
+
+/* Estilo para formulários */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Estilo para inputs de texto */
+input[type="text"] {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px 15px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: #2C2C2C;
+    color: #E0E0E0;
+    font-size: 1em;
+    transition: border 0.3s ease;
+}
+
+input[type="text"]:focus {
+    border-color: #1F8EF1;
+    outline: none;
+}
+
+/* Estilo para botão de envio no formulário */
+form button {
+    padding: 10px 20px;
+    background-color: #1F8EF1;
+    color: #121212;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+form button:hover {
+    background-color: #1669C1;
+    transform: scale(1.05);
+}
+
+/* Estilo para elementos <pre> */
+pre {
+    background-color: #1E1E1E;
+    padding: 15px;
+    border-radius: 5px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 60vh;
+    color: #E0E0E0;
+    font-family: 'Courier New', Courier, monospace;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    text-align: left; /* Alinha o texto à esquerda */
+    margin: 20px auto; /* Centraliza o bloco */
+    width: 60%; /* Ajuste conforme necessário */
+    white-space: pre-wrap; /* Preserva quebras de linha e permite quebra de linhas longas */
+    word-wrap: break-word; /* Quebra palavras longas se necessário */
+}

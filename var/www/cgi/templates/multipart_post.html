@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="container">
+        <h1>Acessando o CGI/Post/Multipart</h1>
+        <p>Estamos acessando o CGI/Post/Multipart</p>
+        <form method="post" enctype="multipart/form-data">
+            <input type="text" name="field1" placeholder="Field 1">
+            <input type="file" name="file1">
+            <input type="text" name="field2" placeholder="Field 2">
+            <input type="file" name="file2">
+            <button type="submit">Enviar</button>
+        </form>
+        {% if data %}
+        <h2>Dados Recebidos:</h2>
+        <pre>{{ data | tojson(indent=2) }}</pre>
+        {% endif %}
+        <p><a href="/cgi" class="button">Voltar</a></p>
+    </div>
+{% endblock %}
