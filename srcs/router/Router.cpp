@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:22 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/27 16:16:46 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/03 09:44:17 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
         return errorHandler.handleError(404, response);
     }
     bool autoIndex = getAutoIndex(request.getURI());
-    FilePath filePath(root, request.getURI(), routeConfig.getIndex(), autoIndex);
+    FilePath filePath(root, request, routeConfig);
 
     std::set<std::string> allowedMethods = routeConfig.getMethods();
     if (allowedMethods.find(request.getMethod()) == allowedMethods.end()) {

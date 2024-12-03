@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 19:58:50 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/09 10:24:09 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/03 09:56:33 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <sstream>
 
 RouteConfig::RouteConfig() {
+    path = "/";
     autoindex = false;
     root = "";
     upload_enable = false;
@@ -33,6 +34,7 @@ RouteConfig::RouteConfig(const RouteConfig& other) {
 }
 
 RouteConfig& RouteConfig::operator=(const RouteConfig& other) {
+    path = other.path;
     autoindex = other.autoindex;
     root = other.root;
     upload_enable = other.upload_enable;
@@ -54,6 +56,10 @@ bool RouteConfig::getAutoindex() const {
 
 bool RouteConfig::getUploadEnable() const {
 	return upload_enable;
+}
+
+std::string RouteConfig::getPath() const {
+    return path;
 }
 
 std::string RouteConfig::getRoot() const {
@@ -93,6 +99,13 @@ void RouteConfig::setMethods(const std::string& method) {
 		if (!word.empty())
 			methods.insert(word);
 	}
+}
+
+void RouteConfig::setPath(const std::string& path) {
+    if (path[path.length() - 1] != '/')
+        this->path = path + "/";
+    else
+        this->path = path;
 }
 
 void RouteConfig::setRoot(const std::string& root) {
@@ -188,8 +201,9 @@ void RouteConfig::initializeDirectiveMap() {
 
 void RouteConfig::applyDirective(const std::string& key, const std::string& value) {
     std::map<std::string, DirectiveHandler>::const_iterator it = directiveMap.find(key);
+
     if (it != directiveMap.end()) {
-        (this->*(it->second.handler))(value);
+        return (this->*(it->second.handler))(value);
     } else {
         throw std::runtime_error("Unknown directive: " + key);
     }

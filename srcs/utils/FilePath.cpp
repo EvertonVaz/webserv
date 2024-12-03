@@ -6,41 +6,35 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 11:15:05 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/27 16:16:24 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/03 09:54:03 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "FilePath.hpp"
+#include <iostream>
 #include <linux/limits.h>
 #include <sys/stat.h>
 #include <cstdlib>
 
-FilePath::FilePath(std::string root, std::string uri, std::list<std::string> index, bool autoindex)
-    : _root(root), _uri(uri), _index(index), _autoindex(autoindex) {
+FilePath::FilePath(std::string root, HTTPRequest req, RouteConfig route) :
+    _root(root), _request(req), _routeConfig(route)
+{
+    _uri = _request.getURI();
+    _index = _routeConfig.getIndex();
+    _autoindex = _routeConfig.getAutoindex();
+    _isCgiRoute = !_routeConfig.getCgiExtensions().empty();
     _isFile = false;
     _isDirectory = false;
 
     if (_root[_root.length() - 1] == '/')
         _root.erase(_root.length() - 1);
-    isPathExist(_root + _uri);
+    isPathExist(_root + isCgi(_uri));
     if (_isDirectory && _uri[_uri.length() - 1] != '/')
         _uri += "/";
     _path = constructorSafeFilePath();
 }
 
 FilePath::~FilePath() {}
-
-void FilePath::setIsDirectory(bool enabled) {
-    _isDirectory = enabled;
-}
-
-void FilePath::setIsFile(bool enabled) {
-    _isFile = enabled;
-}
-
-std::string FilePath::getPath() {
-    return _path;
-}
 
 bool FilePath::isPathSafe(std::string path, std::string root) {
     char resolvedRoot[PATH_MAX];
@@ -79,8 +73,8 @@ bool FilePath::isPathExist(std::string path) {
 }
 
 std::string FilePath::constructorSafeFilePath() {
-    std::string filePath = _root + _uri;
-
+    std::string filePath = _root + isCgi(_uri);
+    std::cerr << "\nfilePath: " << filePath << std::endl;
     if (!_autoindex && _isDirectory) {
         std::list<std::string>::iterator it = _index.begin();
         for (; it != _index.end(); ++it) {
@@ -101,6 +95,28 @@ std::string FilePath::constructorSafeFilePath() {
     return filePath;
 }
 
+std::string FilePath::isCgi(std::string uri) {
+    if (_isCgiRoute) {
+        if (uri.find(".") != std::string::npos) {
+            return uri;
+        }
+        return _routeConfig.getPath();
+    }
+    return uri;
+}
+
+void FilePath::setIsDirectory(bool enabled) {
+    _isDirectory = enabled;
+}
+
+void FilePath::setIsFile(bool enabled) {
+    _isFile = enabled;
+}
+
+std::string FilePath::getPath() {
+    return _path;
+}
+
 bool FilePath::getIsFile() {
     return _isFile;
 }
@@ -119,10 +135,6 @@ bool FilePath::getIsSafe() {
 
 std::string FilePath::getUri() {
     return _uri;
-}
-
-void FilePath::setAutoIndex(bool autoindex) {
-    _autoindex = autoindex;
 }
 
 bool FilePath::getCanRead() {

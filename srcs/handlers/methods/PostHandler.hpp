@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 09:08:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/27 12:01:39 by Everton          ###   ########.fr       */
+/*   Updated: 2024/11/29 08:31:45 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class PostHandler {
         bool handleMultiPart();
         bool handleHeaders();
         bool directoryExists(const std::string& path);
+        bool saveFile(const std::string& content);
     public:
         PostHandler();
         ~PostHandler();

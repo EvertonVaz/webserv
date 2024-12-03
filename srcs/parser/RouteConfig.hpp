@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 19:07:32 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/09 10:23:22 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/03 09:41:59 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 
 class RouteConfig {
 	private:
+		std::string path;
 		bool autoindex;
 		std::string root;
 		bool upload_enable;
@@ -42,6 +43,7 @@ class RouteConfig {
 		~RouteConfig();
 
 		bool getAutoindex() const;
+		std::string getPath() const;
 		std::string getRoot() const;
 		bool getUploadEnable() const;
 		std::string getUploadPath() const;
@@ -51,6 +53,7 @@ class RouteConfig {
 		std::set<std::string> getAllowedMethods() const;
 		std::map<int, std::string> getReturnCodes() const;
 
+		void setPath(const std::string& path);
 		void setMethods(const std::string& method);
 		void setRoot(const std::string& root);
 		void setIndex(const std::string& index);

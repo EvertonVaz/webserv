@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Métodos POST Alternativos</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 5px auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .columns {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, auto);
+            gap: 20px;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-container {
+            border: 1px solid #ccc; /* Borda cinza clara */
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .form-container form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        /* Responsividade */
+        @media (max-width: 800px) {
+            .columns {
+                grid-template-columns: 1fr;
+                grid-template-rows: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Métodos POST Alternativos</h1>
+
+        <div class="columns">
+            <!-- Coluna 1 -->
+            <div class="column">
+                <!-- Formulário para Envio de JSON -->
+                <div class="form-container">
+                    <h2>Envio de JSON via POST</h2>
+                    <form id="jsonForm">
+                        <label for="jsonData">Dados JSON:</label>
+                        <textarea id="jsonData" rows="5" required>{}</textarea>
+                        <br><br>
+                        <input type="submit" class="button" value="Enviar JSON">
+                    </form>
+                </div>
+            </div>
+
+            <!-- Coluna 2 -->
+            <div class="column">
+                <!-- Formulário com Campo Oculto -->
+                <div class="form-container">
+                    <h2>Formulário com Campo Oculto</h2>
+                    <form id="hiddenFieldForm">
+                        <input type="hidden" name="sessionId" value="abc123">
+                        <label for="input1">Entrada 1:</label>
+                        <input type="text" name="input1" id="input1" required>
+                        <br><br>
+                        <input type="submit" value="Enviar Dados" class="button">
+                    </form>
+                </div>
+
+                <!-- Formulário Texto Puro -->
+                <div class="form-container">
+                    <h2>Envio de Texto Puro</h2>
+                    <form id="textForm">
+                        <label for="plainText">Texto:</label>
+                        <textarea id="plainText" rows="5" required></textarea>
+                        <br><br>
+                        <input type="button" class="button" value="Enviar Texto">
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <p style="text-align: center;"><a href="/" class="button">Voltar para a Página Inicial</a></p>
+    </div>
+</body>
+</html>

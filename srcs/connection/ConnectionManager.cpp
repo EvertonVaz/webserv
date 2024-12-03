@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/27 17:03:15 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/02 09:13:54 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,14 +65,17 @@ void ConnectionManager::handleEvents() {
 		int sockFd = pollFds[i].fd;
         if (listenSockets.count(sockFd) > 0) {
             if (pollFds[i].revents & POLLIN) {
-                acceptNewConnection(pollFds[i].fd);
+                acceptNewConnection(sockFd);
             }
         } else {
             if (pollFds[i].revents & POLLIN) {
-                readFromClient(pollFds[i].fd);
+                readFromClient(sockFd);
+            }
+            if (requests[sockFd].isComplete()) {
+                processRequest(sockFd, requests[sockFd]);
             }
             if (pollFds[i].revents & (POLLHUP | POLLERR)) {
-                closeConnection(pollFds[i].fd);
+                closeConnection(sockFd);
             }
         }
         pollFds[i].revents = 0;
@@ -131,8 +134,6 @@ void ConnectionManager::readFromClient(int clientSockFd) {
 
     if (requests[clientSockFd].hasError()) {
         handleReadError(clientSockFd, requests[clientSockFd]);
-    } else if (requests[clientSockFd].isComplete()) {
-        processRequest(clientSockFd, requests[clientSockFd]);
     }
 }
 

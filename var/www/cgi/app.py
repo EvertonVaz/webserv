@@ -148,15 +148,19 @@ def list_files(params):
 def main():
     # Get environment variables
     method = os.environ.get('REQUEST_METHOD', 'GET')
+    path = os.environ.get('PATH_INFO', '')
     query_string = os.environ.get('QUERY_STRING', '')
     params = urllib.parse.parse_qs(query_string)
-    path = params.get('path', [''])[0]  # Get 'path' parameter from query string
 
-    if path in ('', '/'):
-        # Handle the default route '/cgi?path='
+    lista = list(filter(None, path.split("/")))
+    print("\n", lista, "\n", file=sys.stderr)
+    path_len = len(lista)
+    if (path_len > 1):
+        path = path[path.find("/", path_len):]
+    print("\n", path, "\n", file=sys.stderr)
+    if path_len == 1:
         content = render_template('index.html')
     elif path in ('/post', '/post/'):
-        # Handle the '/post' route '/cgi?path=/post'
         content = render_template('post.html')
     elif path == '/post/json':
         content = handle_json_post(method)

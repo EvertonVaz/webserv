@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:10:43 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/09 14:25:06 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/03 09:52:35 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ void ConfigParser::handleLocation(std::istringstream& iss) {
     route_name = path;
     state = STATE_LOCATION;
     currentRoute = RouteConfig();
+    currentRoute.setPath(route_name);
     currentRoute.setRoot(currentServer.getRoot());
 }
 

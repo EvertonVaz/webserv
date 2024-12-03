@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 08:30:54 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/28 10:16:04 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/02 10:08:14 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 #include <cstddef>
 #include <fstream>
 #include <string>
-
-
 
 bool PostHandler::boundaryCreate() {
     std::string boundaryPrefix = "boundary=";
@@ -28,6 +26,17 @@ bool PostHandler::boundaryCreate() {
     if (_boundary.empty() || _endBoundary.empty())
         return false;
     _body = _body.substr(_body.find(_boundary) + _boundary.length()+2);
+    return true;
+}
+
+bool PostHandler::saveFile(const std::string& content) {
+    std::string filePath = _request.getUploadPath() + "/" + _headers["filename"];
+    std::ofstream outFile(filePath.c_str(), std::ios::binary);
+    if (!outFile.is_open()) {
+        return false;
+    }
+    outFile.write(content.c_str(), content.size());
+    outFile.close();
     return true;
 }
 
@@ -44,15 +53,10 @@ bool PostHandler::handleMultiPart() {
         finalPos = _body.find(_endBoundary);
         std::string content = _body.substr(0, boundaryPos);
         if (!_headers["filename"].empty()) {
-            std::string filePath = _request.getUploadPath() + "/" + _headers["filename"];
-            std::ofstream outFile(filePath.c_str(), std::ios::binary);
-            if (!outFile.is_open()) {
-                return false;
-            }
-            outFile.write(content.c_str(), content.size());
-            outFile.close();
+            saveFile(content);
             _body = _body.substr(boundaryPos + _boundary.length());
         } else if (!_headers["name"].empty()) {
+            //TODO: salvar os campos e um map para preencher o response com essas informações
             std::string key = _headers["name"];
             std::string value = content.substr(0, content.length() - 2);
         }
