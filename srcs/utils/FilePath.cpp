@@ -6,12 +6,11 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 11:15:05 by Everton           #+#    #+#             */
-/*   Updated: 2024/12/03 09:54:03 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/03 11:27:28 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "FilePath.hpp"
-#include <iostream>
 #include <linux/limits.h>
 #include <sys/stat.h>
 #include <cstdlib>
@@ -74,7 +73,7 @@ bool FilePath::isPathExist(std::string path) {
 
 std::string FilePath::constructorSafeFilePath() {
     std::string filePath = _root + isCgi(_uri);
-    std::cerr << "\nfilePath: " << filePath << std::endl;
+
     if (!_autoindex && _isDirectory) {
         std::list<std::string>::iterator it = _index.begin();
         for (; it != _index.end(); ++it) {
@@ -96,10 +95,7 @@ std::string FilePath::constructorSafeFilePath() {
 }
 
 std::string FilePath::isCgi(std::string uri) {
-    if (_isCgiRoute) {
-        if (uri.find(".") != std::string::npos) {
-            return uri;
-        }
+    if (_isCgiRoute && uri.find(".") == std::string::npos) {
         return _routeConfig.getPath();
     }
     return uri;

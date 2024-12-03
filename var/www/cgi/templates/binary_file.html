@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualizador de Arquivo</title>
+    <link rel="stylesheet" href="/cgi/static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Visualizador de Arquivo - {{ file_path }}</h1>
+        <div class="file-content">
+            {% if mime_type.startswith('image') %}
+                <img src="data:{{ mime_type }};base64,{{ image_base64 }}" alt="Visualização da imagem" style="max-width: 100%; height: auto;">
+            {% else %}
+                <p>O arquivo não pode ser exibido diretamente. Baixe-o clicando <a href="/{{ file_path }}">aqui</a>.</p>
+            {% endif %}
+        </div>
+        <p><a href="/cgi?path=/list_files&dir={{ parent_dir|urlencode }}" class="button">Voltar</a></p>
+    </div>
+</body>
+</html>

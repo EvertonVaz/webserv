@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualizador de Arquivo</title>
+    <link rel="stylesheet" href="/cgi/static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Visualizador de Arquivo - {{ file_path }}</h1>
+        <pre class="file-content">{{ file_content }}</pre>
+        <p><a href="/cgi?path=/list_files&dir={{ parent_dir|urlencode }}" class="button">Voltar</a></p>
+    </div>
+</body>
+</html>

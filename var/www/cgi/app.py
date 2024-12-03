@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import mimetypes
 import os
 import re
 import sys
@@ -6,6 +7,7 @@ import uuid
 import jinja2
 import fnmatch
 import urllib.parse
+import base64
 
 # Set up Jinja2 template environment
 template_loader = jinja2.FileSystemLoader(searchpath=os.path.join(os.path.dirname(__file__), 'templates'))
@@ -28,6 +30,12 @@ def is_ignored(path, patterns):
             return True
     return False
 
+def get_image_base64(image_path):
+    with open(image_path, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
+    return encoded_string
+
+
 def list_directory(current_path, root_dir, patterns):
     items = []
     for item in os.listdir(current_path):
@@ -41,6 +49,40 @@ def list_directory(current_path, root_dir, patterns):
         else:
             items.append((item, rel_path))
     return items
+
+def list_files(params):
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+    dir_path = params.get('dir', [''])[0]  # Get 'dir' parameter for directory path
+    current_path = os.path.normpath(os.path.join(root_dir, dir_path))
+    if not current_path.startswith(root_dir):
+        current_path = root_dir
+    patterns = read_gitignore(root_dir)
+
+    if os.path.isfile(current_path):
+        mime_type, _ = mimetypes.guess_type(current_path)
+        if mime_type and mime_type.startswith('image'):
+            image_base64 = get_image_base64(current_path)
+            context = {
+                'file_path': dir_path,
+                'image_base64': image_base64,
+                'mime_type': mime_type,
+                'parent_dir': os.path.dirname(dir_path)
+            }
+            content = render_template('binary_file.html', context)
+        else:
+            file_name = os.path.basename(current_path)
+            parent_dir = os.path.dirname(dir_path)
+            context = {'file_path': dir_path, 'file_name': file_name, 'parent_dir': parent_dir, 'mime_type': mime_type}
+            print(context, file=sys.stderr)
+            content = render_template('binary_file.html', context)
+    elif os.path.isdir(current_path):
+        items = list_directory(current_path, root_dir, patterns)
+        context = {'path': dir_path, 'items': items}
+        content = render_template('file_list.html', context)
+
+    return content
+
+
 
 # Replace the render_template function
 def render_template(template_name, context={}):
@@ -131,18 +173,6 @@ def handle_xml_post(method):
     content = render_template('xml_post.html', {'data': data})
     return content
 
-def list_files(params):
-    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
-    dir_path = params.get('dir', [''])[0]  # Get 'dir' parameter for directory path
-    current_path = os.path.normpath(os.path.join(root_dir, dir_path))
-    if not current_path.startswith(root_dir):
-        current_path = root_dir
-    patterns = read_gitignore(root_dir)
-    items = list_directory(current_path, root_dir, patterns)
-    context = {'path': dir_path, 'items': items}
-    content = render_template('file_list.html', context)
-    return content
-
 
 
 def main():
@@ -153,12 +183,15 @@ def main():
     params = urllib.parse.parse_qs(query_string)
 
     lista = list(filter(None, path.split("/")))
-    print("\n", lista, "\n", file=sys.stderr)
+    # print("\n", lista, "\n", file=sys.stderr)
+
+
+
     path_len = len(lista)
     if (path_len > 1):
         path = path[path.find("/", path_len):]
-    print("\n", path, "\n", file=sys.stderr)
-    if path_len == 1:
+    # print("\n", path, "\n", file=sys.stderr)
+    if path_len == 1 and query_string == '':
         content = render_template('index.html')
     elif path in ('/post', '/post/'):
         content = render_template('post.html')
@@ -168,7 +201,7 @@ def main():
         content = handle_multipart_post(method)
     elif path == '/post/xml':
         content = handle_xml_post(method)
-    elif path == '/list_files':
+    elif query_string != '' or path == '/list_files':
         content = list_files(params)
     else:
         # Handle 404 Not Found
