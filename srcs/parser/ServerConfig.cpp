@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 20:05:01 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/07 09:59:00 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/03 15:08:33 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ ServerConfig::ServerConfig() {
 	host = "127.0.0.1";
 	root = "./";
 	port = -1;
-	maxBodySize = 1000000;
+	maxBodySize = 1000000000;
 	serverNames.clear();
 	errorPage = "./var/www/error/";
 	routes.clear();

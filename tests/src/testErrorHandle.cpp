@@ -10,13 +10,7 @@ bool test_error_404() {
     ServerConfig serverConfig;
 	RouteConfig routeConfig;
 
-	routeConfig.setRoot("./var/www/html");
-	routeConfig.setMethods({"GET"});
-	routeConfig.setIndex({"index.html"});
-    serverConfig.setHost("127.0.0.1");
-    serverConfig.setListen("8080");
-    serverConfig.addRoute("/", routeConfig);
-    parser.addServer(serverConfig);
+	parser.createDefaultParser();
 
     MockSocket mockSocket;
     MockServer server(parser, &mockSocket);
@@ -40,13 +34,7 @@ bool test_error_400() {
     ServerConfig serverConfig;
 	RouteConfig routeConfig;
 
-	routeConfig.setRoot("./var/www/html");
-	routeConfig.setMethods({"GET"});
-	routeConfig.setIndex({"index.html"});
-    serverConfig.setHost("127.0.0.1");
-    serverConfig.setListen("8080");
-    serverConfig.addRoute("/", routeConfig);
-    parser.addServer(serverConfig);
+	parser.createDefaultParser();
 
     MockSocket mockSocket;
     MockServer server(parser, &mockSocket);
@@ -96,13 +84,7 @@ bool test_error_405() {
     ServerConfig serverConfig;
 	RouteConfig routeConfig;
 
-	routeConfig.setRoot("./var/www/html");
-	routeConfig.setMethods({"GET"});
-	routeConfig.setIndex({"index.html"});
-    serverConfig.setHost("127.0.0.1");
-    serverConfig.setListen("8080");
-    serverConfig.addRoute("/", routeConfig);
-    parser.addServer(serverConfig);
+	parser.createDefaultParser();
 
     MockSocket mockSocket;
     MockServer server(parser, &mockSocket);
@@ -124,13 +106,7 @@ bool test_error_500() {
     ServerConfig serverConfig;
 	RouteConfig routeConfig;
 
-	routeConfig.setRoot("./var/www/html");
-	routeConfig.setMethods({"GET"});
-	routeConfig.setIndex({"index.html"});
-    serverConfig.setHost("127.0.0.1");
-    serverConfig.setListen("8080");
-    serverConfig.addRoute("/", routeConfig);
-    parser.addServer(serverConfig);
+	parser.createDefaultParser();
 
     MockSocket mockSocket;
     MockServer server(parser, &mockSocket);

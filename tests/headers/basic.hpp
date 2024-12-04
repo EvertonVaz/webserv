@@ -1,10 +1,9 @@
 #ifndef BASIC_HPP
 #define BASIC_HPP
 
-#include <iostream>
 #include <string>
 #include <vector>
-#include <exception>
+#include <iostream>
 
 #define RED     "\033[31m"
 #define GREEN   "\033[32m"

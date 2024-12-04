@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 19:55:40 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/07 19:55:49 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/04 08:21:20 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,4 +30,13 @@ void ConnectionManager::setPollFds(std::vector<struct pollfd> pollFds) {
 
 void ConnectionManager::setClientBuffers(std::map<int, std::string> clientBuffers) {
     this->clientBuffers = clientBuffers;
+}
+
+void ConnectionManager::setPollRevents(int clientSockFd, short revents) {
+    for (size_t i = 0; i < pollFds.size(); i++) {
+        if (pollFds[i].fd == clientSockFd) {
+            pollFds[i].revents = revents;
+            return;
+        }
+    }
 }

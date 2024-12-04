@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 20:39:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/25 20:56:45 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/03 16:02:49 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ class HTTPRequest {
 		void setState(ParseState state);
 		void setMaxBodySize(size_t size);
 		void setUploadPath(const std::string& path);
+		void setUri(const std::string& uri);
 };
 
 std::ostream& operator<<(std::ostream& os, const HTTPRequest& request);

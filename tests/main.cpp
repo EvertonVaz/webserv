@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 20:51:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/06 09:41:54 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/03 16:26:29 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,35 @@ void runRouterTests() {
     RUN_TEST(test_handle_request_autoindex_disabled_no_index);
 }
 
+int runHTTPRequest() {
+    RUN_TEST(testHTTPRequestParsingWithBody);
+    RUN_TEST(testHTTPRequestParsingChunkedEncoding);
+    RUN_TEST(testHTTPRequestParsingLargeRequest);
+    RUN_TEST(testHTTPRequestParsingInvalidVersion);
+    RUN_TEST(testHTTPRequestParsingUnsupportedMethod);
+    return 0;
+}
+
+int runFilePath() {
+    RUN_TEST(test_FilePath_Constructor_WithValidInputs);
+    RUN_TEST(test_FilePath_IsFile_WithExistingFile);
+    RUN_TEST(test_FilePath_IsDirectory_WithExistingDirectory);
+    RUN_TEST(test_FilePath_PathSafety);
+    RUN_TEST(test_FilePath_NonExistingFile);
+    RUN_TEST(test_FilePath_CGIPathHandling);
+    RUN_TEST(test_FilePath_AutoIndexEnabled);
+
+    return 0;
+}
+
 int main() {
-    runConfigTests();
-    runSererTests();
-    // runConnManagerTests();
-    runRouterTests();
-    
+    // runConfigTests();
+    // runSererTests();
+    // // runConnManagerTests();
+    // runRouterTests();
+    // runHTTPRequest();
+    runFilePath();
+
     printSummary();
     return 0;
 }

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/26 12:37:07 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/27 11:54:55 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/04 08:56:05 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 #include "../logger/Logger.hpp"
 #include "../http/HTTPRequest.hpp"
 #include "../interfaces/ISocket.hpp"
-#include "../handlers/methods/PostHandler.hpp"
 
 class ConnectionManager {
 	private:
@@ -44,13 +43,14 @@ class ConnectionManager {
 		void acceptNewConnection(int listenSocketFd);
 		void readFromClient(int clientSocketFd);
 		void processRequest(int clientSockFd, HTTPRequest& request);
-		void closeConnection(int clientSocketFd);
 		void sendResponse(int clientSockFd, HTTPResponse& response);
+		void closeConnection(int clientSocketFd);
 
 		std::set<int> getListenSockets() const;
         std::vector<struct pollfd> getPollFds() const;
         std::map<int, std::string> getClientBuffers() const;
 
 		void setPollFds(std::vector<struct pollfd> pollFds);
+		void setPollRevents(int clientSockFd, short revents);
 		void setClientBuffers(std::map<int, std::string> clientBuffers);
 };

@@ -42,6 +42,8 @@ all: $(NAME)
 
 test: $(TEST_NAME)
 
+tests: test
+
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
 	@echo $(BLUE)[Compiling]$(END_COLOR) $(WHITE)$(notdir $<)$(END_COLOR)

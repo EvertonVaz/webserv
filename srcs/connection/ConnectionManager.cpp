@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/12/02 09:13:54 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/04 09:51:40 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void ConnectionManager::handleEvents() {
             if (pollFds[i].revents & POLLIN) {
                 readFromClient(sockFd);
             }
-            if (requests[sockFd].isComplete()) {
+            if (pollFds[i].revents & POLLOUT) {
                 processRequest(sockFd, requests[sockFd]);
             }
             if (pollFds[i].revents & (POLLHUP | POLLERR)) {
@@ -96,6 +96,7 @@ void ConnectionManager::acceptNewConnection(int listenSockFd) {
     if (socketInterface->fcntl(clientSockFd, F_SETFL, O_NONBLOCK) < 0) {
         socketInterface->close(clientSockFd);
         logger->log(Logger::ERROR, "Fail to set client socket to non-blocking");
+        return;
     }
 
     struct pollfd clientPfd;
@@ -119,7 +120,7 @@ void ConnectionManager::handleReadError(int clientSockFd, const HTTPRequest& req
         request.getMethod(),
         request.getURI(),
         response.getStatusCode());
-    closeConnection(clientSockFd);
+    return setPollRevents(clientSockFd, POLLERR);
 }
 
 void ConnectionManager::readFromClient(int clientSockFd) {
@@ -127,13 +128,16 @@ void ConnectionManager::readFromClient(int clientSockFd) {
     clientBuffers[clientSockFd] = "";
     size_t bytesRead = socketInterface->recv(clientSockFd, buffer, sizeof(buffer), 0);
     if (bytesRead <= 0) {
-        return;
+        return setPollRevents(clientSockFd, POLLHUP);
     }
     clientBuffers[clientSockFd] += std::string(buffer, bytesRead);
     requests[clientSockFd].appendData(clientBuffers[clientSockFd], serverConfigs);
 
     if (requests[clientSockFd].hasError()) {
-        handleReadError(clientSockFd, requests[clientSockFd]);
+        return handleReadError(clientSockFd, requests[clientSockFd]);
+    }
+    if (requests[clientSockFd].isComplete()) {
+        return setPollRevents(clientSockFd, POLLOUT);
     }
 }
 
@@ -145,7 +149,7 @@ void ConnectionManager::processRequest(int clientSockFd, HTTPRequest& request) {
     router.handleRequest(request, response);
 
     std::map<std::string, std::string> reqHeaders = request.getHeaders();
-    if (reqHeaders.find("Connection") != reqHeaders.end() && reqHeaders["Connection"] == "close") {
+    if (reqHeaders.find("connection") != reqHeaders.end() && reqHeaders["connection"] == "close") {
         response.setCloseConnection(true);
     }
     logger->logRoute(
@@ -155,9 +159,10 @@ void ConnectionManager::processRequest(int clientSockFd, HTTPRequest& request) {
         response.getStatusCode());
     sendResponse(clientSockFd, response);
 
-    if (response.shouldCloseConnection()) {
-        closeConnection(clientSockFd);
-    }
+    if (response.shouldCloseConnection())
+        return setPollRevents(clientSockFd, POLLHUP);
+    if (response.getStatusCode() >= 400 && response.getStatusCode() < 600)
+        return setPollRevents(clientSockFd, POLLERR);
 }
 
 void ConnectionManager::sendResponse(int clientSockFd, HTTPResponse& response) {
@@ -170,12 +175,12 @@ void ConnectionManager::sendResponse(int clientSockFd, HTTPResponse& response) {
     while (totalSent < responseLength) {
         int sent = socketInterface->send(clientSockFd, responseData + totalSent, responseLength - totalSent, 0);
         if (sent < 0) {
-            closeConnection(clientSockFd);
             logger->log(Logger::ERROR, "Erro ao enviar resposta para o cliente socket fd " + itostr(clientSockFd));
-            return;
+            return setPollRevents(clientSockFd, POLLERR);
         }
         totalSent += sent;
     }
+    return setPollRevents(clientSockFd, POLLIN);
 }
 
 void ConnectionManager::closeConnection(int sockFd) {
@@ -187,7 +192,6 @@ void ConnectionManager::closeConnection(int sockFd) {
             break;
         }
     }
-
     clientBuffers.erase(sockFd);
     logger->log(Logger::INFO, "Conexão fechada: socket fd " + itostr(sockFd));
 }

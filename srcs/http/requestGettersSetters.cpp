@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 20:26:19 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/25 21:00:45 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/03 16:03:13 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,10 @@ std::string HTTPRequest::getUploadPath() const {
 
 size_t HTTPRequest::getMaxBodySize() const {
     return maxBodySize;
+}
+
+void HTTPRequest::setUri(const std::string& uri) {
+    this->uri = uri;
 }
 
 
