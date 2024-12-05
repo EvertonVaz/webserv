@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 10:45:21 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/18 10:56:39 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/05 08:43:14 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,4 @@ class HTTPResponse {
         bool shouldCloseConnection() const;
 
         std::string generateResponse();
-
-        // TODO: Reavaliar a ideia abaixo e decidir se é necessário
-        // Método para enviar a resposta (pode ser implementado no ConnectionManager)
-        // void sendResponse(int clientSockFd, ISocket* socketInterface);
 };

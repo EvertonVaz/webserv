@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 20:55:57 by Everton           #+#    #+#             */
-/*   Updated: 2024/12/02 10:04:43 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/05 08:42:08 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,6 @@ bool HTTPRequest::chunkedEncondingHandler() {
 }
 
 bool HTTPRequest::parseBody() {
-    //TODO: em vez de dar append do body em uma string, salvar em um arquivo temporário
     if (chunkedEncoding) {
         return (chunkedEncondingHandler());
     } else if (contentLength > 0) {
@@ -134,7 +133,7 @@ bool HTTPRequest::parseBody() {
         if (isNotSafe || contentLength > maxBodySize || body.size() > 512 MB)
             return setState(ERROR413), false;
 
-        body += rawData; // aqui!
+        body += rawData;
         rawData.clear();
         if (contentLength == body.size())
             setState(COMPLETE);

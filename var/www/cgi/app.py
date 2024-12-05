@@ -183,15 +183,14 @@ def main():
     params = urllib.parse.parse_qs(query_string)
 
     lista = list(filter(None, path.split("/")))
-    # print("\n", lista, "\n", file=sys.stderr)
-
+    print("\n", lista, "\n", file=sys.stderr)
 
 
     path_len = len(lista)
     if (path_len > 1):
         path = path[path.find("/", path_len):]
     # print("\n", path, "\n", file=sys.stderr)
-    if path_len == 1 and query_string == '':
+    if (path in ('app.py', '/app.py')) or path_len == 1 and query_string == '':
         content = render_template('index.html')
     elif path in ('/post', '/post/'):
         content = render_template('post.html')

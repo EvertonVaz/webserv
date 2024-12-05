@@ -52,14 +52,24 @@ void CGIHandler::handleExec(int *inputPipe, int *outputPipe) {
     close(inputPipe[1]);
     close(outputPipe[0]);
     std::string path = filePath.getPath();
-    char* argv[] = { const_cast<char*>(path.c_str()), NULL };
+    std::string program = getProgram(path);
+    char* argv[] = {
+        const_cast<char*>(program.c_str()),
+        const_cast<char*>(path.c_str()),
+        NULL
+    };
     execve(argv[0], argv, envp);
     logger->log(Logger::ERROR, "Execve failed: " + std::string(strerror(errno)));
     exit(1);
 }
 
 void CGIHandler::fillResponse(std::string cgiOutput, HTTPResponse& response) {
-    size_t headerEnd = cgiOutput.find("\n\n");
+    size_t headerEnd = std::string::npos;
+    if (cgiOutput.find("\n\n") != std::string::npos)
+        headerEnd =  cgiOutput.find("\n\n");
+    else
+        headerEnd = cgiOutput.find("\r\n\r\n");
+
     if (headerEnd != std::string::npos) {
         std::string headers = cgiOutput.substr(0, headerEnd);
         std::string body = cgiOutput.substr(headerEnd + 2);
@@ -123,13 +133,12 @@ void CGIHandler::executeCGI(HTTPResponse& response) {
     } else {
         handlePOST(inputPipe, outputPipe, request);
         std::string cgiOutput = readCGI(outputPipe);
-
         int status;
         waitpid(pid, &status, 0);
         if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
             fillResponse(cgiOutput, response);
         } else {
-            logger->log(Logger::ERROR, "CGI executed with status: " + itostr(status));
+            logger->log(Logger::ERROR, "CGI executed with error: " + std::string(strerror(errno)));
             return errorHandler.handleError(500, response);
         }
     }
