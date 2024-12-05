@@ -64,10 +64,8 @@ void CGIHandler::handleExec(int *inputPipe, int *outputPipe) {
 }
 
 void CGIHandler::fillResponse(std::string cgiOutput, HTTPResponse& response) {
-    size_t headerEnd = std::string::npos;
-    if (cgiOutput.find("\n\n") != std::string::npos)
-        headerEnd =  cgiOutput.find("\n\n");
-    else
+    size_t headerEnd = cgiOutput.find("\n\n");
+    if (headerEnd == std::string::npos)
         headerEnd = cgiOutput.find("\r\n\r\n");
 
     if (headerEnd != std::string::npos) {
@@ -117,6 +115,21 @@ std::string CGIHandler::readCGI(int *outputPipe) {
     return cgiOutput;
 }
 
+bool CGIHandler::captureTimeOut(int &status, pid_t pid, int timeOut) {
+    int time = 0;
+    int seconds = 1000000;
+    while (time <= timeOut * seconds) {
+        std::string command = "ps -p " + itostr(pid);
+        if (waitpid(pid, &status, WNOHANG) != 0) {
+            return false;
+        }
+        time++;
+    }
+    kill(pid, SIGKILL);
+    logger->log(Logger::ERROR, "CGI time out");
+    return true;
+}
+
 void CGIHandler::executeCGI(HTTPResponse& response) {
     int inputPipe[2];
     int outputPipe[2];
@@ -131,10 +144,11 @@ void CGIHandler::executeCGI(HTTPResponse& response) {
     } else if (pid == 0) {
         handleExec(inputPipe, outputPipe);
     } else {
-        handlePOST(inputPipe, outputPipe, request);
-        std::string cgiOutput = readCGI(outputPipe);
         int status;
-        waitpid(pid, &status, 0);
+        handlePOST(inputPipe, outputPipe, request);
+        if (captureTimeOut(status, pid))
+            return errorHandler.handleError(504, response);
+        std::string cgiOutput = readCGI(outputPipe);
         if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
             fillResponse(cgiOutput, response);
         } else {

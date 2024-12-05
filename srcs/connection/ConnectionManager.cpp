@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/12/04 09:51:40 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/05 15:51:45 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ void ConnectionManager::run() {
 
 		if (ret == -1) {
 			logger->log(Logger::ERROR, "poll() falhou");
-			break ;
 		}
 		handleEvents();
 	}

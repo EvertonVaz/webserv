@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 10:05:26 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/28 09:58:37 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/05 14:22:50 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class CGIHandler {
         void handlePOST(int *inputPipe, int *outputPipe, const HTTPRequest& request);
         std::string readCGI(int *outputPipe);
         void fillResponse(std::string cgiOutput, HTTPResponse& response);
+        bool captureTimeOut(int &status, pid_t pid, int timeOut = 5);
 
     public:
         CGIHandler(ErrorHandler& errorHandler, FilePath& filePath, const HTTPRequest& request);

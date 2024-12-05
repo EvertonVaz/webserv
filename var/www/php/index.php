@@ -11,7 +11,12 @@ echo "    <link rel='stylesheet' href='/php/styles.css'>\r\n";
 echo "    <title>Mensagem</title>\r\n";
 echo "  </head>\r\n";
 echo "  <body>\r\n";
+echo "  <div class='container'>\r\n";
 echo "    <h1>Olá, esta é uma mensagem gerada pelo PHP!</h1>\r\n";
+echo "    <div>\r\n";
+echo "      <p><a href='/' class='button'>Voltar para a Página Inicial</a></p>";
+echo "    </div>\r\n";
+echo "  </div>\r\n";
 echo "  </body>\r\n";
 echo "</html>\r\n";
 ?>

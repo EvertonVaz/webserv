@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 14:36:47 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/05 20:04:41 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/05 21:16:52 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 #include "../../srcs/parser/ConfigParser.hpp"
 #include <algorithm>
 
-// TODO: entender melhor como implementar o teste dessa classe
 void events(int times, std::vector<struct pollfd> &pollFds, ConnectionManager &connManager, MockSocket &mockSocket) {
     for (int i = 0; i < times; i++) {
         mockSocket.poll(pollFds.data(), pollFds.size(), -1);

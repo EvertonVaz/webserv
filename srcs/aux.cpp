@@ -6,11 +6,12 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:48:25 by Everton           #+#    #+#             */
-/*   Updated: 2024/12/05 13:31:59 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/05 21:25:53 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "aux.hpp"
+#include <iostream>
 #include <linux/limits.h>
 #include <map>
 #include <sstream>
@@ -18,6 +19,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <unistd.h>
 #include <vector>
 #include "./logger/Logger.hpp"
 
@@ -173,9 +175,15 @@ std::string itostr(const int value) {
 }
 
 std::string getProgram(const std::string& cgiExtension) {
+    //TODO: TESTAR ISSO AQUI NA 42
+    std::string cwd = getcwd(NULL, 999999);
+    if (cwd.find("etovaz") != std::string::npos)
+        cwd = cwd + "/venv/bin/python3";
+    if (cwd.find("egeraldo") != std::string::npos)
+        cwd = cwd + "/usr/bin/python3";
+    std::cerr << "CWD: " << cwd << std::endl;
     if (cgiExtension.find(".py") != std::string::npos) {
-        //TODO: change to the correct path for the 42 VM
-        return "/home/etovaz/nave/webserver/venv/bin/python3";
+        return cwd;
     }
     if (cgiExtension.find(".php") != std::string::npos) {
         return "/usr/bin/php";

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 08:30:54 by Everton           #+#    #+#             */
-/*   Updated: 2024/12/02 10:08:14 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/05 21:16:30 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,6 @@ bool PostHandler::handleMultiPart() {
         if (!_headers["filename"].empty()) {
             saveFile(content);
             _body = _body.substr(boundaryPos + _boundary.length());
-        } else if (!_headers["name"].empty()) {
-            //TODO: salvar os campos e um map para preencher o response com essas informações
-            std::string key = _headers["name"];
-            std::string value = content.substr(0, content.length() - 2);
         }
     }
     return true;

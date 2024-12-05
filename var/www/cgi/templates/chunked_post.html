@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>Envio de Arquivo com Chunked Encoding</h1>
+{% if data.error %}
+    <p style="color:red">{{ data.error }}</p>
+{% elif data.message %}
+    <p>{{ data.message }}</p>
+{% endif %}
+<form action="/cgi/post/chunked" method="post" enctype="multipart/form-data">
+    <input type="file" name="file">
+    <input type="submit" value="Enviar">
+</form>
+<p><a href="/cgi/post" class="button">Voltar</a></p>
+{% endblock %}

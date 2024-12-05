@@ -173,6 +173,23 @@ def handle_xml_post(method):
     content = render_template('xml_post.html', {'data': data})
     return content
 
+def handle_chunked_post(method):
+    data = {}
+    if method == 'POST':
+        # Read data from stdin until EOF
+        post_data = sys.stdin.buffer.read()
+        # Save the data to a file
+        upload_dir = os.path.join(os.path.dirname(__file__), 'uploads')
+        os.makedirs(upload_dir, exist_ok=True)
+        unique_filename = f"{uuid.uuid4().hex}_chunked_upload"
+        file_path = os.path.join(upload_dir, unique_filename)
+        with open(file_path, 'wb') as f:
+            f.write(post_data)
+        data['message'] = 'Arquivo recebido com sucesso.'
+    else:
+        data = {}
+    content = render_template('chunked_post.html', {'data': data})
+    return content
 
 
 def main():
@@ -183,8 +200,7 @@ def main():
     params = urllib.parse.parse_qs(query_string)
 
     lista = list(filter(None, path.split("/")))
-    print("\n", lista, "\n", file=sys.stderr)
-
+    # print("\n", lista, "\n", file=sys.stderr)
 
     path_len = len(lista)
     if (path_len > 1):
@@ -200,6 +216,11 @@ def main():
         content = handle_multipart_post(method)
     elif path == '/post/xml':
         content = handle_xml_post(method)
+    elif path == '/post/chunked':
+        if method == 'POST':
+            content = handle_chunked_post(method)
+        else:
+            content = render_template('chunked_post.html', {'data': {}})
     elif query_string != '' or path == '/list_files':
         content = list_files(params)
     else:
