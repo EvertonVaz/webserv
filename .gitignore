@@ -8,6 +8,7 @@ venv/
 server.log
 var/www/cgi/uploads/
 var/www/upload/multipart/
+func_permitidas
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
