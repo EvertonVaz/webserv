@@ -6,10 +6,11 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 11:05:35 by Everton           #+#    #+#             */
-/*   Updated: 2024/12/07 16:21:38 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/07 17:47:47 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <sys/poll.h>
 #include <vector>
 #include <poll.h>
 #include <cstddef>
@@ -125,9 +126,12 @@ void ConnectionManager::handleReadError(int clientSockFd, const HTTPRequest& req
 void ConnectionManager::readFromClient(int clientSockFd) {
     char buffer[65535];
     clientBuffers[clientSockFd] = "";
-    size_t bytesRead = socketInterface->recv(clientSockFd, buffer, sizeof(buffer), 0);
-    if (bytesRead <= 0) {
+    long int bytesRead = socketInterface->recv(clientSockFd, buffer, sizeof(buffer), 0);
+    if (bytesRead == 0)
         return setPollRevents(clientSockFd, POLLHUP);
+    if (bytesRead < 0) {
+        logger->log(Logger::ERROR, "Erro ao ler dados do cliente socket fd " + itostr(clientSockFd));
+        return setPollRevents(clientSockFd, POLLERR);
     }
     clientBuffers[clientSockFd] += std::string(buffer, bytesRead);
     requests[clientSockFd].appendData(clientBuffers[clientSockFd], serverConfigs);
@@ -177,6 +181,8 @@ void ConnectionManager::sendResponse(int clientSockFd, HTTPResponse& response) {
             logger->log(Logger::ERROR, "Erro ao enviar resposta para o cliente socket fd " + itostr(clientSockFd));
             return setPollRevents(clientSockFd, POLLERR);
         }
+        if (sent == 0)
+            return setPollRevents(clientSockFd, POLLHUP);
         totalSent += sent;
     }
     return setPollRevents(clientSockFd, POLLIN);

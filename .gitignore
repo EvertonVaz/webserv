@@ -6,6 +6,8 @@ obj/
 instructions.txt
 venv/
 server.log
+var/www/cgi/uploads/
+var/www/upload/multipart/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

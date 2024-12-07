@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:22 by Everton           #+#    #+#             */
-/*   Updated: 2024/12/07 16:29:50 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/07 18:04:03 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ int Router::handleDelete(const FilePath& filePath) {
 }
 
 int Router::handleMethods(const HTTPRequest& request, FilePath filePath) {
-    int code = 0;
+    int code = 200;
     if (request.getMethod() == "POST") {
         postHandler.setRequest(request);
         code = postHandler.handlePost();
