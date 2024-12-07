@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 11:07:26 by Everton           #+#    #+#             */
-/*   Updated: 2024/12/03 09:25:03 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/07 15:04:45 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,14 +46,14 @@ class FilePath {
         FilePath(std::string root, HTTPRequest request, RouteConfig routeConfig);
         ~FilePath();
 
-        bool getIsFile();
-        bool getIsDirectory();
-        bool getPathExist();
-        bool getIsSafe();
-        bool getCanRead();
-        bool getCanWrite();
-        bool getCanExecute();
-        std::string getUri();
-        std::string getPath();
+        bool getIsFile() const;
+        bool getIsDirectory() const;
+        bool getPathExist() const;
+        bool getIsSafe() const;
+        bool getCanRead() const;
+        bool getCanWrite() const;
+        bool getCanExecute() const;
+        std::string getUri() const;
+        std::string getPath() const;
         void setAutoIndex(bool autoindex);
 };

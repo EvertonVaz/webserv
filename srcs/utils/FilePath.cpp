@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 11:15:05 by Everton           #+#    #+#             */
-/*   Updated: 2024/12/03 11:27:28 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/07 15:05:08 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,38 +109,38 @@ void FilePath::setIsFile(bool enabled) {
     _isFile = enabled;
 }
 
-std::string FilePath::getPath() {
+std::string FilePath::getPath() const {
     return _path;
 }
 
-bool FilePath::getIsFile() {
+bool FilePath::getIsFile() const {
     return _isFile;
 }
 
-bool FilePath::getIsDirectory() {
+bool FilePath::getIsDirectory() const {
     return _isDirectory;
 }
 
-bool FilePath::getPathExist() {
+bool FilePath::getPathExist() const {
     return _isFile || _isDirectory;
 }
 
-bool FilePath::getIsSafe() {
+bool FilePath::getIsSafe() const {
     return _isSafe;
 }
 
-std::string FilePath::getUri() {
+std::string FilePath::getUri() const {
     return _uri;
 }
 
-bool FilePath::getCanRead() {
+bool FilePath::getCanRead() const {
     return _canRead;
 }
 
-bool FilePath::getCanWrite() {
+bool FilePath::getCanWrite() const {
     return _canWrite;
 }
 
-bool FilePath::getCanExecute() {
+bool FilePath::getCanExecute() const {
     return _canExecute;
 }

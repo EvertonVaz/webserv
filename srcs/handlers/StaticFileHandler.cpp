@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:59:21 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/23 10:56:03 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/07 17:02:28 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ StaticFileHandler::StaticFileHandler(ErrorHandler errorHandler, FilePath filePat
 StaticFileHandler::~StaticFileHandler() {}
 
 void StaticFileHandler::handleResponse(HTTPResponse& response) {
-
+    if (method == "DELETE" && statusCode == 204)
+        return serveFile(filePath.getPath(), response);
     if (!filePath.getIsSafe() && filePath.getCanRead()) {
         return errorHandler.handleError(403, response);
     }
@@ -52,15 +53,17 @@ void StaticFileHandler::handleResponse(HTTPResponse& response) {
 }
 
 void StaticFileHandler::serveFile(const std::string& filePath, HTTPResponse& response) {
+    if (method == "DELETE")
+        return response.setStatusCode(statusCode);
     std::ifstream file(filePath.c_str(), std::ios::in | std::ios::binary);
     if (!file.is_open()) {
-        return errorHandler.handleError(403, response);;
+        return errorHandler.handleError(403, response);
     }
 
     std::string extension = filePath.substr(filePath.find_last_of('.'));
     std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
-    response.setStatusCode(200);
+    response.setStatusCode(statusCode);
     response.setBody(content);
     response.addHeader("Content-Type", getContentType(extension));
 
@@ -109,4 +112,17 @@ void StaticFileHandler::listDirectory(const std::string& dirPath, HTTPResponse& 
 
 void StaticFileHandler::setDirectoryListingEnabled(bool enabled) {
     directoryListingEnabled = enabled;
+}
+
+void StaticFileHandler::setStatusCode(int code) {
+    statusCode = code;
+}
+
+void StaticFileHandler::setMethod(std::string method) {
+    this->method = method;
+}
+
+void StaticFileHandler::setStatusCodeAndMethod(int code, std::string method) {
+    this->statusCode = code;
+    this->method = method;
 }

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 08:30:54 by Everton           #+#    #+#             */
-/*   Updated: 2024/12/05 21:16:30 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/07 16:03:30 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ bool PostHandler::boundaryCreate() {
     return true;
 }
 
-bool PostHandler::saveFile(const std::string& content) {
+bool PostHandler::saveFileWithName(const std::string& content) {
     std::string filePath = _request.getUploadPath() + "/" + _headers["filename"];
     std::ofstream outFile(filePath.c_str(), std::ios::binary);
     if (!outFile.is_open()) {
@@ -40,22 +40,22 @@ bool PostHandler::saveFile(const std::string& content) {
     return true;
 }
 
-bool PostHandler::handleMultiPart() {
+int PostHandler::handleMultiPart() {
     bool hasBoundary = boundaryCreate();
     size_t boundaryPos = 0;
     size_t finalPos = 1;
 
     while (hasBoundary && boundaryPos < finalPos) {
         if (!handleHeaders()) {
-            return false;
+            return 400;
         }
         boundaryPos = _body.find(_boundary);
         finalPos = _body.find(_endBoundary);
         std::string content = _body.substr(0, boundaryPos);
         if (!_headers["filename"].empty()) {
-            saveFile(content);
+            saveFileWithName(content);
             _body = _body.substr(boundaryPos + _boundary.length());
         }
     }
-    return true;
+    return 201;
 }

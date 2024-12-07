@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 09:08:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/29 08:31:45 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/07 16:03:47 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,15 @@ class PostHandler {
         Logger *_logger;
 
         bool boundaryCreate();
-        bool handleMultiPart();
         bool handleHeaders();
+        int handleMultiPart();
         bool directoryExists(const std::string& path);
-        bool saveFile(const std::string& content);
+        bool saveFileWithName(const std::string& content);
+        bool saveFileNoName(const std::string& content);
     public:
         PostHandler();
         ~PostHandler();
-        bool handlePost();
+        int handlePost();
 
         void setRequest(const HTTPRequest& request);
 };

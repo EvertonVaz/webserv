@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 09:08:56 by Everton           #+#    #+#             */
-/*   Updated: 2024/12/02 09:19:30 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/07 16:03:18 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,15 +71,28 @@ bool PostHandler::handleHeaders() {
     return true;
 }
 
-bool PostHandler::handlePost() {
-    if (!directoryExists(_request.getUploadPath())) {
+bool PostHandler::saveFileNoName(const std::string& content) {
+    std::string filePath = _request.getUploadPath() + "/uploaded_file";
+    std::ofstream outFile(filePath.c_str(), std::ios::binary);
+    if (!outFile.is_open()) {
         return false;
     }
+    outFile.write(content.c_str(), content.size());
+    outFile.close();
+    return true;
+}
+
+int PostHandler::handlePost() {
+    if (!directoryExists(_request.getUploadPath())) {
+        return 404;
+    }
     if (_request.getHeaders().find("content-type") == _request.getHeaders().end()) {
-        return false;
+        return 400;
     }
     if (_request.getHeaders()["content-type"].find("multipart/form-data") != std::string::npos) {
         return handleMultiPart();
     }
-    return true;
+    else if (!saveFileNoName(_request.getBody()))
+        return 500;
+    return 201;
 }

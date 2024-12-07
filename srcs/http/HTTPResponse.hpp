@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 10:45:21 by Everton           #+#    #+#             */
-/*   Updated: 2024/12/05 08:43:14 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/07 16:49:53 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@
 
 class HTTPResponse {
     private:
-        std::string httpVersion;
+        bool closeConnection;
         int statusCode;
+        std::string body;
+        std::string httpVersion;
         std::string reasonPhrase;
         std::map<std::string, std::string> headers;
-        std::string body;
-        Logger* logger;
-        bool closeConnection;
 
+        Logger* logger;
         std::string getHTTPDate();
 
     public:

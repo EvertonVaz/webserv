@@ -6,17 +6,15 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:01:22 by Everton           #+#    #+#             */
-/*   Updated: 2024/12/03 09:44:17 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/07 16:29:50 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Router.hpp"
 #include <sys/stat.h>
 #include "../aux.hpp"
-#include "../handlers/StaticFileHandler.hpp"
-#include "../handlers/ErrorHandler.hpp"
-#include "../utils/FilePath.hpp"
 #include "../handlers/CGIHandler.hpp"
+#include "../handlers/StaticFileHandler.hpp"
 
 Router::Router() {}
 
@@ -77,13 +75,30 @@ bool Router::getAutoIndex(std::string requestURI) {
     return false;
 }
 
-bool Router::handlePost(const HTTPRequest& request) {
-    if (request.getMethod() != "POST") {
-        return false;
+int Router::handleDelete(const FilePath& filePath) {
+    if (filePath.getPathExist())  {
+        if (filePath.getIsDirectory()) {
+            return 403;
+        } else if (filePath.getCanWrite()) {
+            if (remove(filePath.getPath().c_str()) == 0) {
+                return 204;
+            } else {
+                return 500;
+            }
+        }
     }
-    postHandler.setRequest(request);
-    bool hasError = postHandler.handlePost();
-    return !hasError;
+    return 404;
+}
+
+int Router::handleMethods(const HTTPRequest& request, FilePath filePath) {
+    int code = 0;
+    if (request.getMethod() == "POST") {
+        postHandler.setRequest(request);
+        code = postHandler.handlePost();
+    } else if (request.getMethod() == "DELETE") {
+        code = handleDelete(filePath);
+    }
+    return code;
 }
 
 void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
@@ -113,10 +128,12 @@ void Router::handleRequest(const HTTPRequest& request, HTTPResponse& response) {
         CGIHandler cgiHandler(errorHandler, filePath, request);
         return cgiHandler.handleResponse(response);
     } else {
-        if (handlePost(request))
-            return errorHandler.handleError(500, response);
+        int code = handleMethods(request, filePath);
+        if (code >= 400)
+            return errorHandler.handleError(code, response);
         StaticFileHandler staticHandler(errorHandler, filePath);
         staticHandler.setDirectoryListingEnabled(autoIndex);
+        staticHandler.setStatusCodeAndMethod(code, request.getMethod());
         return staticHandler.handleResponse(response);
     }
 }

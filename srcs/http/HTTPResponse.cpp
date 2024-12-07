@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 10:51:09 by Everton           #+#    #+#             */
-/*   Updated: 2024/11/18 10:57:02 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/07 16:49:48 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,9 @@ std::string HTTPResponse::generateResponse(){
     std::ostringstream responseStream;
 
     responseStream << httpVersion << " " << statusCode << " " << reasonPhrase << "\r\n";
-    if (headers.find("Date") == headers.end()) {
-		headers["Date"] = getHTTPDate();
-    }
-    if (headers.find("Server") == headers.end()) {
-        headers["Server"] = "MyWebServer/1.0";
-    }
+	headers["Date"] = getHTTPDate();
+    headers["Server"] = "MyWebServer/1.0";
+
     if (closeConnection) {
         headers["Connection"] = "close";
     } else {
