@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 10:48:25 by Everton           #+#    #+#             */
-/*   Updated: 2024/12/08 09:30:14 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/08 14:12:18 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,12 +175,11 @@ std::string itostr(const int value) {
 }
 
 std::string getProgram(const std::string& cgiExtension) {
-    //TODO: TESTAR ISSO AQUI NA 42
     std::string cwd = getcwd(NULL, 999999);
     if (cwd.find("etovaz") != std::string::npos)
         cwd = cwd + "/venv/bin/python3";
-    if (cwd.find("egeraldo") != std::string::npos)
-        cwd = cwd + "/usr/bin/python3";
+    else
+        cwd = "/usr/bin/python3";
     if (cgiExtension.find(".py") != std::string::npos) {
         return cwd;
     }

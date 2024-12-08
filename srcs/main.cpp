@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 14:14:57 by Everton           #+#    #+#             */
-/*   Updated: 2024/12/05 21:14:00 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/08 10:53:50 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "./logger/Logger.hpp"
 #include "./parser/ConfigParser.hpp"
 #include "./connection/ConnectionManager.hpp"
+#include "aux.hpp"
 
 void ignoreSigPipe() {
     struct sigaction sa;
@@ -29,6 +30,14 @@ void ignoreSigPipe() {
 void signalHandler(int signal) {
     (void)signal;
     throw std::runtime_error("Bye Bye :)");
+}
+
+void printLogs(const Server& server) {
+    Logger& logger = Logger::getInstance();
+    std::string log = server.getServers()[0].getHost() + ":";
+    log += itostr(server.getServers()[0].getPort());
+    logger.log(Logger::INFO, "Servidor iniciado com sucesso.");
+    logger.log(Logger::INFO, "Acesse: http://" + log);
 }
 
 int main(int argc, char **argv){
@@ -49,8 +58,7 @@ int main(int argc, char **argv){
         if (!server.isListening()) {
             throw std::runtime_error("Erro ao iniciar o servidor.");
         }
-        logger.log(Logger::INFO, "Servidor iniciado com sucesso.");
-
+        printLogs(server);
         ConnectionManager connManager(server);
         connManager.run();
     } catch (const std::exception& e) {

@@ -6,7 +6,7 @@
 /*   By: Everton <egeraldo@student.42sp.org.br>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 20:51:59 by Everton           #+#    #+#             */
-/*   Updated: 2024/12/03 16:26:29 by Everton          ###   ########.fr       */
+/*   Updated: 2024/12/08 14:35:08 by Everton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,11 +92,11 @@ int runFilePath() {
 }
 
 int main() {
-    // runConfigTests();
-    // runSererTests();
-    // // runConnManagerTests();
-    // runRouterTests();
-    // runHTTPRequest();
+    runConfigTests();
+    runSererTests();
+    // runConnManagerTests();
+    runRouterTests();
+    runHTTPRequest();
     runFilePath();
 
     printSummary();
