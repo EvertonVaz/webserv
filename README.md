@@ -23,9 +23,16 @@ sequenceDiagram
     StaticFileHandler->>HTTPResponse: Gera resposta de arquivo estático
     CGIHandler->>HTTPResponse: Gera resposta CGI
     HTTPResponse->>Client: Envia resposta HTTP
-    Router->>ErrorHandler: Lida com erros
+    Note over HTTPResponse, Client: Caso ocorra tudo bem com a requisição.
+
+    HTTPRequest->>ErrorHandler: Lida com erros de Request
+    Router->>ErrorHandler: Lida com erros de Rotas
+    StaticFileHandler->>ErrorHandler: Lida com erros de Path
+    CGIHandler->>ErrorHandler: Lida com erros do CGI
+
     ErrorHandler->>HTTPResponse: Gera resposta de erro
     HTTPResponse->>Client: Envia resposta de erro HTTP
+    Note over HTTPResponse, Client: Caso ocorra algum erro na requisição.
 
 ```
 
@@ -70,6 +77,15 @@ server {
  - Resiliência: O servidor é projetado para não falhar mesmo em condições adversas, como falhas de memória.
  - Multiplataforma: Embora desenvolvido e testado em Linux, utiliza apenas funções compatíveis com C++98.
  - Sem Dependências Externas: Não utiliza bibliotecas externas ou funcionalidades além das permitidas.
+
+### Testes de stress com siege
+Para testar a resiliência e desempenho do servidor, utilizamos a ferramenta **siege**. Abaixo estão os resultados dos testes de stress realizados:
+
+![Resultados do Siege](./.docs/siege.png)
+
+Além disso, o servidor gera logs detalhados para monitoramento e depuração:
+
+![Exemplo de Logs](./.docs/logs.png)
 
 ### Requisitos
 Compilador C++ compatível com o padrão C++98
